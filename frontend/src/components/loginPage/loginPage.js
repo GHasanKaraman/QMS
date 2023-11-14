@@ -10,6 +10,7 @@ import logo from "../../images/logo.png";
 import factory from "../../images/factory.gif";
 
 import "./login.css";
+import axios from "../../api/axios";
 
 const LoginPage = (props) => {
   const theme = useTheme();
@@ -24,27 +25,14 @@ const LoginPage = (props) => {
   useEffect(() => {}, []);
 
   const login = async (values) => {
-    if (values.remember) {
-      localStorage.setItem("username", values.username);
-      localStorage.setItem("remember", true);
-    } else {
-      localStorage.removeItem("username");
-      localStorage.removeItem("remember");
-    }
-
-    //const res = await userAuth.login(values.username, values.password);
-
-    const res = {};
-    if (res.result === "success") {
-      navigate("/dashboard");
-    } else if (res.result === "not_found") {
-      enqueueSnackbar("Your username or password is incorrect!", {
-        variant: "error",
+    try {
+      const res = await axios.post("/register", {
+        username: values.username,
+        password: values.password,
       });
-    } else {
-      enqueueSnackbar("You are not authenticated!", {
-        variant: "error",
-      });
+      console.log(res.status, res.data);
+    } catch (err) {
+      console.log(err.response.status);
     }
   };
 

@@ -43,7 +43,6 @@ import AssignmentReturnIcon from "@mui/icons-material/AssignmentReturn";
 import GridOnIcon from "@mui/icons-material/GridOn";
 
 import logo from "../images/logo.png";
-import baseRequest from "../core/baseRequests";
 
 const Item = ({ title, to, icon, selected, setSelected, sub, parentTitle }) => {
   const theme = useTheme();
@@ -94,11 +93,6 @@ const Sidebar = () => {
   const colors = tokens(theme.palette.mode);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selected, setSelected] = useState("Dashboard");
-
-  const loadUser = async () => {
-    const response = await baseRequest.post("/user/get", null);
-    return response;
-  };
 
   return (
     <Box
@@ -184,7 +178,7 @@ const Sidebar = () => {
                   fontWeight="600"
                   color={colors.ciboInnerGreen[500]}
                 >
-                  Developer
+                  Admin Developer
                 </Typography>
               </Box>
             </Box>
@@ -192,148 +186,13 @@ const Sidebar = () => {
 
           <Box paddingLeft={isCollapsed ? undefined : "10%"}>
             <Item
-              title="Dashboard"
+              title="My Quality Dashboard"
               to="/dashboard"
               icon={<DashboardIcon />}
               selected={selected}
               setSelected={setSelected}
             />
-            <Typography
-              variant="h6"
-              color={colors.grey[300]}
-              sx={{ m: "15px 0 5px 20px" }}
-            >
-              Stock
-            </Typography>
-            <Item
-              title="Vreeland"
-              to="/vreeland"
-              icon={
-                <SvgIcon viewBox="0 0 384 512" fontSize="1em">
-                  <path d="M19.7 34.5c16.3-6.8 35 .9 41.8 17.2L192 364.8 322.5 51.7c6.8-16.3 25.5-24 41.8-17.2s24 25.5 17.2 41.8l-160 384c-5 11.9-16.6 19.7-29.5 19.7s-24.6-7.8-29.5-19.7L2.5 76.3c-6.8-16.3 .9-35 17.2-41.8z" />
-                </SvgIcon>
-              }
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Item
-              title="Madison"
-              to="/madison"
-              icon={
-                <SvgIcon viewBox="0 0 448 512" fontSize="1em">
-                  <path d="M22.7 33.4c13.5-4.1 28.1 1.1 35.9 12.9L224 294.3 389.4 46.2c7.8-11.7 22.4-17 35.9-12.9S448 49.9 448 64V448c0 17.7-14.3 32-32 32s-32-14.3-32-32V169.7L250.6 369.8c-5.9 8.9-15.9 14.2-26.6 14.2s-20.7-5.3-26.6-14.2L64 169.7V448c0 17.7-14.3 32-32 32s-32-14.3-32-32V64C0 49.9 9.2 37.5 22.7 33.4z" />
-                </SvgIcon>
-              }
-              selected={selected}
-              setSelected={setSelected}
-            />
-            <Typography
-              variant="h6"
-              color={colors.grey[300]}
-              sx={{ m: "15px 0 5px 20px" }}
-            >
-              Data
-            </Typography>
-            <ItemGroup
-              label="Logs"
-              icon={<HistoryEduOutlinedIcon />}
-              selected={selected}
-              items={[
-                <Item
-                  sub
-                  title="Output Logs"
-                  parentTitle="Logs"
-                  to="/logs/output"
-                  icon={<OutputIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />,
-                <Item
-                  sub
-                  title="Return Logs"
-                  parentTitle="Logs"
-                  to="/logs/return"
-                  icon={<AssignmentReturnIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />,
-              ]}
-            />
-            <ItemGroup
-              label="Reports"
-              icon={<SummarizeOutlinedIcon />}
-              selected={selected}
-              items={[
-                <Item
-                  sub
-                  title="Maintenance"
-                  parentTitle="Reports"
-                  to="/reports"
-                  icon={<BuildIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />,
-                <Item
-                  sub
-                  title="Costs"
-                  parentTitle="Reports"
-                  to="/reports"
-                  icon={<AttachMoneyIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />,
-                <Item
-                  sub
-                  title="Technicians"
-                  parentTitle="Reports"
-                  to="/reports"
-                  icon={<EngineeringOutlinedIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />,
-                <Item
-                  sub
-                  title="Inventory"
-                  parentTitle="Reports"
-                  to="/reports"
-                  icon={<InventoryIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />,
-              ]}
-            />
-            <ItemGroup
-              label="Issues"
-              icon={<TroubleshootOutlinedIcon />}
-              selected={selected}
-              items={[
-                <Item
-                  sub
-                  title="View Issues"
-                  parentTitle="Issues"
-                  to="/issues/view"
-                  icon={<DynamicFeedIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />,
-                <Item
-                  sub
-                  title="Create Issue"
-                  parentTitle="Issues"
-                  to="/issues/create"
-                  icon={<PostAddIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />,
-              ]}
-            />
-            <Item
-              title="Issue Monitoring"
-              to="/issuemonitoring"
-              icon={<MonitorOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
+
             <Typography
               variant="h6"
               color={colors.grey[300]}
@@ -349,83 +208,8 @@ const Sidebar = () => {
               setSelected={setSelected}
             />
             <ItemGroup
-              label="Tags"
-              icon={<SellOutlinedIcon />}
-              selected={selected}
-              items={[
-                <Item
-                  sub
-                  title="View Tags"
-                  parentTitle="Tags"
-                  to="/labels/view"
-                  icon={<TableViewIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />,
-                <Item
-                  sub
-                  title="Add Tag"
-                  parentTitle="Tags"
-                  to="/labels/add"
-                  icon={<PostAddIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />,
-              ]}
-            />
-            <ItemGroup
-              label="Users"
-              icon={<ManageAccountsIcon />}
-              selected={selected}
-              items={[
-                <Item
-                  sub
-                  title="View Users"
-                  parentTitle="Users"
-                  to="/users/view"
-                  icon={<PermContactCalendarIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />,
-                <Item
-                  sub
-                  title="Add User"
-                  parentTitle="Users"
-                  to="/users/add"
-                  icon={<PersonAddIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />,
-              ]}
-            />
-            <ItemGroup
-              label="Racks"
-              icon={<GridOnIcon />}
-              selected={selected}
-              items={[
-                <Item
-                  sub
-                  title="View Racks"
-                  parentTitle="Racks"
-                  to="/racks/view"
-                  icon={<TableViewIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />,
-                <Item
-                  sub
-                  title="Add Rack"
-                  parentTitle="Racks"
-                  to="/racks/add"
-                  icon={<PostAddIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />,
-              ]}
-            />
-            <ItemGroup
               label="Locations"
-              icon={<LocationOnIcon />}
+              icon={<PrecisionManufacturingOutlinedIcon />}
               selected={selected}
               items={[
                 <Item
@@ -443,149 +227,6 @@ const Sidebar = () => {
                   parentTitle="Locations"
                   to="/locations/add"
                   icon={<AddLocationAltIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />,
-              ]}
-            />
-            <ItemGroup
-              label="Vendors"
-              icon={<StorefrontOutlinedIcon />}
-              selected={selected}
-              items={[
-                <Item
-                  sub
-                  title="View Vendors"
-                  parentTitle="Vendors"
-                  to="/vendors/view"
-                  icon={<TableViewIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />,
-                <Item
-                  sub
-                  title="Add Vendor"
-                  parentTitle="Vendors"
-                  to="/vendors/add"
-                  icon={<AddBusinessIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />,
-              ]}
-            />
-            <ItemGroup
-              label="Machine Types"
-              icon={<RoomPreferencesOutlinedIcon />}
-              selected={selected}
-              items={[
-                <Item
-                  sub
-                  title="View Mach. Types"
-                  parentTitle="Machine Types"
-                  to="/machinetypes/view"
-                  icon={<TableViewIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />,
-                <Item
-                  sub
-                  title="Add Mach. Type"
-                  parentTitle="Machine Types"
-                  to="/machinetypes/add"
-                  icon={<PostAddIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />,
-              ]}
-            />
-            <ItemGroup
-              label="Targets"
-              icon={<PrecisionManufacturingOutlinedIcon />}
-              selected={selected}
-              items={[
-                <Item
-                  sub
-                  title="View Targets"
-                  parentTitle="Targets"
-                  to="/targets/view"
-                  icon={<TableViewIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />,
-                <Item
-                  sub
-                  title="Add Target"
-                  parentTitle="Targets"
-                  to="/targets/add"
-                  icon={<PostAddIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />,
-              ]}
-            />
-            <ItemGroup
-              label="Fixing Methods"
-              icon={<ConstructionOutlinedIcon />}
-              selected={selected}
-              items={[
-                <Item
-                  sub
-                  title="View Fixings"
-                  parentTitle="Fixing Methods"
-                  to="/fixingmethods/view"
-                  icon={<TableViewIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />,
-                <Item
-                  sub
-                  title="Add Fixing"
-                  parentTitle="Fixing Methods"
-                  to="/fixingmethods/add"
-                  icon={<PostAddIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />,
-              ]}
-            />
-            <ItemGroup
-              label="Problems"
-              icon={<HelpOutlineOutlinedIcon />}
-              selected={selected}
-              items={[
-                <Item
-                  sub
-                  title="View Problems"
-                  parentTitle="Problems"
-                  to="/problems/view"
-                  icon={<TableViewIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />,
-                <Item
-                  sub
-                  title="View Superiors"
-                  parentTitle="Problems"
-                  to="/problems/superiors/view"
-                  icon={<TableViewIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />,
-                <Item
-                  sub
-                  title="Add Problem"
-                  parentTitle="Problems"
-                  to="/problems/add"
-                  icon={<PostAddIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />,
-                <Item
-                  sub
-                  title="Add Superior"
-                  parentTitle="Problems"
-                  to="/problems/superiors/add"
-                  icon={<PostAddIcon />}
                   selected={selected}
                   setSelected={setSelected}
                 />,

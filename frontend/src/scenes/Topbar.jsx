@@ -43,7 +43,6 @@ const Topbar = () => {
     setAnchorElUser(null);
   };
 
-
   const logout = () => {
     localStorage.removeItem("token");
     navigate("/login");
@@ -67,11 +66,7 @@ const Topbar = () => {
             <LightModeOutlinedIcon />
           )}
         </IconButton>
-        <IconButton
-          aria-label="noti"
-          id="noti-button"
-          aria-haspopup="true"
-        >
+        <IconButton aria-label="noti" id="noti-button" aria-haspopup="true">
           <Badge
             badgeContent={notificationsLength}
             sx={{

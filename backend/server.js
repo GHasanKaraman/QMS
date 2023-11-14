@@ -27,6 +27,26 @@ db.once("open", function () {
   app.use(bodyParser.json());
   app.use(cors());
 
+  app.post("/register", async (req, res) => {
+    const { username, password } = req.body;
+    console.log(username, password);
+
+    res.status(400).json({ result: "success" });
+  });
+
+  var txt = encodeURIComponent(
+    `
+   _______ __          ____    ___ 
+  / ____(_) /_  ____  / __ \\  /   |
+ / /   / / __ \\/ __ \\/ / / / / /| |
+/ /___/ / /_/ / /_/ / /_/ / / ___ |
+\\____/_/_.___/\\____/\\___\\_\\/_/  |_|
+                                   
+  `
+  );
+  txt = decodeURIComponent(txt);
+  console.log("\x1b[35m%s\x1b[0m", txt);
+
   app.listen(process.env.PORT, (req, res) => {
     console.log(
       "\x1b[33m%s\x1b[0m",
