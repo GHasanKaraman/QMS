@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, Navigate, Outlet } from "react-router-dom";
+import { Routes, Route, Outlet } from "react-router-dom";
 
 import Topbar from "../scenes/Topbar.jsx";
 import Sidebar from "../scenes/Sidebar.jsx";
@@ -7,7 +7,7 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "../theme";
 
 import LoginPage from "../components/loginPage/loginPage";
-import HomePage from "../components/homePage/homePage.js";
+import DashboardPage from "../components/dashboardPage/dashboardPage.js";
 
 import ViewLocationsPage from "../components/locationsPage/viewLocationsPage.js";
 import AddLocationPage from "../components/locationsPage/addLocationPage";
@@ -60,7 +60,7 @@ const Router = () => {
         <Route
           exact
           path="/dashboard"
-          element={<HomePage title="CiboQA | My Quality Dashboard" />}
+          element={<DashboardPage title="CiboQA | Dashboard" />}
         />
         <Route
           exact

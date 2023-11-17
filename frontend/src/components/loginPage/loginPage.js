@@ -10,7 +10,9 @@ import logo from "../../images/logo.png";
 import factory from "../../images/factory.gif";
 
 import "./login.css";
+import api from "axios";
 import axios from "../../api/axios";
+import userAuth from "../../utils/userAuth";
 
 const LoginPage = (props) => {
   const theme = useTheme();
@@ -22,17 +24,58 @@ const LoginPage = (props) => {
     document.title = props.title || "";
   }, [props.title]);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/dashboard");
+    }
+  }, []);
+
+  const b64EncodeUnicode = (str) => {
+    return btoa(
+      encodeURIComponent(str).replace(
+        /%([0-9A-F]{2})/g,
+        function toSolidBytes(match, p1) {
+          return String.fromCharCode("0x" + p1);
+        }
+      )
+    );
+  };
 
   const login = async (values) => {
-    try {
-      const res = await axios.post("/register", {
-        username: values.username,
-        password: values.password,
-      });
-      console.log(res.status, res.data);
-    } catch (err) {
-      console.log(err.response.status);
+    const { username, password } = values;
+
+    const encoded = b64EncodeUnicode(username + "=" + password);
+    await axios.addHeader(encoded);
+    const res = await axios.post("/login", null);
+    if (res?.data) {
+      localStorage.setItem("token", res.data.token.token);
+      axios.addToken(res.data.token.token);
+      localStorage.setItem("username", res.data.token.userName);
+      navigate("/dashboard");
+    } else {
+      switch (res.response?.status) {
+        case 404:
+          enqueueSnackbar("Your username or password is incorrect!", {
+            variant: "error",
+          });
+          break;
+
+        case 500:
+          enqueueSnackbar(
+            "Something went wrong while authenticate the credentials!",
+            {
+              variant: "error",
+            }
+          );
+          break;
+
+        case 503:
+          enqueueSnackbar("Something went wrong with the server!", {
+            variant: "error",
+          });
+          break;
+      }
     }
   };
 

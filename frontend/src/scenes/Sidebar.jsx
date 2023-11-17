@@ -10,37 +10,12 @@ import { useNavigate } from "react-router-dom";
 
 import { tokens } from "../theme";
 
-import SvgIcon from "@mui/material/SvgIcon";
-import SellOutlinedIcon from "@mui/icons-material/SellOutlined";
-import DynamicFeedIcon from "@mui/icons-material/DynamicFeed";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
-import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
 import PrecisionManufacturingOutlinedIcon from "@mui/icons-material/PrecisionManufacturingOutlined";
-import EngineeringOutlinedIcon from "@mui/icons-material/EngineeringOutlined";
-import ConstructionOutlinedIcon from "@mui/icons-material/ConstructionOutlined";
-import RoomPreferencesOutlinedIcon from "@mui/icons-material/RoomPreferencesOutlined";
-import MonitorOutlinedIcon from "@mui/icons-material/MonitorOutlined";
-import SummarizeOutlinedIcon from "@mui/icons-material/SummarizeOutlined";
-import HistoryEduOutlinedIcon from "@mui/icons-material/HistoryEduOutlined";
-import TroubleshootOutlinedIcon from "@mui/icons-material/TroubleshootOutlined";
-import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import TableViewIcon from "@mui/icons-material/TableView";
-import PostAddIcon from "@mui/icons-material/PostAdd";
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import InventoryIcon from "@mui/icons-material/Inventory";
-import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import PermContactCalendarIcon from "@mui/icons-material/PermContactCalendar";
-import AddBusinessIcon from "@mui/icons-material/AddBusiness";
 import MapIcon from "@mui/icons-material/Map";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
 import AddLocationAltIcon from "@mui/icons-material/AddLocationAlt";
-import BuildIcon from "@mui/icons-material/Build";
-import OutputIcon from "@mui/icons-material/Output";
-import AssignmentReturnIcon from "@mui/icons-material/AssignmentReturn";
-import GridOnIcon from "@mui/icons-material/GridOn";
 
 import logo from "../images/logo.png";
 
@@ -91,7 +66,15 @@ const ItemGroup = ({ label, icon, items, selected }) => {
 const Sidebar = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(
+    (function () {
+      const collapsed = localStorage.getItem("collapsed");
+      if (collapsed === "true") {
+        return true;
+      }
+      return false;
+    })()
+  );
   const [selected, setSelected] = useState("Dashboard");
 
   return (
@@ -123,7 +106,12 @@ const Sidebar = () => {
       <ProSidebar collapsed={isCollapsed}>
         <Menu iconShape="square">
           <div style={{ width: "100%", textAlign: "center", marginTop: "5px" }}>
-            <img src={logo} width="75%" style={{ pointerEvents: "none" }} />
+            <img
+              src={logo}
+              width="75%"
+              alt="logo"
+              style={{ pointerEvents: "none" }}
+            />
             {!isCollapsed ? (
               <Typography variant="h6" color={colors.grey[100]}>
                 v2.1.0
@@ -131,7 +119,10 @@ const Sidebar = () => {
             ) : null}
           </div>
           <MenuItem
-            onClick={() => setIsCollapsed(!isCollapsed)}
+            onClick={() => {
+              localStorage.setItem("collapsed", !isCollapsed);
+              setIsCollapsed(!isCollapsed);
+            }}
             icon={isCollapsed ? <MenuOutlinedIcon /> : undefined}
             style={{
               margin: "10px 0 20px 0",
@@ -186,7 +177,7 @@ const Sidebar = () => {
 
           <Box paddingLeft={isCollapsed ? undefined : "10%"}>
             <Item
-              title="My Quality Dashboard"
+              title="Dashboard"
               to="/dashboard"
               icon={<DashboardIcon />}
               selected={selected}

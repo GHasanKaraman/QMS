@@ -7,6 +7,11 @@ const moment = require("moment-timezone");
 var morgan = require("morgan");
 var fs = require("fs");
 const chalk = require("chalk");
+const md5 = require("md5");
+
+const authentication = require("./routes/authentication.js");
+const authorization = require("./routes/authorization.js");
+const dashboard = require("./routes/dashboard.js");
 
 require("console-stamp")(console, {
   format: "(->).yellow :date().bold.black.bgRed",
@@ -27,11 +32,21 @@ db.once("open", function () {
   app.use(bodyParser.json());
   app.use(cors());
 
-  app.post("/register", async (req, res) => {
-    const { username, password } = req.body;
-    console.log(username, password);
+  app.use((req, res, next) => {
+    if ("OPTIONS" === req.method) {
+      res.sendStatus(200);
+    } else {
+      next();
+    }
+  });
 
-    res.status(400).json({ result: "success" });
+  app.use("/", authentication);
+  app.use("/", authorization);
+
+  app.use("/", dashboard);
+
+  app.get("/", async (req, res) => {
+    res.send("<h2 style = color:green>Listening port...</h2>");
   });
 
   var txt = encodeURIComponent(
