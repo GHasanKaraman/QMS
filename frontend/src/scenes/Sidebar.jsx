@@ -186,10 +186,10 @@ const Sidebar = () => {
               color={colors.grey[300]}
               sx={{ m: "15px 0 5px 0px", ml: isCollapsed ? "10px" : "20px" }}
             >
-              Settings
+              Create
             </Typography>
             <Item
-              title="Create Ratio Form"
+              title="Ratio Form"
               to="/ratioform"
               icon={<BlenderIcon />}
               selected={selected}

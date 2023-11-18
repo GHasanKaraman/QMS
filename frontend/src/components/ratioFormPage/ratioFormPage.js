@@ -15,6 +15,8 @@ import {
   DialogTitle,
   DialogContent,
   DialogContentText,
+  Backdrop,
+  CircularProgress,
 } from "@mui/material";
 import CalculateIcon from "@mui/icons-material/Calculate";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -31,6 +33,7 @@ import { tokens } from "../../theme";
 
 import axios from "../../api/axios";
 import userAuth from "../../utils/userAuth";
+import { saveRatioForm } from "../controllers/ratioFormController";
 
 const RatioFormPage = (props) => {
   const theme = useTheme();
@@ -47,6 +50,7 @@ const RatioFormPage = (props) => {
   const [targets, setTargets] = useState({});
   const [calculated, setCalculated] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const ref = useRef(null);
 
@@ -83,6 +87,57 @@ const RatioFormPage = (props) => {
       ingredient.length
     );
     return { code, name, target };
+  };
+
+  const handleSave = async (type) => {
+    setOpenDialog(false);
+    setOpen(true);
+    const res = await saveRatioForm(formik.values, type);
+    setOpen(false);
+    if (userAuth.control(res)) {
+      if (res?.data) {
+        formik.resetForm();
+        if (type === "done") {
+          enqueueSnackbar("You have succesfully created a ratio form!", {
+            variant: "success",
+          });
+        } else {
+          enqueueSnackbar("The ratio form is saved for later to complete!", {
+            variant: "success",
+          });
+        }
+      } else {
+        switch (res.response?.status) {
+          case 404:
+            enqueueSnackbar("Your username or password is incorrect!", {
+              variant: "error",
+            });
+            break;
+
+          case 500:
+            enqueueSnackbar(
+              "Something went wrong while authenticate the credentials!",
+              {
+                variant: "error",
+              }
+            );
+            break;
+
+          case 503:
+            enqueueSnackbar("Something went wrong with the server!", {
+              variant: "error",
+            });
+            break;
+        }
+      }
+    } else {
+      navigate("/login");
+      localStorage.removeItem("token");
+      localStorage.removeItem("username");
+      enqueueSnackbar("Please sign in again!", {
+        variant: "error",
+      });
+    }
   };
 
   const handleSubmit = (values) => {
@@ -459,6 +514,12 @@ const RatioFormPage = (props) => {
 
   return (
     <Box m="0 20px">
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={open}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <Dialog
         fullScreen={fullScreen}
         open={openDialog}
@@ -490,7 +551,7 @@ const RatioFormPage = (props) => {
             variant="contained"
             color="info"
             onClick={() => {
-              saveRatioForm(formik.values, "later");
+              console.log(handleSave("later"));
             }}
           >
             Save for Later
@@ -500,7 +561,7 @@ const RatioFormPage = (props) => {
             color="info"
             autoFocus
             onClick={() => {
-              saveRatioForm(formik.values, "done");
+              handleSave("done");
             }}
           >
             Save
@@ -511,7 +572,7 @@ const RatioFormPage = (props) => {
         title="Finished Product Ratio Form"
         subtitle="Please fill out the form"
       />
-      <form onSubmit={formik.handleSubmit}>
+      <form onSubmit={formik.handleSubmit} style={{ paddingBottom: "10px" }}>
         <Box
           display="grid"
           gap="30px"

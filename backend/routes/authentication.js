@@ -53,7 +53,7 @@ router.post("/login", async (req, res) => {
         res.sendStatus(500);
         console.log(
           "\x1b[31m%s",
-          "Something went wrong while creatig token!",
+          "Something went wrong while creating token!",
           "\x1b[0m"
         );
       }

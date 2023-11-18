@@ -45,7 +45,7 @@ router.use(async (req, res, next) => {
         .limit(1);
       if (!isEmpty(tokenData)) {
         console.log("\x1b[35m%s\x1b[0m", token + " will be authenticated!");
-        if (Math.abs(essentials.fromNow(tokenData[0].createdAt)) >= 60 * 6) {
+        if (Math.abs(essentials.fromNow(tokenData[0].createdAt)) >= 60 * 24) {
           console.log(
             "\x1b[31m%s\x1b[0m",
             token + " has expired! User should sign in again!"
