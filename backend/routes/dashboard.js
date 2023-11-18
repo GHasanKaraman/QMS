@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
+const ratioFormModel = require("../models/ratioFormModel");
+
 router.use("/dashboard", async (req, res) => {
   try {
     const resp = await fetch("http://10.12.0.15:81/qac.php?stations", {
@@ -8,8 +10,9 @@ router.use("/dashboard", async (req, res) => {
     });
 
     const data = await resp.json();
-    if (data) {
-      res.status(200).json({ locations: data });
+    const ratioForms = await ratioFormModel.find({});
+    if (data && ratioForms) {
+      res.status(200).json({ locations: data, ratioForms: ratioForms });
       console.log("Fetched all locations from OC DB!");
     } else {
       res.sendStatus(404);
