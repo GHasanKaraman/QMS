@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Sidebar as ProSidebar,
   Menu,
@@ -10,12 +10,9 @@ import { useNavigate } from "react-router-dom";
 
 import { tokens } from "../theme";
 
-import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
-import PrecisionManufacturingOutlinedIcon from "@mui/icons-material/PrecisionManufacturingOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import MapIcon from "@mui/icons-material/Map";
-import AddLocationAltIcon from "@mui/icons-material/AddLocationAlt";
+import BlenderIcon from "@mui/icons-material/Blender";
 
 import logo from "../images/logo.png";
 
@@ -192,36 +189,11 @@ const Sidebar = () => {
               Settings
             </Typography>
             <Item
-              title="New Part"
-              to="/newpart"
-              icon={<AddCircleOutlineOutlinedIcon />}
+              title="Create Ratio Form"
+              to="/ratioform"
+              icon={<BlenderIcon />}
               selected={selected}
               setSelected={setSelected}
-            />
-            <ItemGroup
-              label="Locations"
-              icon={<PrecisionManufacturingOutlinedIcon />}
-              selected={selected}
-              items={[
-                <Item
-                  sub
-                  title="View Locations"
-                  parentTitle="Locations"
-                  to="/locations/view"
-                  icon={<MapIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />,
-                <Item
-                  sub
-                  title="Add Location"
-                  parentTitle="Locations"
-                  to="/locations/add"
-                  icon={<AddLocationAltIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />,
-              ]}
             />
           </Box>
         </Menu>

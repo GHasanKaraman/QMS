@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
-import { Box, Divider, List, ListItem, Stack } from "@mui/material";
+import { Box, Divider, IconButton, List, ListItem, Stack } from "@mui/material";
 import { useTheme } from "@emotion/react";
+import { useSnackbar } from "notistack";
+import { useNavigate } from "react-router-dom";
+import MenuIcon from "@mui/icons-material/Menu";
 
 import Header from "../Header";
 import { tokens } from "../../theme";
 import axios from "../../api/axios";
 import userAuth from "../../utils/userAuth";
-import { useNavigate } from "react-router-dom";
-import { useSnackbar } from "notistack";
 
 const DashboardPage = (props) => {
   const theme = useTheme();
@@ -21,8 +22,9 @@ const DashboardPage = (props) => {
   }, [props.title]);
 
   const loadAllStations = async () => {
-    const res = await axios.post("/home");
+    const res = await axios.post("/dashboard");
     if (userAuth.control(res)) {
+      setLocations(res.data.locations);
     } else {
       navigate("/login");
       localStorage.removeItem("token");
@@ -31,8 +33,6 @@ const DashboardPage = (props) => {
         variant: "error",
       });
     }
-    /*const res = await api.post("http://10.12.0.15:81/qac.php?stations");
-    setLocations(res.data);*/
   };
 
   useEffect(() => {
@@ -45,9 +45,22 @@ const DashboardPage = (props) => {
       <List>
         {locations.map((location) => {
           return [
-            <ListItem>
-              <Stack>
-                <div style={{ fontSize: "18px", fontWeight: "bold" }}>
+            <ListItem
+              key={location}
+              secondaryAction={
+                <IconButton
+                  onClick={() => {
+                    console.log(location);
+                  }}
+                >
+                  <MenuIcon />
+                </IconButton>
+              }
+            >
+              <Stack  spacing={1}>
+                <div
+                  style={{ fontSize: "18px", fontWeight: "bold" }}
+                >
                   {location.name + " " + location.type}
                 </div>
                 <div style={{ fontSize: "12px", color: colors.grey[200] }}>

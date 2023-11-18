@@ -8,9 +8,7 @@ import { ColorModeContext, useMode } from "../theme";
 
 import LoginPage from "../components/loginPage/loginPage";
 import DashboardPage from "../components/dashboardPage/dashboardPage.js";
-
-import ViewLocationsPage from "../components/locationsPage/viewLocationsPage.js";
-import AddLocationPage from "../components/locationsPage/addLocationPage";
+import RatioFormPage from "../components/ratioFormPage/ratioFormPage.js";
 
 const BarLayout = () => {
   const [theme, colorMode] = useMode();
@@ -64,13 +62,10 @@ const Router = () => {
         />
         <Route
           exact
-          path="/locations/view"
-          element={<ViewLocationsPage title="CiboENG | View Locations" />}
-        />
-        <Route
-          exact
-          path="/locations/add"
-          element={<AddLocationPage title="CiboENG | Add Location" />}
+          path="/ratioform"
+          element={
+            <RatioFormPage title="CiboQA | Finished Product Ratio Form" />
+          }
         />
       </Route>
     </Routes>

@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-router.use("/dashboard", async (req, res) => {
+router.use("/ratioform", async (req, res) => {
   try {
     const resp = await fetch("http://10.12.0.15:81/qac.php?stations", {
       method: "GET",

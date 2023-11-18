@@ -12,6 +12,7 @@ const md5 = require("md5");
 const authentication = require("./routes/authentication.js");
 const authorization = require("./routes/authorization.js");
 const dashboard = require("./routes/dashboard.js");
+const ratioForm = require("./routes/ratioForm.js");
 
 require("console-stamp")(console, {
   format: "(->).yellow :date().bold.black.bgRed",
@@ -44,6 +45,7 @@ db.once("open", function () {
   app.use("/", authorization);
 
   app.use("/", dashboard);
+  app.use("/", ratioForm);
 
   app.get("/", async (req, res) => {
     res.send("<h2 style = color:green>Listening port...</h2>");
