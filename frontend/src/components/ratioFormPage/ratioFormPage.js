@@ -534,7 +534,7 @@ const RatioFormPage = (props) => {
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Do you really want to delete this location?
+            Do you really want to save this form?
           </DialogContentText>
         </DialogContent>
         <DialogActions>

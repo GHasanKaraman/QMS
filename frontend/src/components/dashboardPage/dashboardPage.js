@@ -76,9 +76,15 @@ const DashboardPage = (props) => {
                 </div>
                 <div style={{ fontSize: "12px", color: colors.grey[200] }}>
                   {"Xth Shift  •  Started X:XX AM  •  " +
-                    ratioForms.filter(
-                      (ratioForm) => ratioForm.location === location.name
-                    ).length +
+                    (function () {
+                      const length = ratioForms.filter(
+                        (ratioForm) => ratioForm.location === location.name
+                      ).length;
+                      if (length == 0) {
+                        return "No";
+                      }
+                      return length;
+                    })() +
                     " Completed Data Sheets"}
                 </div>
                 <Stack direction="row" spacing={1}>
