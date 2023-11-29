@@ -33,7 +33,7 @@ import { tokens } from "../../theme";
 
 import axios from "../../api/axios";
 import userAuth from "../../utils/userAuth";
-import { saveRatioForm } from "../controllers/ratioFormController";
+import { saveRatioForm } from "../../controllers/ratioFormController";
 
 const RatioFormPage = (props) => {
   const theme = useTheme();

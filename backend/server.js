@@ -12,6 +12,7 @@ const md5 = require("md5");
 const authentication = require("./routes/authentication.js");
 const authorization = require("./routes/authorization.js");
 const dashboard = require("./routes/dashboard.js");
+const qualityControlForm = require("./routes/qualityControlForm.js");
 const ratioForm = require("./routes/ratioForm.js");
 
 require("console-stamp")(console, {
@@ -45,6 +46,7 @@ db.once("open", function () {
   app.use("/", authorization);
 
   app.use("/", dashboard);
+  app.use("/", qualityControlForm);
   app.use("/", ratioForm);
 
   app.get("/", async (req, res) => {

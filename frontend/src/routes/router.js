@@ -1,4 +1,3 @@
-import React from "react";
 import { Routes, Route, Outlet } from "react-router-dom";
 
 import Topbar from "../scenes/Topbar.jsx";
@@ -9,6 +8,7 @@ import { ColorModeContext, useMode } from "../theme";
 import LoginPage from "../components/loginPage/loginPage";
 import DashboardPage from "../components/dashboardPage/dashboardPage.js";
 import RatioFormPage from "../components/ratioFormPage/ratioFormPage.js";
+import QualityControlPage from "../components/qualityControlPage/qualityControlPage.js";
 
 const BarLayout = () => {
   const [theme, colorMode] = useMode();
@@ -19,7 +19,7 @@ const BarLayout = () => {
         <div className="app">
           <Sidebar />
           <main className="content">
-            <Topbar />
+            <Topbar/>
             <Outlet />
           </main>
         </div>
@@ -59,6 +59,13 @@ const Router = () => {
           exact
           path="/dashboard"
           element={<DashboardPage title="CiboQA | Dashboard" />}
+        />
+        <Route
+          exact
+          path="/qualitycontrol"
+          element={
+            <QualityControlPage title="CiboQA | Quality Control Inspection" />
+          }
         />
         <Route
           exact

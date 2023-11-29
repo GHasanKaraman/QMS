@@ -82,44 +82,47 @@ const Topbar = () => {
           </Badge>
         </IconButton>
         <IconButton
-          onClick={handleClickUser}
+          id="menu-button"
           aria-controls={openUser ? "account-menu" : undefined}
           aria-haspopup="true"
           aria-expanded={openUser ? "true" : undefined}
+          onClick={handleClickUser}
         >
           <PersonOutlinedIcon />
         </IconButton>
       </Box>
 
       <Menu
-        anchorEl={anchorElUser}
         id="account-menu"
+        anchorEl={anchorElUser}
         open={openUser}
         onClose={handleCloseUser}
-        onClick={handleCloseUser}
-        PaperProps={{
-          elevation: 0,
-          sx: {
-            overflow: "visible",
-            filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-            mt: 1.5,
-            "& .MuiAvatar-root": {
-              width: 32,
-              height: 32,
-              ml: -0.5,
-              mr: 1,
-            },
-            "&:before": {
-              content: '""',
-              display: "block",
-              position: "absolute",
-              top: 0,
-              right: 14,
-              width: 10,
-              height: 10,
-              bgcolor: "background.paper",
-              transform: "translateY(-50%) rotate(45deg)",
-              zIndex: 0,
+        MenuListProps={{ "aria-labelledby": "menu-button" }}
+        slotProps={{
+          paper: {
+            elevation: 0,
+            sx: {
+              overflow: "visible",
+              filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+              mt: 1.5,
+              "& .MuiAvatar-root": {
+                width: 32,
+                height: 32,
+                ml: -0.5,
+                mr: 1,
+              },
+              "&:before": {
+                content: '""',
+                display: "block",
+                position: "absolute",
+                top: 0,
+                right: 14,
+                width: 10,
+                height: 10,
+                bgcolor: "background.paper",
+                transform: "translateY(-50%) rotate(45deg)",
+                zIndex: 0,
+              },
             },
           },
         }}
@@ -146,38 +149,6 @@ const Topbar = () => {
           </ListItemIcon>
           Logout
         </MenuItem>
-      </Menu>
-
-      <Menu
-        id="noti-menu"
-        MenuListProps={{
-          "aria-labelledby": "noti-button",
-        }}
-        PaperProps={{
-          style: {
-            maxHeight: 72 * 4.5,
-            width: "90ch",
-          },
-        }}
-        transformOrigin={{ horizontal: "right", vertical: "top" }}
-        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-      >
-        {notifications.map((notification, index) => {
-          return (
-            <MenuItem onClick={handleCloseUser} key={"menuItem" + index}>
-              <Stack
-                direction="row"
-                justifyContent="center"
-                alignItems="center"
-                textAlign="center"
-                gap="10px"
-              >
-                <Avatar src={notification.image} />
-                <Typography variant="h6">{notification.description}</Typography>
-              </Stack>
-            </MenuItem>
-          );
-        })}
       </Menu>
     </Box>
   );

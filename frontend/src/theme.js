@@ -16,7 +16,7 @@ export const tokens = (mode) => ({
           800: "#292929",
           900: "#141414",
         },
-        contrast: { 100: "#fff", 200: "#ccc" },
+        contrast: { 100: "#fff", 200: "#ccc", 300: "#000" },
         primary: {
           100: "#d0d1d5",
           200: "#a1a4ab",
@@ -129,7 +129,7 @@ export const tokens = (mode) => ({
           800: "#c2c2c2",
           900: "#e0e0e0",
         },
-        contrast: { 100: "#000", 200: "#333" },
+        contrast: { 100: "#000", 200: "#333", 300: "#fff" },
         primary: {
           100: "#040509",
           200: "#080b12",
