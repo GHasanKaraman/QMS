@@ -50,7 +50,7 @@ router.use(async (req, res, next) => {
             "\x1b[31m%s\x1b[0m",
             token + " has expired! User should sign in again!"
           );
-          res.sendStatus(404);
+          res.status(404).json({ error: "token" });
         } else {
           req.username = tokenData[0].userName;
           console.log(
@@ -64,7 +64,7 @@ router.use(async (req, res, next) => {
           "\x1b[31m%s\x1b[0m",
           "Token is not valid. User should sign in again!"
         );
-        res.sendStatus(401);
+        res.status(401).json({ error: "token" });
       }
     } else {
       console.log(
@@ -72,12 +72,12 @@ router.use(async (req, res, next) => {
         "User is not authorized! User should sign in!",
         "\x1b[0m"
       );
-      res.sendStatus(500);
+      res.status(500).json({ error: "token" });
     }
   } catch (e) {
     req.user = null;
     console.log(e);
-    res.sendStatus(503);
+    res.status(503).json({ error: "token" });
   }
 });
 

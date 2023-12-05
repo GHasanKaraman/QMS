@@ -11,8 +11,6 @@ const ToggleButtonCheck = (props) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  const [options, _] = useState(props.options);
-
   return (
     <ToggleButtonGroup
       {...props}
@@ -34,13 +32,15 @@ const ToggleButtonCheck = (props) => {
       exclusive
       aria-label="switch"
     >
-      {options?.map((option, i) => {
+      {props.options?.map((option, i) => {
         return (
           <ToggleButton
             key={option.label}
             value={option.label}
             aria-label={i}
-            sx={{ borderColor: colors.contrast[100] }}
+            sx={{
+              borderColor: props.error ? "red" : colors.contrast[100],
+            }}
           >
             <Stack direction="row" spacing={1}>
               <Divider
