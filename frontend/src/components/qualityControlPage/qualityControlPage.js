@@ -99,6 +99,10 @@ const QualityControlPage = (props) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [open, setOpen] = useState(false);
 
+  const [xRayState, setXRayState] = useState(null);
+  const [metalCardState, setMetalCardState] = useState(null);
+  const [metalBallState, setMetalBallState] = useState(null);
+
   useEffect(() => {
     document.title = props.title || "";
   }, [props.title]);
@@ -191,18 +195,22 @@ const QualityControlPage = (props) => {
       unitOfMeasure: null,
       isSealCorrect: null,
       isNotchCorrect: null,
+
       xrayRequired: null,
       xrayFeDetected: null,
       xrayNonFeDetected: null,
       xraySsDetected: null,
+
       metalCardRequired: null,
       metalCardFeDetected: null,
       metalCardNonFeDetected: null,
       metalCardSsDetected: null,
+
       metalBallRequired: null,
       metalBallFeDetected: null,
       metalBallNonFeDetected: null,
       metalBallSsDetected: null,
+
       correctContainer: null,
       pictureLabelFront: null,
       pictureLabelBack: null,
@@ -211,10 +219,12 @@ const QualityControlPage = (props) => {
       pictureOfAllergenStatement: null,
       labelPackageCorrect: null,
       pictureOfBarcode: null,
+
       unitsCase: null,
       salesOrderNumber: "",
       caseLabel: null,
       pictureOfBoxLabel: null,
+
       anyDeviations: null,
     },
     onSubmit: handleSubmit,
@@ -277,18 +287,29 @@ const QualityControlPage = (props) => {
       unitOfMeasure: yup.string().required(),
       isSealCorrect: yup.string().required(),
       isNotchCorrect: yup.string().required(),
+
       xrayRequired: yup.string().required(),
-      xrayFeDetected: yup.string().required(),
-      xrayNonFeDetected: yup.string().required(),
-      xraySsDetected: yup.string().required(),
+      xrayFeDetected: xRayState === "Yes" ? yup.string().required() : undefined,
+      xrayNonFeDetected:
+        xRayState === "Yes" ? yup.string().required() : undefined,
+      xraySsDetected: xRayState === "Yes" ? yup.string().required() : undefined,
+
       metalCardRequired: yup.string().required(),
-      metalCardFeDetected: yup.string().required(),
-      metalCardNonFeDetected: yup.string().required(),
-      metalCardSsDetected: yup.string().required(),
+      metalCardFeDetected:
+        metalCardState === "Yes" ? yup.string().required() : undefined,
+      metalCardNonFeDetected:
+        metalCardState === "Yes" ? yup.string().required() : undefined,
+      metalCardSsDetected:
+        metalCardState === "Yes" ? yup.string().required() : undefined,
+
       metalBallRequired: yup.string().required(),
-      metalBallFeDetected: yup.string().required(),
-      metalBallNonFeDetected: yup.string().required(),
-      metalBallSsDetected: yup.string().required(),
+      metalBallFeDetected:
+        metalBallState === "Yes" ? yup.string().required() : undefined,
+      metalBallNonFeDetected:
+        metalBallState === "Yes" ? yup.string().required() : undefined,
+      metalBallSsDetected:
+        metalBallState === "Yes" ? yup.string().required() : undefined,
+
       correctContainer: yup.string().required(),
       pictureLabelFront: yup
         .mixed()
@@ -349,6 +370,7 @@ const QualityControlPage = (props) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
           }
         ),
+
       unitsCase: yup.string().required(),
       salesOrderNumber: yup.string().required(),
       caseLabel: yup.string().required(),
@@ -366,6 +388,7 @@ const QualityControlPage = (props) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
           }
         ),
+
       anyDeviations: yup.string().required(),
     }),
   });
@@ -1010,6 +1033,7 @@ const QualityControlPage = (props) => {
                   alignment={formik.values.xrayRequired}
                   onChange={(value) => {
                     formik.setFieldValue("xrayRequired", value);
+                    setXRayState(value);
                   }}
                   error={
                     !!formik.touched.xrayRequired &&
@@ -1024,135 +1048,144 @@ const QualityControlPage = (props) => {
                     },
                   ]}
                 />
-                <Typography
-                  variant="h6"
-                  color={colors.grey[100]}
-                  fontWeight="600"
-                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
-                >
-                  Fe 2.00 mm detected?
-                </Typography>
-                <ToggleButtonCheck
-                  style={{ gridColumn: "span 4" }}
-                  alignment={formik.values.xrayFeDetected}
-                  onChange={(value) => {
-                    formik.setFieldValue("xrayFeDetected", value);
+                <Stack
+                  direction="column"
+                  spacing={1.5}
+                  style={{
+                    display:
+                      formik.values.xrayRequired === "Yes" ? "block" : "none",
                   }}
-                  error={
-                    !!formik.touched.xrayFeDetected &&
-                    !!formik.errors.xrayFeDetected
-                  }
-                  options={[
-                    {
-                      label: "Yes",
-                      icon: (
-                        <CheckBoxIcon
-                          sx={{
-                            fill: colors.ciboInnerGreen[500],
-                          }}
-                        />
-                      ),
-                    },
-                    {
-                      label: "No",
-                      icon: (
-                        <CloseIcon
-                          sx={{
-                            color: colors.yoggieRed[500],
-                            stroke: colors.yoggieRed[500],
-                            strokeWidth: "2",
-                          }}
-                        />
-                      ),
-                    },
-                  ]}
-                />
-                <Typography
-                  variant="h6"
-                  color={colors.grey[100]}
-                  fontWeight="600"
-                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
                 >
-                  Non-Fe 2.00 mm detected?
-                </Typography>
-                <ToggleButtonCheck
-                  style={{ gridColumn: "span 4" }}
-                  alignment={formik.values.xrayNonFeDetected}
-                  onChange={(value) => {
-                    formik.setFieldValue("xrayNonFeDetected", value);
-                  }}
-                  error={
-                    !!formik.touched.xrayNonFeDetected &&
-                    !!formik.errors.xrayNonFeDetected
-                  }
-                  options={[
-                    {
-                      label: "Yes",
-                      icon: (
-                        <CheckBoxIcon
-                          sx={{
-                            fill: colors.ciboInnerGreen[500],
-                          }}
-                        />
-                      ),
-                    },
-                    {
-                      label: "No",
-                      icon: (
-                        <CloseIcon
-                          sx={{
-                            color: colors.yoggieRed[500],
-                            stroke: colors.yoggieRed[500],
-                            strokeWidth: "2",
-                          }}
-                        />
-                      ),
-                    },
-                  ]}
-                />
-                <Typography
-                  variant="h6"
-                  color={colors.grey[100]}
-                  fontWeight="600"
-                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
-                >
-                  SS 2.50 mm detected?
-                </Typography>
-                <ToggleButtonCheck
-                  style={{ gridColumn: "span 4" }}
-                  alignment={formik.values.xraySsDetected}
-                  onChange={(value) => {
-                    formik.setFieldValue("xraySsDetected", value);
-                  }}
-                  error={
-                    !!formik.touched.xraySsDetected &&
-                    !!formik.errors.xraySsDetected
-                  }
-                  options={[
-                    {
-                      label: "Yes",
-                      icon: (
-                        <CheckBoxIcon
-                          sx={{
-                            fill: colors.ciboInnerGreen[500],
-                          }}
-                        />
-                      ),
-                    },
-                    {
-                      label: "No",
-                      icon: (
-                        <CloseIcon
-                          sx={{
-                            color: colors.yoggieRed[500],
-                            stroke: colors.yoggieRed[500],
-                            strokeWidth: "2",
-                          }}
-                        />
-                      ),
-                    },
-                  ]}
-                />
+                  <Typography
+                    variant="h6"
+                    color={colors.grey[100]}
+                    fontWeight="600"
+                    sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                  >
+                    Fe 2.00 mm detected?
+                  </Typography>
+                  <ToggleButtonCheck
+                    style={{ gridColumn: "span 4" }}
+                    alignment={formik.values.xrayFeDetected}
+                    onChange={(value) => {
+                      formik.setFieldValue("xrayFeDetected", value);
+                    }}
+                    error={
+                      !!formik.touched.xrayFeDetected &&
+                      !!formik.errors.xrayFeDetected
+                    }
+                    options={[
+                      {
+                        label: "Yes",
+                        icon: (
+                          <CheckBoxIcon
+                            sx={{
+                              fill: colors.ciboInnerGreen[500],
+                            }}
+                          />
+                        ),
+                      },
+                      {
+                        label: "No",
+                        icon: (
+                          <CloseIcon
+                            sx={{
+                              color: colors.yoggieRed[500],
+                              stroke: colors.yoggieRed[500],
+                              strokeWidth: "2",
+                            }}
+                          />
+                        ),
+                      },
+                    ]}
+                  />
+                  <Typography
+                    variant="h6"
+                    color={colors.grey[100]}
+                    fontWeight="600"
+                    sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                  >
+                    Non-Fe 2.00 mm detected?
+                  </Typography>
+                  <ToggleButtonCheck
+                    style={{ gridColumn: "span 4" }}
+                    alignment={formik.values.xrayNonFeDetected}
+                    onChange={(value) => {
+                      formik.setFieldValue("xrayNonFeDetected", value);
+                    }}
+                    error={
+                      !!formik.touched.xrayNonFeDetected &&
+                      !!formik.errors.xrayNonFeDetected
+                    }
+                    options={[
+                      {
+                        label: "Yes",
+                        icon: (
+                          <CheckBoxIcon
+                            sx={{
+                              fill: colors.ciboInnerGreen[500],
+                            }}
+                          />
+                        ),
+                      },
+                      {
+                        label: "No",
+                        icon: (
+                          <CloseIcon
+                            sx={{
+                              color: colors.yoggieRed[500],
+                              stroke: colors.yoggieRed[500],
+                              strokeWidth: "2",
+                            }}
+                          />
+                        ),
+                      },
+                    ]}
+                  />
+                  <Typography
+                    variant="h6"
+                    color={colors.grey[100]}
+                    fontWeight="600"
+                    sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                  >
+                    SS 2.50 mm detected?
+                  </Typography>
+                  <ToggleButtonCheck
+                    style={{ gridColumn: "span 4" }}
+                    alignment={formik.values.xraySsDetected}
+                    onChange={(value) => {
+                      formik.setFieldValue("xraySsDetected", value);
+                    }}
+                    error={
+                      !!formik.touched.xraySsDetected &&
+                      !!formik.errors.xraySsDetected
+                    }
+                    options={[
+                      {
+                        label: "Yes",
+                        icon: (
+                          <CheckBoxIcon
+                            sx={{
+                              fill: colors.ciboInnerGreen[500],
+                            }}
+                          />
+                        ),
+                      },
+                      {
+                        label: "No",
+                        icon: (
+                          <CloseIcon
+                            sx={{
+                              color: colors.yoggieRed[500],
+                              stroke: colors.yoggieRed[500],
+                              strokeWidth: "2",
+                            }}
+                          />
+                        ),
+                      },
+                    ]}
+                  />
+                </Stack>
               </Box>
             </AccordionDetails>
           </Accordion>
@@ -1204,6 +1237,7 @@ const QualityControlPage = (props) => {
                   alignment={formik.values.metalCardRequired}
                   onChange={(value) => {
                     formik.setFieldValue("metalCardRequired", value);
+                    setMetalCardState(value);
                   }}
                   error={
                     !!formik.touched.metalCardRequired &&
@@ -1218,135 +1252,146 @@ const QualityControlPage = (props) => {
                     },
                   ]}
                 />
-                <Typography
-                  variant="h6"
-                  color={colors.grey[100]}
-                  fontWeight="600"
-                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
-                >
-                  Fe 2.00 mm detected?
-                </Typography>
-                <ToggleButtonCheck
-                  style={{ gridColumn: "span 4" }}
-                  alignment={formik.values.metalCardFeDetected}
-                  onChange={(value) => {
-                    formik.setFieldValue("metalCardFeDetected", value);
+                <Stack
+                  direction="column"
+                  spacing={1.5}
+                  style={{
+                    display:
+                      formik.values.metalCardRequired === "Yes"
+                        ? "block"
+                        : "none",
                   }}
-                  error={
-                    !!formik.touched.metalCardFeDetected &&
-                    !!formik.errors.metalCardFeDetected
-                  }
-                  options={[
-                    {
-                      label: "Yes",
-                      icon: (
-                        <CheckBoxIcon
-                          sx={{
-                            fill: colors.ciboInnerGreen[500],
-                          }}
-                        />
-                      ),
-                    },
-                    {
-                      label: "No",
-                      icon: (
-                        <CloseIcon
-                          sx={{
-                            color: colors.yoggieRed[500],
-                            stroke: colors.yoggieRed[500],
-                            strokeWidth: "2",
-                          }}
-                        />
-                      ),
-                    },
-                  ]}
-                />
-                <Typography
-                  variant="h6"
-                  color={colors.grey[100]}
-                  fontWeight="600"
-                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
                 >
-                  Non-Fe 2.00 mm detected?
-                </Typography>
-                <ToggleButtonCheck
-                  style={{ gridColumn: "span 4" }}
-                  alignment={formik.values.metalCardNonFeDetected}
-                  onChange={(value) => {
-                    formik.setFieldValue("metalCardNonFeDetected", value);
-                  }}
-                  error={
-                    !!formik.touched.metalCardNonFeDetected &&
-                    !!formik.errors.metalCardNonFeDetected
-                  }
-                  options={[
-                    {
-                      label: "Yes",
-                      icon: (
-                        <CheckBoxIcon
-                          sx={{
-                            fill: colors.ciboInnerGreen[500],
-                          }}
-                        />
-                      ),
-                    },
-                    {
-                      label: "No",
-                      icon: (
-                        <CloseIcon
-                          sx={{
-                            color: colors.yoggieRed[500],
-                            stroke: colors.yoggieRed[500],
-                            strokeWidth: "2",
-                          }}
-                        />
-                      ),
-                    },
-                  ]}
-                />
-                <Typography
-                  variant="h6"
-                  color={colors.grey[100]}
-                  fontWeight="600"
-                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
-                >
-                  SS 2.50 mm detected?
-                </Typography>
-                <ToggleButtonCheck
-                  style={{ gridColumn: "span 4" }}
-                  alignment={formik.values.metalCardSsDetected}
-                  onChange={(value) => {
-                    formik.setFieldValue("metalCardSsDetected", value);
-                  }}
-                  error={
-                    !!formik.touched.metalCardSsDetected &&
-                    !!formik.errors.metalCardSsDetected
-                  }
-                  options={[
-                    {
-                      label: "Yes",
-                      icon: (
-                        <CheckBoxIcon
-                          sx={{
-                            fill: colors.ciboInnerGreen[500],
-                          }}
-                        />
-                      ),
-                    },
-                    {
-                      label: "No",
-                      icon: (
-                        <CloseIcon
-                          sx={{
-                            color: colors.yoggieRed[500],
-                            stroke: colors.yoggieRed[500],
-                            strokeWidth: "2",
-                          }}
-                        />
-                      ),
-                    },
-                  ]}
-                />
+                  <Typography
+                    variant="h6"
+                    color={colors.grey[100]}
+                    fontWeight="600"
+                    sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                  >
+                    Fe 2.00 mm detected?
+                  </Typography>
+                  <ToggleButtonCheck
+                    style={{ gridColumn: "span 4" }}
+                    alignment={formik.values.metalCardFeDetected}
+                    onChange={(value) => {
+                      formik.setFieldValue("metalCardFeDetected", value);
+                    }}
+                    error={
+                      !!formik.touched.metalCardFeDetected &&
+                      !!formik.errors.metalCardFeDetected
+                    }
+                    options={[
+                      {
+                        label: "Yes",
+                        icon: (
+                          <CheckBoxIcon
+                            sx={{
+                              fill: colors.ciboInnerGreen[500],
+                            }}
+                          />
+                        ),
+                      },
+                      {
+                        label: "No",
+                        icon: (
+                          <CloseIcon
+                            sx={{
+                              color: colors.yoggieRed[500],
+                              stroke: colors.yoggieRed[500],
+                              strokeWidth: "2",
+                            }}
+                          />
+                        ),
+                      },
+                    ]}
+                  />
+                  <Typography
+                    variant="h6"
+                    color={colors.grey[100]}
+                    fontWeight="600"
+                    sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                  >
+                    Non-Fe 2.00 mm detected?
+                  </Typography>
+                  <ToggleButtonCheck
+                    style={{ gridColumn: "span 4" }}
+                    alignment={formik.values.metalCardNonFeDetected}
+                    onChange={(value) => {
+                      formik.setFieldValue("metalCardNonFeDetected", value);
+                    }}
+                    error={
+                      !!formik.touched.metalCardNonFeDetected &&
+                      !!formik.errors.metalCardNonFeDetected
+                    }
+                    options={[
+                      {
+                        label: "Yes",
+                        icon: (
+                          <CheckBoxIcon
+                            sx={{
+                              fill: colors.ciboInnerGreen[500],
+                            }}
+                          />
+                        ),
+                      },
+                      {
+                        label: "No",
+                        icon: (
+                          <CloseIcon
+                            sx={{
+                              color: colors.yoggieRed[500],
+                              stroke: colors.yoggieRed[500],
+                              strokeWidth: "2",
+                            }}
+                          />
+                        ),
+                      },
+                    ]}
+                  />
+                  <Typography
+                    variant="h6"
+                    color={colors.grey[100]}
+                    fontWeight="600"
+                    sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                  >
+                    SS 2.50 mm detected?
+                  </Typography>
+                  <ToggleButtonCheck
+                    style={{ gridColumn: "span 4" }}
+                    alignment={formik.values.metalCardSsDetected}
+                    onChange={(value) => {
+                      formik.setFieldValue("metalCardSsDetected", value);
+                    }}
+                    error={
+                      !!formik.touched.metalCardSsDetected &&
+                      !!formik.errors.metalCardSsDetected
+                    }
+                    options={[
+                      {
+                        label: "Yes",
+                        icon: (
+                          <CheckBoxIcon
+                            sx={{
+                              fill: colors.ciboInnerGreen[500],
+                            }}
+                          />
+                        ),
+                      },
+                      {
+                        label: "No",
+                        icon: (
+                          <CloseIcon
+                            sx={{
+                              color: colors.yoggieRed[500],
+                              stroke: colors.yoggieRed[500],
+                              strokeWidth: "2",
+                            }}
+                          />
+                        ),
+                      },
+                    ]}
+                  />
+                </Stack>
               </Box>
             </AccordionDetails>
           </Accordion>
@@ -1398,6 +1443,7 @@ const QualityControlPage = (props) => {
                   alignment={formik.values.metalBallRequired}
                   onChange={(value) => {
                     formik.setFieldValue("metalBallRequired", value);
+                    setMetalBallState(value);
                   }}
                   error={
                     !!formik.touched.metalBallRequired &&
@@ -1412,135 +1458,146 @@ const QualityControlPage = (props) => {
                     },
                   ]}
                 />
-                <Typography
-                  variant="h6"
-                  color={colors.grey[100]}
-                  fontWeight="600"
-                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
-                >
-                  Fe 3.00 mm detected?
-                </Typography>
-                <ToggleButtonCheck
-                  style={{ gridColumn: "span 4" }}
-                  alignment={formik.values.metalBallFeDetected}
-                  onChange={(value) => {
-                    formik.setFieldValue("metalBallFeDetected", value);
+                <Stack
+                  direction="column"
+                  spacing={1.5}
+                  style={{
+                    display:
+                      formik.values.metalBallRequired === "Yes"
+                        ? "block"
+                        : "none",
                   }}
-                  error={
-                    !!formik.touched.metalBallFeDetected &&
-                    !!formik.errors.metalBallFeDetected
-                  }
-                  options={[
-                    {
-                      label: "Yes",
-                      icon: (
-                        <CheckBoxIcon
-                          sx={{
-                            fill: colors.ciboInnerGreen[500],
-                          }}
-                        />
-                      ),
-                    },
-                    {
-                      label: "No",
-                      icon: (
-                        <CloseIcon
-                          sx={{
-                            color: colors.yoggieRed[500],
-                            stroke: colors.yoggieRed[500],
-                            strokeWidth: "2",
-                          }}
-                        />
-                      ),
-                    },
-                  ]}
-                />
-                <Typography
-                  variant="h6"
-                  color={colors.grey[100]}
-                  fontWeight="600"
-                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
                 >
-                  Non-Fe 4.50 mm detected?
-                </Typography>
-                <ToggleButtonCheck
-                  style={{ gridColumn: "span 4" }}
-                  alignment={formik.values.metalBallNonFeDetected}
-                  onChange={(value) => {
-                    formik.setFieldValue("metalBallNonFeDetected", value);
-                  }}
-                  error={
-                    !!formik.touched.metalBallNonFeDetected &&
-                    !!formik.errors.metalBallNonFeDetected
-                  }
-                  options={[
-                    {
-                      label: "Yes",
-                      icon: (
-                        <CheckBoxIcon
-                          sx={{
-                            fill: colors.ciboInnerGreen[500],
-                          }}
-                        />
-                      ),
-                    },
-                    {
-                      label: "No",
-                      icon: (
-                        <CloseIcon
-                          sx={{
-                            color: colors.yoggieRed[500],
-                            stroke: colors.yoggieRed[500],
-                            strokeWidth: "2",
-                          }}
-                        />
-                      ),
-                    },
-                  ]}
-                />
-                <Typography
-                  variant="h6"
-                  color={colors.grey[100]}
-                  fontWeight="600"
-                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
-                >
-                  SS 3.00 mm detected?
-                </Typography>
-                <ToggleButtonCheck
-                  style={{ gridColumn: "span 4" }}
-                  alignment={formik.values.metalBallSsDetected}
-                  onChange={(value) => {
-                    formik.setFieldValue("metalBallSsDetected", value);
-                  }}
-                  error={
-                    !!formik.touched.metalBallSsDetected &&
-                    !!formik.errors.metalBallSsDetected
-                  }
-                  options={[
-                    {
-                      label: "Yes",
-                      icon: (
-                        <CheckBoxIcon
-                          sx={{
-                            fill: colors.ciboInnerGreen[500],
-                          }}
-                        />
-                      ),
-                    },
-                    {
-                      label: "No",
-                      icon: (
-                        <CloseIcon
-                          sx={{
-                            color: colors.yoggieRed[500],
-                            stroke: colors.yoggieRed[500],
-                            strokeWidth: "2",
-                          }}
-                        />
-                      ),
-                    },
-                  ]}
-                />
+                  <Typography
+                    variant="h6"
+                    color={colors.grey[100]}
+                    fontWeight="600"
+                    sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                  >
+                    Fe 3.00 mm detected?
+                  </Typography>
+                  <ToggleButtonCheck
+                    style={{ gridColumn: "span 4" }}
+                    alignment={formik.values.metalBallFeDetected}
+                    onChange={(value) => {
+                      formik.setFieldValue("metalBallFeDetected", value);
+                    }}
+                    error={
+                      !!formik.touched.metalBallFeDetected &&
+                      !!formik.errors.metalBallFeDetected
+                    }
+                    options={[
+                      {
+                        label: "Yes",
+                        icon: (
+                          <CheckBoxIcon
+                            sx={{
+                              fill: colors.ciboInnerGreen[500],
+                            }}
+                          />
+                        ),
+                      },
+                      {
+                        label: "No",
+                        icon: (
+                          <CloseIcon
+                            sx={{
+                              color: colors.yoggieRed[500],
+                              stroke: colors.yoggieRed[500],
+                              strokeWidth: "2",
+                            }}
+                          />
+                        ),
+                      },
+                    ]}
+                  />
+                  <Typography
+                    variant="h6"
+                    color={colors.grey[100]}
+                    fontWeight="600"
+                    sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                  >
+                    Non-Fe 4.50 mm detected?
+                  </Typography>
+                  <ToggleButtonCheck
+                    style={{ gridColumn: "span 4" }}
+                    alignment={formik.values.metalBallNonFeDetected}
+                    onChange={(value) => {
+                      formik.setFieldValue("metalBallNonFeDetected", value);
+                    }}
+                    error={
+                      !!formik.touched.metalBallNonFeDetected &&
+                      !!formik.errors.metalBallNonFeDetected
+                    }
+                    options={[
+                      {
+                        label: "Yes",
+                        icon: (
+                          <CheckBoxIcon
+                            sx={{
+                              fill: colors.ciboInnerGreen[500],
+                            }}
+                          />
+                        ),
+                      },
+                      {
+                        label: "No",
+                        icon: (
+                          <CloseIcon
+                            sx={{
+                              color: colors.yoggieRed[500],
+                              stroke: colors.yoggieRed[500],
+                              strokeWidth: "2",
+                            }}
+                          />
+                        ),
+                      },
+                    ]}
+                  />
+                  <Typography
+                    variant="h6"
+                    color={colors.grey[100]}
+                    fontWeight="600"
+                    sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                  >
+                    SS 3.00 mm detected?
+                  </Typography>
+                  <ToggleButtonCheck
+                    style={{ gridColumn: "span 4" }}
+                    alignment={formik.values.metalBallSsDetected}
+                    onChange={(value) => {
+                      formik.setFieldValue("metalBallSsDetected", value);
+                    }}
+                    error={
+                      !!formik.touched.metalBallSsDetected &&
+                      !!formik.errors.metalBallSsDetected
+                    }
+                    options={[
+                      {
+                        label: "Yes",
+                        icon: (
+                          <CheckBoxIcon
+                            sx={{
+                              fill: colors.ciboInnerGreen[500],
+                            }}
+                          />
+                        ),
+                      },
+                      {
+                        label: "No",
+                        icon: (
+                          <CloseIcon
+                            sx={{
+                              color: colors.yoggieRed[500],
+                              stroke: colors.yoggieRed[500],
+                              strokeWidth: "2",
+                            }}
+                          />
+                        ),
+                      },
+                    ]}
+                  />
+                </Stack>
               </Box>
             </AccordionDetails>
           </Accordion>

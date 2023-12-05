@@ -11,9 +11,11 @@ const ToggleButtonCheck = (props) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
+  const { error, ...rest } = props;
+
   return (
     <ToggleButtonGroup
-      {...props}
+      {...rest}
       sx={{
         height: "30px",
         "& .Mui-selected": {
