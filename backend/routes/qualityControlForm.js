@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const upload = require("../file");
 
 router.post("/qualitycontrol", async (req, res) => {
   try {
@@ -103,6 +104,15 @@ router.post("/qualitycontrol/getproduct", async (req, res) => {
     } else {
       res.sendStatus(404);
     }
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(503);
+  }
+});
+
+router.post("/qualitycontrol/add", upload.any(), async (req, res) => {
+  try {
+    //console.log(req.body);
   } catch (err) {
     console.log(err);
     res.sendStatus(503);

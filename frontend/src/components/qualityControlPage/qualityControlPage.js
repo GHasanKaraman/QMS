@@ -144,7 +144,6 @@ const QualityControlPage = (props) => {
     });
     if (userAuth.control(res)) {
       if (res?.data) {
-        console.log(res.data.details);
         setProductDetails(res.data.details);
       } else {
         switch (res.response?.status) {
@@ -178,7 +177,13 @@ const QualityControlPage = (props) => {
   const handleSave = async () => {};
 
   const handleSubmit = async (values) => {
-    console.log(values);
+    const formData = new FormData();
+    for (const name in values) {
+      formData.append(name, values[name]);
+    }
+    formData.append("fileIndex", 1);
+    const res = await axios.post("/qualitycontrol/add", formData);
+    console.log(res);
   };
 
   const formik = useFormik({
@@ -196,20 +201,20 @@ const QualityControlPage = (props) => {
       isSealCorrect: null,
       isNotchCorrect: null,
 
-      xrayRequired: null,
-      xrayFeDetected: null,
-      xrayNonFeDetected: null,
-      xraySsDetected: null,
+      xrayRequired: "Yes", //null x4
+      xrayFeDetected: "Yes",
+      xrayNonFeDetected: "Yes",
+      xraySsDetected: "Yes",
 
-      metalCardRequired: null,
-      metalCardFeDetected: null,
-      metalCardNonFeDetected: null,
-      metalCardSsDetected: null,
+      metalCardRequired: "Yes", //null x4
+      metalCardFeDetected: "Yes",
+      metalCardNonFeDetected: "Yes",
+      metalCardSsDetected: "Yes",
 
-      metalBallRequired: null,
-      metalBallFeDetected: null,
-      metalBallNonFeDetected: null,
-      metalBallSsDetected: null,
+      metalBallRequired: "Yes", //null x4
+      metalBallFeDetected: "Yes",
+      metalBallNonFeDetected: "Yes",
+      metalBallSsDetected: "Yes",
 
       correctContainer: null,
       pictureLabelFront: null,
@@ -314,7 +319,7 @@ const QualityControlPage = (props) => {
       pictureLabelFront: yup
         .mixed()
         .nullable()
-        .required("Please upload the image of the mix code!")
+        .required("Please upload the image of front side of the label!")
         .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
           return !value || (value && value.size < 1024 * 1024 * 10);
         })
@@ -328,7 +333,7 @@ const QualityControlPage = (props) => {
       pictureLabelBack: yup
         .mixed()
         .nullable()
-        .required("Please upload the image of the mix code!")
+        .required("Please upload the image of back side of the label!")
         .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
           return !value || (value && value.size < 1024 * 1024 * 10);
         })
@@ -344,7 +349,7 @@ const QualityControlPage = (props) => {
       pictureOfAllergenStatement: yup
         .mixed()
         .nullable()
-        .required("Please upload the image of the mix code!")
+        .required("Please upload the image of the allergen statement!")
         .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
           return !value || (value && value.size < 1024 * 1024 * 10);
         })
@@ -359,7 +364,7 @@ const QualityControlPage = (props) => {
       pictureOfBarcode: yup
         .mixed()
         .nullable()
-        .required("Please upload the image of the mix code!")
+        .required("Please upload the image of the barcode")
         .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
           return !value || (value && value.size < 1024 * 1024 * 10);
         })
@@ -377,7 +382,7 @@ const QualityControlPage = (props) => {
       pictureOfBoxLabel: yup
         .mixed()
         .nullable()
-        .required("Please upload the image of the mix code!")
+        .required("Please upload the image of the box label!")
         .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
           return !value || (value && value.size < 1024 * 1024 * 10);
         })
@@ -467,7 +472,11 @@ const QualityControlPage = (props) => {
         subtitle="Please fill out the form"
       />
 
-      <form onSubmit={formik.handleSubmit} style={{ paddingBottom: "10px" }}>
+      <form
+        onSubmit={formik.handleSubmit}
+        style={{ paddingBottom: "10px" }}
+        encType="multipart/form-data"
+      >
         <Box
           display="grid"
           gap="30px"
