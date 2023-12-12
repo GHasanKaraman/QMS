@@ -177,11 +177,11 @@ const QualityControlPage = (props) => {
   const handleSave = async () => {};
 
   const handleSubmit = async (values) => {
+    values.product = values.product.partNum;
     const formData = new FormData();
     for (const name in values) {
       formData.append(name, values[name]);
     }
-    formData.append("fileIndex", 1);
     const res = await axios.post("/qualitycontrol/add", formData);
     console.log(res);
   };

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const ratioFormModel = require("../models/ratioFormModel");
+const qualityControlFormModel = require("../models/qualityControlFormModel");
 
 router.use("/dashboard", async (req, res) => {
   try {
@@ -11,8 +12,13 @@ router.use("/dashboard", async (req, res) => {
 
     const data = await resp.json();
     const ratioForms = await ratioFormModel.find({});
-    if (data && ratioForms) {
-      res.status(200).json({ locations: data, ratioForms: ratioForms });
+    const qualityControlForms = await qualityControlFormModel.find({});
+    if (data && ratioForms && qualityControlForms) {
+      res.status(200).json({
+        locations: data,
+        ratioForms: ratioForms,
+        qualityControlForms: qualityControlForms,
+      });
       console.log("Fetched all locations from OC DB!");
     } else {
       res.sendStatus(404);

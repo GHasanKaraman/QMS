@@ -5,7 +5,6 @@ const mongoose = require("mongoose");
 const moment = require("moment-timezone");
 
 var morgan = require("morgan");
-var fs = require("fs");
 const chalk = require("chalk");
 const md5 = require("md5");
 
@@ -41,6 +40,9 @@ db.once("open", function () {
       next();
     }
   });
+  app.get("/", async (req, res) => {
+    res.send("<h2 style = color:green>Listening port...</h2>");
+  });
 
   app.use("/", authentication);
   app.use("/", authorization);
@@ -48,10 +50,6 @@ db.once("open", function () {
   app.use("/", dashboard);
   app.use("/", qualityControlForm);
   app.use("/", ratioForm);
-
-  app.get("/", async (req, res) => {
-    res.send("<h2 style = color:green>Listening port...</h2>");
-  });
 
   var txt = encodeURIComponent(
     `

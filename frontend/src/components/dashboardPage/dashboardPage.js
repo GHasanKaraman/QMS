@@ -8,6 +8,7 @@ import {
   Stack,
   Card,
   CardContent,
+  CardActionArea,
   Typography,
 } from "@mui/material";
 import { useTheme } from "@emotion/react";
@@ -26,7 +27,9 @@ const DashboardPage = (props) => {
   const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+
   const [ratioForms, setRatioForms] = useState([]);
+  const [qualityControlForms, setQualityControlForms] = useState([]);
 
   const [locations, setLocations] = useState([]);
   useEffect(() => {
@@ -38,6 +41,7 @@ const DashboardPage = (props) => {
     if (userAuth.control(res)) {
       setLocations(res.data.locations);
       setRatioForms(res.data.ratioForms);
+      setQualityControlForms(res.data.qualityControlForms);
     } else {
       navigate("/login");
       localStorage.removeItem("token");
@@ -56,7 +60,7 @@ const DashboardPage = (props) => {
     <Box m="0 20px">
       <Header title="My Quality Dashboard" subtitle="Locations" />
       <List>
-        {locations.map((location) => {
+        {locations.map((location, i) => {
           return [
             <ListItem
               key={location}
@@ -90,45 +94,103 @@ const DashboardPage = (props) => {
                 <Stack direction="row" spacing={1}>
                   {ratioForms
                     .filter((ratioForm) => ratioForm.location === location.name)
-                    .map((ratioForm) => {
+                    .map((ratioForm, i) => {
                       return (
                         <Card
+                          key={i}
                           sx={{
                             background: colors.ciboInnerGreen[500],
                             width: 200,
                             height: 75,
                           }}
                         >
-                          <CardContent sx={{ paddingTop: 1 }}>
-                            <Stack spacing={0}>
-                              <Typography
-                                variant="h6"
-                                fontWeight="bold"
-                                color={colors.primary[400]}
-                                sx={{ textAlign: "center" }}
-                              >
-                                Finished Product Ratio Form
-                              </Typography>
-                              <Typography
-                                variant="h6"
-                                fontWeight="bold"
-                                color={colors.primary[400]}
-                                sx={{ textAlign: "center" }}
-                              >
-                                {toStringDate(ratioForm.createdAt, {
-                                  hour: "numeric",
-                                  minute: "numeric",
-                                })}
-                              </Typography>
-                            </Stack>
-                          </CardContent>
+                          <CardActionArea
+                            sx={{ height: "100%" }}
+                            onClick={() => {
+                              navigate("/ratioform/" + ratioForm._id);
+                            }}
+                          >
+                            <CardContent sx={{ paddingTop: 1 }}>
+                              <Stack spacing={0}>
+                                <Typography
+                                  variant="h6"
+                                  fontWeight="bold"
+                                  color={colors.primary[400]}
+                                  sx={{ textAlign: "center" }}
+                                >
+                                  Finished Product Ratio Form
+                                </Typography>
+                                <Typography
+                                  variant="h6"
+                                  fontWeight="bold"
+                                  color={colors.primary[400]}
+                                  sx={{ textAlign: "center" }}
+                                >
+                                  {toStringDate(ratioForm.createdAt, {
+                                    hour: "numeric",
+                                    minute: "numeric",
+                                  })}
+                                </Typography>
+                              </Stack>
+                            </CardContent>
+                          </CardActionArea>
+                        </Card>
+                      );
+                    })}
+                  {qualityControlForms
+                    .filter(
+                      (qualityControlForm) =>
+                        qualityControlForm.station === location.name
+                    )
+                    .map((qualityControlForm, i) => {
+                      return (
+                        <Card
+                          key={i}
+                          sx={{
+                            background: colors.ciboInnerGreen[500],
+                            width: 200,
+                            height: 75,
+                          }}
+                        >
+                          <CardActionArea
+                            sx={{ height: "100%" }}
+                            onClick={() => {
+                              navigate(
+                                "/qualitycontrol/" + qualityControlForm._id
+                              );
+                            }}
+                          >
+                            <CardContent sx={{ paddingTop: 1 }}>
+                              <Stack spacing={0}>
+                                <Typography
+                                  variant="h6"
+                                  fontWeight="bold"
+                                  color={colors.primary[400]}
+                                  sx={{ textAlign: "center" }}
+                                >
+                                  Quality Control Inspection
+                                </Typography>
+                                <Typography
+                                  variant="h6"
+                                  fontWeight="bold"
+                                  color={colors.primary[400]}
+                                  sx={{ textAlign: "center" }}
+                                >
+                                  {toStringDate(qualityControlForm.createdAt, {
+                                    hour: "numeric",
+                                    minute: "numeric",
+                                  })}
+                                </Typography>
+                              </Stack>
+                            </CardContent>
+                          </CardActionArea>
                         </Card>
                       );
                     })}
                 </Stack>
               </Stack>
             </ListItem>,
-            <Divider />,
+            <Divider key={location + i} />,
           ];
         })}
       </List>

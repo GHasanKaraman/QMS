@@ -20,7 +20,7 @@ const storage = multer.diskStorage({
       fs.mkdirSync("./imgs/" + totalNumber);
     } else {
       const totalImage = fs.readdirSync("./imgs/" + totalNumber).length;
-      if (totalImage > 1000) {
+      if (totalImage > 500) {
         fileIndex += 1;
       }
     }
