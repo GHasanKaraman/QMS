@@ -40,6 +40,9 @@ db.once("open", function () {
       next();
     }
   });
+
+  app.use("/imgs", express.static(__dirname + "/imgs"));
+
   app.get("/", async (req, res) => {
     res.send("<h2 style = color:green>Listening port...</h2>");
   });

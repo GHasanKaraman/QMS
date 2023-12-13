@@ -9,6 +9,7 @@ import LoginPage from "../components/loginPage/loginPage";
 import DashboardPage from "../components/dashboardPage/dashboardPage.js";
 import RatioFormPage from "../components/ratioFormPage/ratioFormPage.js";
 import QualityControlPage from "../components/qualityControlPage/qualityControlPage.js";
+import ViewQualityControlPage from "../components/qualityControlPage/viewQualityControlPage.js";
 
 const BarLayout = () => {
   const [theme, colorMode] = useMode();
@@ -19,7 +20,7 @@ const BarLayout = () => {
         <div className="app">
           <Sidebar />
           <main className="content">
-            <Topbar/>
+            <Topbar />
             <Outlet />
           </main>
         </div>
@@ -60,6 +61,7 @@ const Router = () => {
           path="/dashboard"
           element={<DashboardPage title="CiboQA | Dashboard" />}
         />
+
         <Route
           exact
           path="/qualitycontrol"
@@ -67,6 +69,14 @@ const Router = () => {
             <QualityControlPage title="CiboQA | Quality Control Inspection" />
           }
         />
+        <Route
+          exact
+          path="/qualitycontrol/:id"
+          element={
+            <ViewQualityControlPage title="CiboQA | Data Sheet Results" />
+          }
+        />
+
         <Route
           exact
           path="/ratioform"

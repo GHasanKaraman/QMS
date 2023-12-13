@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { styled } from "@mui/material/styles";
 import moment from "moment-timezone";
 import {
   Box,
@@ -24,17 +23,12 @@ import {
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 
-import MuiAccordion from "@mui/material/Accordion";
-import MuiAccordionSummary from "@mui/material/AccordionSummary";
-import MuiAccordionDetails from "@mui/material/AccordionDetails";
-
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CloseIcon from "@mui/icons-material/Close";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import ScaleIcon from "@mui/icons-material/Scale";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -48,39 +42,7 @@ import axios from "../../api/axios";
 import userAuth from "../../utils/userAuth";
 import ToggleButtonCheck from "../ToggleButtonCheck";
 import UploadButton from "../UploadButton";
-
-const Accordion = styled((props) => (
-  <MuiAccordion disableGutters elevation={0} square {...props} />
-))(({ theme }) => ({
-  border: `1px solid ${theme.palette.divider}`,
-  "&:not(:last-child)": {
-    borderBottom: 0,
-  },
-  "&:before": {
-    display: "none",
-  },
-}));
-
-const AccordionSummary = styled((props) => (
-  <MuiAccordionSummary
-    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
-    {...props}
-  />
-))(({ theme }) => ({
-  backgroundColor: theme.palette.mode === "dark" ? "#1F2A40" : "#f2f0f0",
-  flexDirection: "row-reverse",
-  "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
-    transform: "rotate(90deg)",
-  },
-  "& .MuiAccordionSummary-content": {
-    marginLeft: theme.spacing(1),
-  },
-}));
-
-const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
-  padding: theme.spacing(2),
-  borderTop: "1px solid rgba(0, 0, 0, .125)",
-}));
+import { Accordion, AccordionDetails, AccordionSummary } from "../Accordion";
 
 const QualityControlPage = (props) => {
   const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png"];
@@ -1624,7 +1586,7 @@ const QualityControlPage = (props) => {
                 <Typography fontWeight={600} fontSize={18}>
                   LABEL INSPECTION (CCP)
                 </Typography>
-                <Typography fontWeight={600}>15 Items</Typography>
+                <Typography fontWeight={600}>9 Items</Typography>
               </Stack>
             </AccordionSummary>
             <AccordionDetails>

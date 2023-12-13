@@ -114,7 +114,53 @@ router.post("/qualitycontrol/getproduct", async (req, res) => {
     res.sendStatus(503);
   }
 });
+router.post("/qualitycontrol/get", async (req, res) => {
+  try {
+    const { id } = req.body;
+    const qualityControlForm = await qualityControlModel.find({ _id: id });
+    if (qualityControlForm) {
+      var details = {
+        part: qualityControlForm[0].product,
+      };
+      var formBody = [];
+      for (var property in details) {
+        var encodedKey = encodeURIComponent(property);
+        var encodedValue = encodeURIComponent(details[property]);
+        formBody.push(encodedKey + "=" + encodedValue);
+      }
+      formBody = formBody.join("&");
 
+      const resp = await fetch("http://10.12.0.15:81/qac.php?recipe", {
+        method: "POST",
+        body: formBody,
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        },
+      });
+      const product = await resp.json();
+      const images = await imageModel.find({
+        _id: { $in: qualityControlForm[0].imageIDs },
+      });
+      if (images) {
+        res.status(200).json({
+          qualityControlForm: qualityControlForm[0],
+          images: images,
+          product: product,
+        });
+        console.log(
+          "Fetched " + id + " quality control inspection data sheet result!"
+        );
+      } else {
+        res.sendStatus(404);
+      }
+    } else {
+      res.sendStatus(404);
+    }
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(503);
+  }
+});
 router.post("/qualitycontrol/add", upload.any(), async (req, res) => {
   try {
     //Resizing the images and saving them
@@ -143,7 +189,7 @@ router.post("/qualitycontrol/add", upload.any(), async (req, res) => {
     if (result) {
       console.log(result);
       const formInformations = req.body;
-      var status = false;
+      /*var status = false;
       if (
         formInformations.areIngredientsCorrect === "Yes" &&
         formInformations.isTasteAcceptable === "Acceptable" &&
@@ -165,12 +211,12 @@ router.post("/qualitycontrol/add", upload.any(), async (req, res) => {
         formInformations.caseLabel === "Yes"
       ) {
         status = true;
-      }
+      }*/
       const imageIDs = result.map((info) => info._id);
       const form = await qualityControlModel.create({
         ...formInformations,
-        status,
         imageIDs,
+        username: req.username,
       });
       if (form) {
         console.log(
