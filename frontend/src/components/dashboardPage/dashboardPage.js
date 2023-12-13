@@ -30,6 +30,7 @@ const DashboardPage = (props) => {
 
   const [ratioForms, setRatioForms] = useState([]);
   const [qualityControlForms, setQualityControlForms] = useState([]);
+  const [metalDetectorForms, setMetalDetectorForms] = useState([]);
 
   const [locations, setLocations] = useState([]);
   useEffect(() => {
@@ -42,6 +43,7 @@ const DashboardPage = (props) => {
       setLocations(res.data.locations);
       setRatioForms(res.data.ratioForms);
       setQualityControlForms(res.data.qualityControlForms);
+      setMetalDetectorForms(res.data.metalDetectorForms);
     } else {
       navigate("/login");
       localStorage.removeItem("token");
@@ -177,6 +179,56 @@ const DashboardPage = (props) => {
                                   sx={{ textAlign: "center" }}
                                 >
                                   {toStringDate(qualityControlForm.createdAt, {
+                                    hour: "numeric",
+                                    minute: "numeric",
+                                  })}
+                                </Typography>
+                              </Stack>
+                            </CardContent>
+                          </CardActionArea>
+                        </Card>
+                      );
+                    })}
+                  {metalDetectorForms
+                    .filter(
+                      (metalDetectorForm) =>
+                        metalDetectorForm.station === location.name
+                    )
+                    .map((metalDetectorForm, i) => {
+                      return (
+                        <Card
+                          key={i}
+                          sx={{
+                            background: colors.ciboInnerGreen[500],
+                            width: 200,
+                            height: 75,
+                          }}
+                        >
+                          <CardActionArea
+                            sx={{ height: "100%" }}
+                            onClick={() => {
+                              navigate(
+                                "/metaldetector/" + metalDetectorForm._id
+                              );
+                            }}
+                          >
+                            <CardContent sx={{ paddingTop: 1 }}>
+                              <Stack spacing={0}>
+                                <Typography
+                                  variant="h6"
+                                  fontWeight="bold"
+                                  color={colors.primary[400]}
+                                  sx={{ textAlign: "center" }}
+                                >
+                                  Direct Observation Metal Detector
+                                </Typography>
+                                <Typography
+                                  variant="h6"
+                                  fontWeight="bold"
+                                  color={colors.primary[400]}
+                                  sx={{ textAlign: "center" }}
+                                >
+                                  {toStringDate(metalDetectorForm.createdAt, {
                                     hour: "numeric",
                                     minute: "numeric",
                                   })}

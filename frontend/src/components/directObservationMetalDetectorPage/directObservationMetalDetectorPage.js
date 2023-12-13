@@ -1,0 +1,396 @@
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import moment from "moment-timezone";
+import {
+  Box,
+  useTheme,
+  useMediaQuery,
+  Autocomplete,
+  TextField,
+  Typography,
+  Button,
+  Stack,
+  Dialog,
+  DialogActions,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  Backdrop,
+  CircularProgress,
+  Chip,
+} from "@mui/material";
+
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import CloseIcon from "@mui/icons-material/Close";
+import InventoryIcon from "@mui/icons-material/Inventory";
+import ScaleIcon from "@mui/icons-material/Scale";
+
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+
+import { useFormik } from "formik";
+import * as yup from "yup";
+
+import { useSnackbar } from "notistack";
+
+import Header from "../Header";
+import { tokens } from "../../theme";
+
+import axios from "../../api/axios";
+import userAuth from "../../utils/userAuth";
+import ToggleButtonCheck from "../ToggleButtonCheck";
+import UploadButton from "../UploadButton";
+import { Accordion, AccordionDetails, AccordionSummary } from "../Accordion";
+
+const DirectObservationMetalDetectorPage = (props) => {
+  const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png"];
+
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
+  const isNonMobile = useMediaQuery("(min-width:600px)");
+  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
+  const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
+
+  const [stations, setStations] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [productDetails, setProductDetails] = useState(null);
+
+  const [openDialog, setOpenDialog] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    document.title = props.title || "";
+  }, [props.title]);
+
+  const loadAllStations = async () => {
+    const res = await axios.post("/qualitycontrol");
+    if (userAuth.control(res)) {
+      setStations(res.data.stations);
+    } else {
+      navigate("/login");
+      localStorage.removeItem("token");
+      localStorage.removeItem("username");
+      enqueueSnackbar("Please sign in again!", {
+        variant: "error",
+      });
+    }
+  };
+
+  const loadProducts = async (station) => {
+    const res = await axios.post("/qualitycontrol/stationplan", {
+      station: station,
+    });
+    if (userAuth.control(res)) {
+      setProducts(res.data.products);
+    } else {
+      navigate("/login");
+      localStorage.removeItem("token");
+      localStorage.removeItem("username");
+      enqueueSnackbar("Please sign in again!", {
+        variant: "error",
+      });
+    }
+  };
+
+  const loadDetails = async (station, product) => {
+    const res = await axios.post("/qualitycontrol/getproduct", {
+      station: station,
+      product: product,
+    });
+    if (userAuth.control(res)) {
+      if (res?.data) {
+        setProductDetails(res.data.details);
+      } else {
+        switch (res.response?.status) {
+          case 404:
+            enqueueSnackbar("Station or product is wrong!", {
+              variant: "error",
+            });
+            break;
+
+          case 503:
+            enqueueSnackbar("Something went wrong with the server!", {
+              variant: "error",
+            });
+            break;
+        }
+      }
+    } else {
+      navigate("/login");
+      localStorage.removeItem("token");
+      localStorage.removeItem("username");
+      enqueueSnackbar("Please sign in again!", {
+        variant: "error",
+      });
+    }
+  };
+
+  useEffect(() => {
+    loadAllStations();
+  }, []);
+
+  const handleSubmit = async (values) => {
+    setOpen(true);
+    values.product = values.product.partNum;
+    const res = await axios.post("/metaldetector/add", values);
+    setOpen(false);
+  };
+
+  const formik = useFormik({
+    initialValues: {
+      station: null,
+      product: null,
+      lotCode: "",
+      personBeingObserved: "",
+      ballOrCard: null,
+    },
+    onSubmit: handleSubmit,
+    validationSchema: yup.object().shape({
+      station: yup.string().required("Please select the station!"),
+      product: yup
+        .mixed()
+        .nullable()
+        .test(
+          "PRODUCT_VALIDATION",
+          "Please select the running product!",
+          (value) => {
+            if (value) {
+              if (value?.partnum != "") {
+                return true;
+              }
+            }
+            return false;
+          }
+        ),
+      lotCode: yup
+        .string()
+        .required("Please enter the lot code of the product!"),
+      personBeingObserved: yup
+        .string()
+        .required("Please enter the lot code of the product!"),
+      ballOrCard: yup.string().required(),
+    }),
+  });
+
+  return (
+    <Box
+      m="0 20px"
+      sx={{
+        "& .MuiInputBase-root::after": {
+          borderBottomColor: colors.ciboInnerGreen[500],
+        },
+        "& .MuiInputBase-root::before": {
+          borderBottomColor: colors.ciboInnerGreen[600],
+        },
+        "& .MuiFormLabel-root.Mui-focused": {
+          color: colors.ciboInnerGreen[300],
+        },
+      }}
+    >
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={open}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+      <Header
+        title="Direct Observation Metal Detector"
+        subtitle="Please fill out the form"
+      />
+      <form onSubmit={formik.handleSubmit} style={{ paddingBottom: "10px" }}>
+        <Box
+          display="grid"
+          gap="30px"
+          gridTemplateColumns="repeat(4, minmax(0, 1fr))"
+          sx={{
+            "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
+            "& .MuiInputBase-root::after": {
+              borderBottomColor: colors.ciboInnerGreen[500],
+            },
+            "& .MuiInputBase-root::before": {
+              borderBottomColor: colors.ciboInnerGreen[600],
+            },
+            "& .MuiFormLabel-root.Mui-focused": {
+              color: colors.ciboInnerGreen[300],
+            },
+          }}
+        >
+          <Autocomplete
+            onChange={async (_, value) => {
+              formik.resetForm();
+              setProductDetails(null);
+              formik.setFieldValue("station", value);
+              formik.setFieldValue("product", null);
+              if (value != null) {
+                await loadProducts(value);
+              }
+            }}
+            value={formik.values.station}
+            sx={{ marginBottom: "30px", gridColumn: "span 2" }}
+            options={stations.map(({ name }) => name)}
+            onBlur={formik.handleBlur}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                variant="filled"
+                label="Station"
+                name="station"
+                error={!!formik.touched.station && !!formik.errors.station}
+                helperText={formik.touched.station && formik.errors.station}
+              />
+            )}
+          />
+          <Autocomplete
+            getOptionLabel={({ partNum, description }) =>
+              partNum + " - " + description
+            }
+            disabled={products.length == 0}
+            onChange={async (_, value) => {
+              const station = formik.values.station;
+              formik.resetForm();
+              formik.setFieldValue("station", station);
+              formik.setFieldValue("product", value);
+              if (value != null) {
+                await loadDetails(formik.values.station, value.partNum);
+              }
+            }}
+            value={formik.values.product}
+            sx={{ marginBottom: "30px", gridColumn: "span 2" }}
+            options={products}
+            onBlur={formik.handleBlur}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                variant="filled"
+                label="Product"
+                name="product"
+                error={!!formik.touched.product && !!formik.errors.product}
+                helperText={formik.touched.product && formik.errors.product}
+              />
+            )}
+          />
+        </Box>
+        <div
+          style={{
+            display:
+              productDetails == null ||
+              productDetails?.err ||
+              formik.values.product == null
+                ? "none"
+                : "block",
+          }}
+        >
+          <Accordion defaultExpanded>
+            <AccordionSummary
+              aria-controls="panel8d-content"
+              id="panel8d-header"
+              expandIcon={<ExpandMoreIcon />}
+            >
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                width="100%"
+              >
+                <Typography fontWeight={600} fontSize={18}>
+                  PRODUCT INFORMATION
+                </Typography>
+                <Typography fontWeight={600}>2 Items</Typography>
+              </Stack>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Box
+                display="grid"
+                gap="30px"
+                gridTemplateColumns="repeat(4, minmax(0, 1fr))"
+                sx={{
+                  "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
+                  "& .MuiInputBase-root::after": {
+                    borderBottomColor: colors.ciboInnerGreen[500],
+                  },
+                  "& .MuiInputBase-root::before": {
+                    borderBottomColor: colors.ciboInnerGreen[600],
+                  },
+                  "& .MuiFormLabel-root.Mui-focused": {
+                    color: colors.ciboInnerGreen[300],
+                  },
+                }}
+              >
+                <TextField
+                  variant="filled"
+                  type="text"
+                  label="Lot Code #"
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  value={formik.values.lotCode}
+                  name="lotCode"
+                  error={!!formik.touched.lotCode && !!formik.errors.lotCode}
+                  helperText={formik.touched.lotCode && formik.errors.lotCode}
+                  sx={{ gridColumn: "span 4" }}
+                />
+                <TextField
+                  variant="filled"
+                  type="text"
+                  label="Person Being Observed"
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  value={formik.values.personBeingObserved}
+                  name="personBeingObserved"
+                  error={
+                    !!formik.touched.personBeingObserved &&
+                    !!formik.errors.personBeingObserved
+                  }
+                  helperText={
+                    formik.touched.personBeingObserved &&
+                    formik.errors.personBeingObserved
+                  }
+                  sx={{ gridColumn: "span 4" }}
+                />
+                <Typography
+                  variant="h6"
+                  color={colors.grey[100]}
+                  fontWeight="600"
+                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                >
+                  Ball or Card?
+                </Typography>
+                <ToggleButtonCheck
+                  style={{ gridColumn: "span 4" }}
+                  alignment={formik.values.ballOrCard}
+                  onChange={(value) => {
+                    formik.setFieldValue("ballOrCard", value);
+                  }}
+                  error={
+                    !!formik.touched.ballOrCard && !!formik.errors.ballOrCard
+                  }
+                  options={[
+                    {
+                      label: "Ball",
+                    },
+                    {
+                      label: "Card",
+                    },
+                  ]}
+                />
+              </Box>
+            </AccordionDetails>
+          </Accordion>
+          <Box display="flex" justifyContent="center" mt="20px">
+            <Button
+              type="submit"
+              color="secondary"
+              variant="contained"
+              sx={{ width: "100%" }}
+            >
+              Save
+            </Button>
+          </Box>
+        </div>
+      </form>
+    </Box>
+  );
+};
+
+export default DirectObservationMetalDetectorPage;

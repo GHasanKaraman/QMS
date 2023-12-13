@@ -14,6 +14,7 @@ import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import ContentPasteSearchIcon from "@mui/icons-material/ContentPasteSearch";
 import BlenderIcon from "@mui/icons-material/Blender";
+import RadarIcon from "@mui/icons-material/Radar";
 
 import logo from "../images/logo.png";
 
@@ -193,6 +194,13 @@ const Sidebar = () => {
               title="Quality Control"
               to="/qualitycontrol"
               icon={<ContentPasteSearchIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Metal Detector"
+              to="/metalDetector"
+              icon={<RadarIcon />}
               selected={selected}
               setSelected={setSelected}
             />

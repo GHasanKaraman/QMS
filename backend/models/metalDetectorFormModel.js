@@ -1,0 +1,20 @@
+const mongoose = require("mongoose");
+const essentials = require("../utils/essentials");
+
+const metalDetectorFormSchema = new mongoose.Schema(
+  {
+    station: { type: String, required: true },
+    product: { type: String, required: true },
+    username: { type: String, required: true },
+    lotCode: { type: String, required: true },
+    personBeingObserved: { type: String, required: true },
+  },
+  { timestamps: true }
+);
+
+const metalDetectorFormModel = mongoose.model(
+  "metalDetectorForms",
+  metalDetectorFormSchema
+);
+
+module.exports = metalDetectorFormModel;

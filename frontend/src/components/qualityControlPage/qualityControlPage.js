@@ -10,11 +10,6 @@ import {
   Typography,
   Button,
   Stack,
-  Dialog,
-  DialogActions,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
   Backdrop,
   CircularProgress,
   Chip,
@@ -50,15 +45,12 @@ const QualityControlPage = (props) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const isNonMobile = useMediaQuery("(min-width:600px)");
-  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
   const [stations, setStations] = useState([]);
   const [products, setProducts] = useState([]);
   const [productDetails, setProductDetails] = useState(null);
-
-  const [openDialog, setOpenDialog] = useState(false);
   const [open, setOpen] = useState(false);
 
   const [xRayState, setXRayState] = useState(null);
@@ -136,16 +128,15 @@ const QualityControlPage = (props) => {
     loadAllStations();
   }, []);
 
-  const handleSave = async () => {};
-
   const handleSubmit = async (values) => {
+    setOpen(true);
     values.product = values.product.partNum;
     const formData = new FormData();
     for (const name in values) {
       formData.append(name, values[name]);
     }
     const res = await axios.post("/qualitycontrol/add", formData);
-    console.log(res);
+    setOpen(false);
   };
 
   const formik = useFormik({
@@ -381,54 +372,6 @@ const QualityControlPage = (props) => {
       >
         <CircularProgress color="inherit" />
       </Backdrop>
-      <Dialog
-        fullScreen={fullScreen}
-        open={openDialog}
-        onClose={() => {
-          setOpenDialog(false);
-        }}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {"Confirm the action"}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Do you really want to save this form?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            variant="contained"
-            color="error"
-            onClick={() => {
-              setOpenDialog(false);
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="contained"
-            color="info"
-            onClick={() => {
-              console.log(handleSave("later"));
-            }}
-          >
-            Save for Later
-          </Button>
-          <Button
-            variant="contained"
-            color="info"
-            autoFocus
-            onClick={() => {
-              handleSave("done");
-            }}
-          >
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
       <Header
         title="Quality Control Inspection"
         subtitle="Please fill out the form"

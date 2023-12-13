@@ -10,6 +10,7 @@ import DashboardPage from "../components/dashboardPage/dashboardPage.js";
 import RatioFormPage from "../components/ratioFormPage/ratioFormPage.js";
 import QualityControlPage from "../components/qualityControlPage/qualityControlPage.js";
 import ViewQualityControlPage from "../components/qualityControlPage/viewQualityControlPage.js";
+import DirectObservationMetalDetectorPage from "../components/directObservationMetalDetectorPage/directObservationMetalDetectorPage.js";
 
 const BarLayout = () => {
   const [theme, colorMode] = useMode();
@@ -74,6 +75,14 @@ const Router = () => {
           path="/qualitycontrol/:id"
           element={
             <ViewQualityControlPage title="CiboQA | Data Sheet Results" />
+          }
+        />
+
+        <Route
+          exact
+          path="/metaldetector"
+          element={
+            <DirectObservationMetalDetectorPage title="CiboQA | Metal Detector Inspection" />
           }
         />
 
