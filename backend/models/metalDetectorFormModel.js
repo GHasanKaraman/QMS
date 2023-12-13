@@ -8,6 +8,7 @@ const metalDetectorFormSchema = new mongoose.Schema(
     username: { type: String, required: true },
     lotCode: { type: String, required: true },
     personBeingObserved: { type: String, required: true },
+    ballOrCard: { type: String, required: true },
   },
   { timestamps: true }
 );

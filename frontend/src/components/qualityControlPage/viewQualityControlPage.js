@@ -34,10 +34,6 @@ const ViewQualityControlPage = (props) => {
   const loadQualityControlPage = async () => {
     const res = await axios.post("/qualitycontrol/get", { id });
     if (userAuth.control(res)) {
-      const product = await axios.post("/qualitycontrol/getproduct", {
-        station: res.data.qualityControlForm.station,
-        product: res.data.qualityControlForm.product,
-      });
       setData(res.data.qualityControlForm);
       setImages(res.data.images);
       setProduct(res.data.product);

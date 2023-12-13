@@ -11,6 +11,7 @@ import RatioFormPage from "../components/ratioFormPage/ratioFormPage.js";
 import QualityControlPage from "../components/qualityControlPage/qualityControlPage.js";
 import ViewQualityControlPage from "../components/qualityControlPage/viewQualityControlPage.js";
 import DirectObservationMetalDetectorPage from "../components/directObservationMetalDetectorPage/directObservationMetalDetectorPage.js";
+import ViewDirectObservationMetalDetectorPage from "../components/directObservationMetalDetectorPage/viewDirectObservationMetalDetectorPage.js";
 
 const BarLayout = () => {
   const [theme, colorMode] = useMode();
@@ -83,6 +84,14 @@ const Router = () => {
           path="/metaldetector"
           element={
             <DirectObservationMetalDetectorPage title="CiboQA | Metal Detector Inspection" />
+          }
+        />
+
+        <Route
+          exact
+          path="/metaldetector/:id"
+          element={
+            <ViewDirectObservationMetalDetectorPage title="CiboQA | Data Sheet Results" />
           }
         />
 

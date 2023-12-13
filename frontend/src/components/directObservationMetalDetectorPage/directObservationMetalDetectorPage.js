@@ -297,7 +297,7 @@ const DirectObservationMetalDetectorPage = (props) => {
                 <Typography fontWeight={600} fontSize={18}>
                   PRODUCT INFORMATION
                 </Typography>
-                <Typography fontWeight={600}>2 Items</Typography>
+                <Typography fontWeight={600}>5 Items</Typography>
               </Stack>
             </AccordionSummary>
             <AccordionDetails>
