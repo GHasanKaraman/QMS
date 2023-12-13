@@ -1,0 +1,72 @@
+const express = require("express");
+const router = express.Router();
+
+const labelInspectionFormModel = require("../models/labelInspectionFormModel");
+
+router.post("/labelinspection/get", async (req, res) => {
+  try {
+    const { id } = req.body;
+    const labelInspectionForm = await labelInspectionFormModel.find({
+      _id: id,
+    });
+    if (labelInspectionForm) {
+      var details = {
+        part: labelInspectionForm[0].product,
+      };
+      var formBody = [];
+      for (var property in details) {
+        var encodedKey = encodeURIComponent(property);
+        var encodedValue = encodeURIComponent(details[property]);
+        formBody.push(encodedKey + "=" + encodedValue);
+      }
+      formBody = formBody.join("&");
+
+      const resp = await fetch("http://10.12.0.15:81/qac.php?recipe", {
+        method: "POST",
+        body: formBody,
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        },
+      });
+      const product = await resp.json();
+      if (product) {
+        res.status(200).json({
+          labelInspectionForm: labelInspectionForm[0],
+          product: product,
+        });
+        console.log("Fetched " + id + " label inspection data sheet result!");
+      } else {
+        res.sendStatus(404);
+      }
+    } else {
+      res.sendStatus(404);
+    }
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(503);
+  }
+});
+
+router.use("/labelinspection/add", async (req, res) => {
+  try {
+    const form = await labelInspectionFormModel.create({
+      ...req.body,
+      username: req.username,
+    });
+
+    if (form) {
+      console.log(
+        req.username + " successfully created a label inspection form!"
+      );
+      res.status(200).json({ form });
+    } else {
+      console.log("Something went wrong while creating label inspection form!");
+      res.sendStatus(500);
+    }
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(503);
+  }
+});
+
+module.exports = router;

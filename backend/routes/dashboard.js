@@ -4,6 +4,7 @@ const router = express.Router();
 const ratioFormModel = require("../models/ratioFormModel");
 const qualityControlFormModel = require("../models/qualityControlFormModel");
 const metalDetectorFormModel = require("../models/metalDetectorFormModel");
+const labelInspectionFormModel = require("../models/labelInspectionFormModel");
 
 router.use("/dashboard", async (req, res) => {
   try {
@@ -15,12 +16,20 @@ router.use("/dashboard", async (req, res) => {
     const ratioForms = await ratioFormModel.find({});
     const qualityControlForms = await qualityControlFormModel.find({});
     const metalDetectorForms = await metalDetectorFormModel.find({});
-    if (data && ratioForms && qualityControlForms) {
+    const labelInspectionForms = await labelInspectionFormModel.find({});
+    if (
+      data &&
+      ratioForms &&
+      qualityControlForms &&
+      metalDetectorForms &&
+      labelInspectionForms
+    ) {
       res.status(200).json({
         locations: data,
         ratioForms: ratioForms,
         qualityControlForms: qualityControlForms,
         metalDetectorForms: metalDetectorForms,
+        labelInspectionForms: labelInspectionForms,
       });
       console.log("Fetched all locations from OC DB!");
     } else {

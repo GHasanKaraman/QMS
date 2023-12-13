@@ -13,6 +13,7 @@ const authorization = require("./routes/authorization.js");
 const dashboard = require("./routes/dashboard.js");
 const qualityControlForm = require("./routes/qualityControlForm.js");
 const metalDetectorForm = require("./routes/metalDetectorForm.js");
+const labelInspectionForm = require("./routes/labelInspectionForm.js");
 const ratioForm = require("./routes/ratioForm.js");
 
 require("console-stamp")(console, {
@@ -54,6 +55,7 @@ db.once("open", function () {
   app.use("/", dashboard);
   app.use("/", qualityControlForm);
   app.use("/", metalDetectorForm);
+  app.use("/", labelInspectionForm);
   app.use("/", ratioForm);
 
   var txt = encodeURIComponent(

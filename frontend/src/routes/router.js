@@ -12,6 +12,8 @@ import QualityControlPage from "../components/qualityControlPage/qualityControlP
 import ViewQualityControlPage from "../components/qualityControlPage/viewQualityControlPage.js";
 import DirectObservationMetalDetectorPage from "../components/directObservationMetalDetectorPage/directObservationMetalDetectorPage.js";
 import ViewDirectObservationMetalDetectorPage from "../components/directObservationMetalDetectorPage/viewDirectObservationMetalDetectorPage.js";
+import DirectObservationLabelInspectionPage from "../components/directObservationLabelInspectionPage copy/directObservationLabelInspectionPage.js";
+import ViewDirectObservationLabelInspectionPage from "../components/directObservationLabelInspectionPage copy/viewDirectObservationLabelInspectionPage.js";
 
 const BarLayout = () => {
   const [theme, colorMode] = useMode();
@@ -86,12 +88,26 @@ const Router = () => {
             <DirectObservationMetalDetectorPage title="CiboQA | Metal Detector Inspection" />
           }
         />
-
         <Route
           exact
           path="/metaldetector/:id"
           element={
             <ViewDirectObservationMetalDetectorPage title="CiboQA | Data Sheet Results" />
+          }
+        />
+
+        <Route
+          exact
+          path="/labelinspection"
+          element={
+            <DirectObservationLabelInspectionPage title="CiboQA | Metal Detector Inspection" />
+          }
+        />
+        <Route
+          exact
+          path="/labelinspection/:id"
+          element={
+            <ViewDirectObservationLabelInspectionPage title="CiboQA | Data Sheet Results" />
           }
         />
 

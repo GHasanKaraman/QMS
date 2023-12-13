@@ -15,6 +15,7 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import ContentPasteSearchIcon from "@mui/icons-material/ContentPasteSearch";
 import BlenderIcon from "@mui/icons-material/Blender";
 import RadarIcon from "@mui/icons-material/Radar";
+import CollectionsBookmarkIcon from "@mui/icons-material/CollectionsBookmark";
 
 import logo from "../images/logo.png";
 
@@ -201,6 +202,13 @@ const Sidebar = () => {
               title="Metal Detector"
               to="/metalDetector"
               icon={<RadarIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Label Inspection"
+              to="/labelinspection"
+              icon={<CollectionsBookmarkIcon />}
               selected={selected}
               setSelected={setSelected}
             />

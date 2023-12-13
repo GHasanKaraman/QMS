@@ -31,6 +31,7 @@ const DashboardPage = (props) => {
   const [ratioForms, setRatioForms] = useState([]);
   const [qualityControlForms, setQualityControlForms] = useState([]);
   const [metalDetectorForms, setMetalDetectorForms] = useState([]);
+  const [labelInspectionForms, setLabelInspectionForms] = useState([]);
 
   const [locations, setLocations] = useState([]);
   useEffect(() => {
@@ -44,6 +45,7 @@ const DashboardPage = (props) => {
       setRatioForms(res.data.ratioForms);
       setQualityControlForms(res.data.qualityControlForms);
       setMetalDetectorForms(res.data.metalDetectorForms);
+      setLabelInspectionForms(res.data.labelInspectionForms);
     } else {
       navigate("/login");
       localStorage.removeItem("token");
@@ -229,6 +231,56 @@ const DashboardPage = (props) => {
                                   sx={{ textAlign: "center" }}
                                 >
                                   {toStringDate(metalDetectorForm.createdAt, {
+                                    hour: "numeric",
+                                    minute: "numeric",
+                                  })}
+                                </Typography>
+                              </Stack>
+                            </CardContent>
+                          </CardActionArea>
+                        </Card>
+                      );
+                    })}
+                  {labelInspectionForms
+                    .filter(
+                      (labelInspectionForm) =>
+                        labelInspectionForm.station === location.name
+                    )
+                    .map((labelInspectionForm, i) => {
+                      return (
+                        <Card
+                          key={i}
+                          sx={{
+                            background: colors.ciboInnerGreen[500],
+                            width: 200,
+                            height: 75,
+                          }}
+                        >
+                          <CardActionArea
+                            sx={{ height: "100%" }}
+                            onClick={() => {
+                              navigate(
+                                "/labelinspection/" + labelInspectionForm._id
+                              );
+                            }}
+                          >
+                            <CardContent sx={{ paddingTop: 1 }}>
+                              <Stack spacing={0}>
+                                <Typography
+                                  variant="h6"
+                                  fontWeight="bold"
+                                  color={colors.primary[400]}
+                                  sx={{ textAlign: "center" }}
+                                >
+                                  Direct Observation Label Inspection
+                                </Typography>
+                                <Typography
+                                  variant="h6"
+                                  fontWeight="bold"
+                                  color={colors.primary[400]}
+                                  sx={{ textAlign: "center" }}
+                                >
+                                  {toStringDate(labelInspectionForm.createdAt, {
                                     hour: "numeric",
                                     minute: "numeric",
                                   })}
