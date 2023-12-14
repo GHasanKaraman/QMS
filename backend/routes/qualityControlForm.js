@@ -189,7 +189,7 @@ router.post("/qualitycontrol/add", upload.any(), async (req, res) => {
     if (result) {
       console.log(result);
       const formInformations = req.body;
-      /*var status = false;
+      var status = undefined;
       if (
         formInformations.areIngredientsCorrect === "Yes" &&
         formInformations.isTasteAcceptable === "Acceptable" &&
@@ -205,18 +205,19 @@ router.post("/qualitycontrol/add", upload.any(), async (req, res) => {
         formInformations.metalBallNonFeDetected !== "No" &&
         formInformations.metalBallSsDetected !== "No" &&
         formInformations.areAllergensCorrect === "Yes" &&
-        formInformations.allergentStatement === "Yes" &&
+        formInformations.allergenStatement === "Yes" &&
         formInformations.labelPackageCorrect === "Yes" &&
         formInformations.unitsCase === "Yes" &&
         formInformations.caseLabel === "Yes"
       ) {
-        status = true;
-      }*/
+        status = "passed";
+      }
       const imageIDs = result.map((info) => info._id);
       const form = await qualityControlModel.create({
         ...formInformations,
         imageIDs,
         username: req.username,
+        status,
       });
       if (form) {
         console.log(

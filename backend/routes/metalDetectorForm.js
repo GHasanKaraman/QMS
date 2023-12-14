@@ -49,8 +49,15 @@ router.post("/metaldetector/get", async (req, res) => {
 
 router.use("/metaldetector/add", async (req, res) => {
   try {
+    const data = req.body;
+    var status = undefined;
+    if (data.lotCode && data.personBeingObserved && data.ballOrCard) {
+      status = "passed";
+    }
+
     const form = await metalDetectorFormModel.create({
-      ...req.body,
+      ...data,
+      status,
       username: req.username,
     });
 

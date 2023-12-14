@@ -9,6 +9,7 @@ const labelInspectionFormSchema = new mongoose.Schema(
     lotCode: { type: String, required: true },
     isAllergenStatementCorrect: { type: String, required: true },
     personBeingObserved: { type: String, required: true },
+    status: { type: String, default: "failed" },
   },
   { timestamps: true }
 );

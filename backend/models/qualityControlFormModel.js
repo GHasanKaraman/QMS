@@ -35,6 +35,7 @@ const qualityControlFormSchema = new mongoose.Schema(
     caseLabel: { type: String, required: true },
     anyDeviations: { type: String, required: true },
     imageIDs: [{ type: mongoose.Types.ObjectId }],
+    status:{type:String, default:"failed"}
   },
   { timestamps: true }
 );

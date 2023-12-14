@@ -49,8 +49,18 @@ router.post("/labelinspection/get", async (req, res) => {
 
 router.use("/labelinspection/add", async (req, res) => {
   try {
+    const data = req.body;
+    var status = undefined;
+    if (
+      data.lotCode &&
+      data.personBeingObserved &&
+      data.isAllergenStatementCorrect !== "No"
+    ) {
+      status = "passed";
+    }
     const form = await labelInspectionFormModel.create({
-      ...req.body,
+      ...data,
+      status,
       username: req.username,
     });
 

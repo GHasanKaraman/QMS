@@ -1,11 +1,21 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
-import { Box, Chip, Divider, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Chip,
+  Divider,
+  Stack,
+  Typography,
+  Backdrop,
+  CircularProgress,
+} from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useTheme } from "@emotion/react";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 
 import { toStringDate } from "../../utils/helpers";
 import Header from "../Header";
@@ -30,8 +40,10 @@ const ViewQualityControlPage = (props) => {
   const [data, setData] = useState();
   const [images, setImages] = useState([]);
   const [product, setProduct] = useState();
+  const [open, setOpen] = useState(false);
 
   const loadQualityControlPage = async () => {
+    setOpen(true);
     const res = await axios.post("/qualitycontrol/get", { id });
     if (userAuth.control(res)) {
       setData(res.data.qualityControlForm);
@@ -48,6 +60,7 @@ const ViewQualityControlPage = (props) => {
         variant: "error",
       });
     }
+    setOpen(false);
   };
 
   useEffect(() => {
@@ -73,33 +86,79 @@ const ViewQualityControlPage = (props) => {
         },
       }}
     >
-      <Header
-        title="Quality Control Inspection"
-        subtitle={
-          "Trigger: Run Started (" +
-          toStringDate(data?.createdAt, {
-            month: "short",
-            year: "numeric",
-            day: "numeric",
-            hour: "numeric",
-            minute: "numeric",
-          }) +
-          ") • Updated: " +
-          toStringDate(data?.updatedAt, {
-            month: "short",
-            year: "numeric",
-            day: "numeric",
-            hour: "numeric",
-            minute: "numeric",
-          }) +
-          " • Station: " +
-          data?.station +
-          " • Product Type: " +
-          product?.desc +
-          " • SKU: " +
-          product?.part
-        }
-      />
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={open}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+      <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <Header
+          title="Quality Control Inspection"
+          subtitle={
+            "Trigger: Run Started (" +
+            toStringDate(data?.createdAt, {
+              month: "short",
+              year: "numeric",
+              day: "numeric",
+              hour: "numeric",
+              minute: "numeric",
+            }) +
+            ") • Updated: " +
+            toStringDate(data?.updatedAt, {
+              month: "short",
+              year: "numeric",
+              day: "numeric",
+              hour: "numeric",
+              minute: "numeric",
+            }) +
+            " • Station: " +
+            data?.station +
+            " • Product Type: " +
+            product?.desc +
+            " • SKU: " +
+            product?.part
+          }
+        />
+        <Stack
+          direction="row"
+          spacing={1.5}
+          alignItems="center"
+          sx={{ pl: "20px" }}
+        >
+          <div className="swing">
+            {data ? (
+              data?.status === "passed" ? (
+                <ThumbUpIcon
+                  sx={{
+                    color: colors.ciboInnerGreen[500],
+                    fontSize: "25px",
+                  }}
+                />
+              ) : (
+                <ThumbDownIcon
+                  sx={{
+                    color: colors.yoggieRed[500],
+                    fontSize: "25px",
+                  }}
+                />
+              )
+            ) : undefined}
+          </div>
+          <Box
+            sx={{
+              fontWeight: "600",
+              fontSize: "18px",
+            }}
+          >
+            {data
+              ? data?.status === "passed"
+                ? "Passed"
+                : "Failed"
+              : undefined}
+          </Box>
+        </Stack>
+      </Stack>
       <Divider />
       <Label
         title="To"
@@ -140,11 +199,11 @@ const ViewQualityControlPage = (props) => {
               subtitle={
                 <LabelResult
                   text={data?.areIngredientsCorrect}
-                  status={data?.areIngredientsCorrect === "Yes"}
+                  status={data?.areIngredientsCorrect !== "No"}
                 />
               }
             />
-            <StatusIndicator status={data?.areIngredientsCorrect === "Yes"} />
+            <StatusIndicator status={data?.areIngredientsCorrect !== "No"} />
           </Stack>
           <Divider />
           <Stack direction="row" justifyContent="space-between">
@@ -162,12 +221,12 @@ const ViewQualityControlPage = (props) => {
               subtitle={
                 <LabelResult
                   text={data?.isTasteAcceptable}
-                  status={data?.isTasteAcceptable === "Acceptable"}
+                  status={data?.isTasteAcceptable !== "Unacceptable"}
                 />
               }
             />
             <StatusIndicator
-              status={data?.isTasteAcceptable === "Acceptable"}
+              status={data?.isTasteAcceptable !== "Unacceptable"}
             />
           </Stack>
           <Divider />
@@ -523,11 +582,11 @@ const ViewQualityControlPage = (props) => {
               subtitle={
                 <LabelResult
                   text={data?.allergenStatement}
-                  status={data?.allergenStatement === "Yes"}
+                  status={data?.allergenStatement !== "No"}
                 />
               }
             />
-            <StatusIndicator status={data?.allergenStatement === "Yes"} />
+            <StatusIndicator status={data?.allergenStatement !== "No"} />
           </Stack>
           <Divider />
           <Stack direction="row" justifyContent="space-between">
@@ -545,11 +604,11 @@ const ViewQualityControlPage = (props) => {
               subtitle={
                 <LabelResult
                   text={data?.labelPackageCorrect}
-                  status={data?.labelPackageCorrect === "Yes"}
+                  status={data?.labelPackageCorrect !== "No"}
                 />
               }
             />
-            <StatusIndicator status={data?.labelPackageCorrect === "Yes"} />
+            <StatusIndicator status={data?.labelPackageCorrect !== "No"} />
           </Stack>
           <Divider />
           <Stack direction="row" justifyContent="space-between">
@@ -599,11 +658,11 @@ const ViewQualityControlPage = (props) => {
               subtitle={
                 <LabelResult
                   text={data?.caseLabel}
-                  status={data?.caseLabel === "Yes"}
+                  status={data?.caseLabel !== "No"}
                 />
               }
             />
-            <StatusIndicator status={data?.caseLabel === "Yes"} />
+            <StatusIndicator status={data?.caseLabel !== "No"} />
           </Stack>
           <Divider />
           <Stack direction="row" justifyContent="space-between">
