@@ -21,6 +21,41 @@ router.post("/ratioform", async (req, res) => {
     res.sendStatus(503);
   }
 });
+router.post("/ratioform/recipe", async (req, res) => {
+  try {
+    const { product } = req.body;
+    var details = {
+      part: product,
+    };
+    var formBody = [];
+    for (var property in details) {
+      var encodedKey = encodeURIComponent(property);
+      var encodedValue = encodeURIComponent(details[property]);
+      formBody.push(encodedKey + "=" + encodedValue);
+    }
+    formBody = formBody.join("&");
+
+    const resp = await fetch("http://10.12.0.15:81/qac.php?recipe", {
+      method: "POST",
+      body: formBody,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+      },
+    });
+    const recipe = await resp.json();
+    if (recipe) {
+      res.status(200).json({
+        recipe: recipe,
+      });
+      console.log("Fetched recipe of " + product + " !");
+    } else {
+      res.sendStatus(404);
+    }
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(503);
+  }
+});
 
 router.put("/ratioform/save", async (req, res) => {
   try {
