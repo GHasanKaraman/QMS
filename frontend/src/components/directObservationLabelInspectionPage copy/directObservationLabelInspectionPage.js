@@ -57,6 +57,7 @@ const DirectObservationLabelInspectionPage = (props) => {
   const [stations, setStations] = useState([]);
   const [products, setProducts] = useState([]);
   const [productDetails, setProductDetails] = useState(null);
+  const [operators, setOperators] = useState([]);
 
   const [openDialog, setOpenDialog] = useState(false);
   const [open, setOpen] = useState(false);
@@ -85,6 +86,20 @@ const DirectObservationLabelInspectionPage = (props) => {
     });
     if (userAuth.control(res)) {
       setProducts(res.data.products);
+    } else {
+      navigate("/login");
+      localStorage.removeItem("token");
+      localStorage.removeItem("username");
+      enqueueSnackbar("Please sign in again!", {
+        variant: "error",
+      });
+    }
+  };
+
+  const loadOperators = async () => {
+    const res = await axios.post("/operators");
+    if (userAuth.control(res)) {
+      setOperators(res.data.operators);
     } else {
       navigate("/login");
       localStorage.removeItem("token");
@@ -130,6 +145,7 @@ const DirectObservationLabelInspectionPage = (props) => {
 
   useEffect(() => {
     loadAllStations();
+    loadOperators();
   }, []);
 
   const handleSubmit = async (values) => {
@@ -170,7 +186,7 @@ const DirectObservationLabelInspectionPage = (props) => {
         .required("Please enter the lot code of the product!"),
       personBeingObserved: yup
         .string()
-        .required("Please enter the lot code of the product!"),
+        .required("Please select the operator that you are observing!"),
       isAllergenStatementCorrect: yup.string().required(),
     }),
   });
@@ -383,23 +399,30 @@ const DirectObservationLabelInspectionPage = (props) => {
                     },
                   ]}
                 />
-                <TextField
-                  variant="filled"
-                  type="text"
-                  label="Person Being Observed"
-                  onBlur={formik.handleBlur}
-                  onChange={formik.handleChange}
+                <Autocomplete
+                  onChange={(_, value) => {
+                    formik.setFieldValue("personBeingObserved", value);
+                  }}
                   value={formik.values.personBeingObserved}
-                  name="personBeingObserved"
-                  error={
-                    !!formik.touched.personBeingObserved &&
-                    !!formik.errors.personBeingObserved
-                  }
-                  helperText={
-                    formik.touched.personBeingObserved &&
-                    formik.errors.personBeingObserved
-                  }
-                  sx={{ gridColumn: "span 4" }}
+                  sx={{ marginBottom: "30px", gridColumn: "span 4" }}
+                  options={operators}
+                  onBlur={formik.handleBlur}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="filled"
+                      label="Person Being Observed"
+                      name="personBeingObserved"
+                      error={
+                        !!formik.touched.personBeingObserved &&
+                        !!formik.errors.personBeingObserved
+                      }
+                      helperText={
+                        formik.touched.personBeingObserved &&
+                        formik.errors.personBeingObserved
+                      }
+                    />
+                  )}
                 />
               </Box>
             </AccordionDetails>

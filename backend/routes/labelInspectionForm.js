@@ -3,6 +3,27 @@ const router = express.Router();
 
 const labelInspectionFormModel = require("../models/labelInspectionFormModel");
 
+router.post("/operators", async (req, res) => {
+  try {
+    const resp = await fetch("http://10.12.0.15:81/qac.php?operators", {
+      method: "POST",
+    });
+
+    const data = await resp.json();
+    if (data) {
+      res.status(200).json({
+        operators: data,
+      });
+      console.log("Fetched all operators from OC DB!");
+    } else {
+      res.sendStatus(404);
+    }
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(503);
+  }
+});
+
 router.post("/labelinspection/get", async (req, res) => {
   try {
     const { id } = req.body;

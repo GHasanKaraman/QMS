@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import moment from "moment-timezone";
 import {
   Box,
   useTheme,
@@ -10,23 +9,9 @@ import {
   Typography,
   Button,
   Stack,
-  Dialog,
-  DialogActions,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
   Backdrop,
   CircularProgress,
-  Chip,
 } from "@mui/material";
-
-import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import CloseIcon from "@mui/icons-material/Close";
-import InventoryIcon from "@mui/icons-material/Inventory";
-import ScaleIcon from "@mui/icons-material/Scale";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
@@ -41,22 +26,19 @@ import { tokens } from "../../theme";
 import axios from "../../api/axios";
 import userAuth from "../../utils/userAuth";
 import ToggleButtonCheck from "../ToggleButtonCheck";
-import UploadButton from "../UploadButton";
 import { Accordion, AccordionDetails, AccordionSummary } from "../Accordion";
 
 const DirectObservationMetalDetectorPage = (props) => {
-  const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png"];
-
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const isNonMobile = useMediaQuery("(min-width:600px)");
-  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
   const [stations, setStations] = useState([]);
   const [products, setProducts] = useState([]);
   const [productDetails, setProductDetails] = useState(null);
+  const [operators, setOperators] = useState([]);
 
   const [openDialog, setOpenDialog] = useState(false);
   const [open, setOpen] = useState(false);
@@ -69,6 +51,20 @@ const DirectObservationMetalDetectorPage = (props) => {
     const res = await axios.post("/qualitycontrol");
     if (userAuth.control(res)) {
       setStations(res.data.stations);
+    } else {
+      navigate("/login");
+      localStorage.removeItem("token");
+      localStorage.removeItem("username");
+      enqueueSnackbar("Please sign in again!", {
+        variant: "error",
+      });
+    }
+  };
+
+  const loadOperators = async () => {
+    const res = await axios.post("/operators");
+    if (userAuth.control(res)) {
+      setOperators(res.data.operators);
     } else {
       navigate("/login");
       localStorage.removeItem("token");
@@ -130,6 +126,7 @@ const DirectObservationMetalDetectorPage = (props) => {
 
   useEffect(() => {
     loadAllStations();
+    loadOperators();
   }, []);
 
   const handleSubmit = async (values) => {
@@ -170,7 +167,7 @@ const DirectObservationMetalDetectorPage = (props) => {
         .required("Please enter the lot code of the product!"),
       personBeingObserved: yup
         .string()
-        .required("Please enter the lot code of the product!"),
+        .required("Please select the operator that you are observing!"),
       ballOrCard: yup.string().required(),
     }),
   });
@@ -330,23 +327,30 @@ const DirectObservationMetalDetectorPage = (props) => {
                   helperText={formik.touched.lotCode && formik.errors.lotCode}
                   sx={{ gridColumn: "span 4" }}
                 />
-                <TextField
-                  variant="filled"
-                  type="text"
-                  label="Person Being Observed"
-                  onBlur={formik.handleBlur}
-                  onChange={formik.handleChange}
+                <Autocomplete
+                  onChange={(_, value) => {
+                    formik.setFieldValue("personBeingObserved", value);
+                  }}
                   value={formik.values.personBeingObserved}
-                  name="personBeingObserved"
-                  error={
-                    !!formik.touched.personBeingObserved &&
-                    !!formik.errors.personBeingObserved
-                  }
-                  helperText={
-                    formik.touched.personBeingObserved &&
-                    formik.errors.personBeingObserved
-                  }
-                  sx={{ gridColumn: "span 4" }}
+                  sx={{ marginBottom: "30px", gridColumn: "span 4" }}
+                  options={operators}
+                  onBlur={formik.handleBlur}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="filled"
+                      label="Person Being Observed"
+                      name="personBeingObserved"
+                      error={
+                        !!formik.touched.personBeingObserved &&
+                        !!formik.errors.personBeingObserved
+                      }
+                      helperText={
+                        formik.touched.personBeingObserved &&
+                        formik.errors.personBeingObserved
+                      }
+                    />
+                  )}
                 />
                 <Typography
                   variant="h6"
