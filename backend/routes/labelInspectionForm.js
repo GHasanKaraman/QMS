@@ -5,7 +5,7 @@ const labelInspectionFormModel = require("../models/labelInspectionFormModel");
 
 router.post("/operators", async (req, res) => {
   try {
-    const resp = await fetch("http://10.12.0.15:81/qac.php?operators", {
+    const resp = await fetch("http://10.12.0.15:81/qac.php?qcNames", {
       method: "POST",
     });
 

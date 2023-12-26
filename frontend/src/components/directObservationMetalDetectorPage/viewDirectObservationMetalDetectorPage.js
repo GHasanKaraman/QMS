@@ -157,11 +157,6 @@ const ViewDirectObservationMetalDetectorPage = (props) => {
       </Stack>
       <Divider />
       <Label
-        title="To"
-        subtitle="Gurkan Karaman, Rabi Alam, Joseph Ben Yakob, Moshe Ben Yahuda"
-      />
-      <Divider />
-      <Label
         title="Completed By"
         subtitle={
           data?.username +

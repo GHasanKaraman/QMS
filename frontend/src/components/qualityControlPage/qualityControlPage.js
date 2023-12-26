@@ -55,7 +55,8 @@ const QualityControlPage = (props) => {
 
   const [xRayState, setXRayState] = useState(null);
   const [metalCardState, setMetalCardState] = useState(null);
-  const [metalBallState, setMetalBallState] = useState(null);
+  const [metalBallStateSingle, setMetalBallStateSingle] = useState(null);
+  const [metalBallStateMultiple, setMetalBallStateMultiple] = useState(null);
 
   useEffect(() => {
     document.title = props.title || "";
@@ -154,22 +155,27 @@ const QualityControlPage = (props) => {
       isSealCorrect: null,
       isNotchCorrect: null,
 
-      xrayRequired: "Yes", //null x4
-      xrayFeDetected: "Yes",
-      xrayNonFeDetected: "Yes",
-      xraySsDetected: "Yes",
+      xrayRequired: null,
+      xrayFeDetected: null,
+      xrayNonFeDetected: null,
+      xraySsDetected: null,
 
-      metalCardRequired: "Yes", //null x4
-      metalCardFeDetected: "Yes",
-      metalCardNonFeDetected: "Yes",
-      metalCardSsDetected: "Yes",
+      metalCardRequired: null,
+      metalCardFeDetected: null,
+      metalCardNonFeDetected: null,
+      metalCardSsDetected: null,
 
-      metalBallRequired: "Yes", //null x4
-      metalBallFeDetected: "Yes",
-      metalBallNonFeDetected: "Yes",
-      metalBallSsDetected: "Yes",
+      metalBallSingleRequired: null,
+      metalBallSingleFeDetected: null,
+      metalBallSingleNonFeDetected: null,
+      metalBallSingleSsDetected: null,
 
-      correctContainer: null,
+      metalBallMultipleRequired: null,
+      metalBallMultipleFeDetected: null,
+      metalBallMultipleNonFeDetected: null,
+      metalBallMultipleSsDetected: null,
+
+      correctPackaging: null,
       pictureLabelFront: null,
       pictureLabelBack: null,
       areAllergensCorrect: null,
@@ -242,7 +248,6 @@ const QualityControlPage = (props) => {
       currentWeight: yup
         .string()
         .required("Please enter the weight of the item!"),
-      unitOfMeasure: yup.string().required(),
       isSealCorrect: yup.string().required(),
       isNotchCorrect: yup.string().required(),
 
@@ -260,15 +265,23 @@ const QualityControlPage = (props) => {
       metalCardSsDetected:
         metalCardState === "Yes" ? yup.string().required() : undefined,
 
-      metalBallRequired: yup.string().required(),
-      metalBallFeDetected:
-        metalBallState === "Yes" ? yup.string().required() : undefined,
-      metalBallNonFeDetected:
-        metalBallState === "Yes" ? yup.string().required() : undefined,
-      metalBallSsDetected:
-        metalBallState === "Yes" ? yup.string().required() : undefined,
+      metalBallSingleRequired: yup.string().required(),
+      metalBallSingleFeDetected:
+        metalBallStateSingle === "Yes" ? yup.string().required() : undefined,
+      metalBallSingleNonFeDetected:
+        metalBallStateSingle === "Yes" ? yup.string().required() : undefined,
+      metalBallSingleSsDetected:
+        metalBallStateSingle === "Yes" ? yup.string().required() : undefined,
 
-      correctContainer: yup.string().required(),
+      metalBallMultipleRequired: yup.string().required(),
+      metalBallMultipleFeDetected:
+        metalBallStateMultiple === "Yes" ? yup.string().required() : undefined,
+      metalBallMultipleNonFeDetected:
+        metalBallStateMultiple === "Yes" ? yup.string().required() : undefined,
+      metalBallMultipleSsDetected:
+        metalBallStateMultiple === "Yes" ? yup.string().required() : undefined,
+
+      correctPackaging: yup.string().required(),
       pictureLabelFront: yup
         .mixed()
         .nullable()
@@ -775,47 +788,6 @@ const QualityControlPage = (props) => {
                   fontWeight="600"
                   sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
                 >
-                  What is the unit of measure?
-                </Typography>
-                <ToggleButtonCheck
-                  style={{ gridColumn: "span 4" }}
-                  alignment={formik.values.unitOfMeasure}
-                  onChange={(value) => {
-                    formik.setFieldValue("unitOfMeasure", value);
-                  }}
-                  error={
-                    !!formik.touched.unitOfMeasure &&
-                    !!formik.errors.unitOfMeasure
-                  }
-                  options={[
-                    {
-                      label: "Count",
-                      icon: (
-                        <InventoryIcon
-                          sx={{
-                            fill: colors.ciboInnerGreen[500],
-                          }}
-                        />
-                      ),
-                    },
-                    {
-                      label: "Weight",
-                      icon: (
-                        <ScaleIcon
-                          sx={{
-                            fill: colors.ciboInnerGreen[500],
-                          }}
-                        />
-                      ),
-                    },
-                  ]}
-                />
-                <Typography
-                  variant="h6"
-                  color={colors.grey[100]}
-                  fontWeight="600"
-                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
-                >
                   Is the seal correct?
                 </Typography>
                 <ToggleButtonCheck
@@ -890,6 +862,16 @@ const QualityControlPage = (props) => {
                             color: colors.yoggieRed[500],
                             stroke: colors.yoggieRed[500],
                             strokeWidth: "2",
+                          }}
+                        />
+                      ),
+                    },
+                    {
+                      label: "N/A",
+                      icon: (
+                        <CheckBoxIcon
+                          sx={{
+                            fill: colors.ciboInnerGreen[500],
                           }}
                         />
                       ),
@@ -1354,14 +1336,14 @@ const QualityControlPage = (props) => {
                 </Typography>
                 <ToggleButtonCheck
                   style={{ gridColumn: "span 4" }}
-                  alignment={formik.values.metalBallRequired}
+                  alignment={formik.values.metalBallSingleRequired}
                   onChange={(value) => {
-                    formik.setFieldValue("metalBallRequired", value);
-                    setMetalBallState(value);
+                    formik.setFieldValue("metalBallSingleRequired", value);
+                    setMetalBallStateSingle(value);
                   }}
                   error={
-                    !!formik.touched.metalBallRequired &&
-                    !!formik.errors.metalBallRequired
+                    !!formik.touched.metalBallSingleRequired &&
+                    !!formik.errors.metalBallSingleRequired
                   }
                   options={[
                     {
@@ -1377,7 +1359,7 @@ const QualityControlPage = (props) => {
                   spacing={1.5}
                   style={{
                     display:
-                      formik.values.metalBallRequired === "Yes"
+                      formik.values.metalBallSingleRequired === "Yes"
                         ? "block"
                         : "none",
                   }}
@@ -1392,13 +1374,13 @@ const QualityControlPage = (props) => {
                   </Typography>
                   <ToggleButtonCheck
                     style={{ gridColumn: "span 4" }}
-                    alignment={formik.values.metalBallFeDetected}
+                    alignment={formik.values.metalBallSingleFeDetected}
                     onChange={(value) => {
-                      formik.setFieldValue("metalBallFeDetected", value);
+                      formik.setFieldValue("metalBallSingleFeDetected", value);
                     }}
                     error={
-                      !!formik.touched.metalBallFeDetected &&
-                      !!formik.errors.metalBallFeDetected
+                      !!formik.touched.metalBallSingleFeDetected &&
+                      !!formik.errors.metalBallSingleFeDetected
                     }
                     options={[
                       {
@@ -1435,13 +1417,16 @@ const QualityControlPage = (props) => {
                   </Typography>
                   <ToggleButtonCheck
                     style={{ gridColumn: "span 4" }}
-                    alignment={formik.values.metalBallNonFeDetected}
+                    alignment={formik.values.metalBallSingleNonFeDetected}
                     onChange={(value) => {
-                      formik.setFieldValue("metalBallNonFeDetected", value);
+                      formik.setFieldValue(
+                        "metalBallSingleNonFeDetected",
+                        value
+                      );
                     }}
                     error={
-                      !!formik.touched.metalBallNonFeDetected &&
-                      !!formik.errors.metalBallNonFeDetected
+                      !!formik.touched.metalBallSingleNonFeDetected &&
+                      !!formik.errors.metalBallSingleNonFeDetected
                     }
                     options={[
                       {
@@ -1478,13 +1463,13 @@ const QualityControlPage = (props) => {
                   </Typography>
                   <ToggleButtonCheck
                     style={{ gridColumn: "span 4" }}
-                    alignment={formik.values.metalBallSsDetected}
+                    alignment={formik.values.metalBallSingleSsDetected}
                     onChange={(value) => {
-                      formik.setFieldValue("metalBallSsDetected", value);
+                      formik.setFieldValue("metalBallSingleSsDetected", value);
                     }}
                     error={
-                      !!formik.touched.metalBallSsDetected &&
-                      !!formik.errors.metalBallSsDetected
+                      !!formik.touched.metalBallSingleSsDetected &&
+                      !!formik.errors.metalBallSingleSsDetected
                     }
                     options={[
                       {
@@ -1515,6 +1500,223 @@ const QualityControlPage = (props) => {
               </Box>
             </AccordionDetails>
           </Accordion>
+
+          <Accordion>
+            <AccordionSummary
+              aria-controls="panel4d-content"
+              id="panel4d-header"
+              expandIcon={<ExpandMoreIcon />}
+            >
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                width="100%"
+              >
+                <Typography fontWeight={600} fontSize={18}>
+                  METAL DETECTOR BALLS CHECK (If machine is required)
+                </Typography>
+                <Typography fontWeight={600}>4 Items</Typography>
+              </Stack>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Box
+                display="grid"
+                gap="30px"
+                gridTemplateColumns="repeat(4, minmax(0, 1fr))"
+                sx={{
+                  "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
+                  "& .MuiInputBase-root::after": {
+                    borderBottomColor: colors.ciboInnerGreen[500],
+                  },
+                  "& .MuiInputBase-root::before": {
+                    borderBottomColor: colors.ciboInnerGreen[600],
+                  },
+                  "& .MuiFormLabel-root.Mui-focused": {
+                    color: colors.ciboInnerGreen[300],
+                  },
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  color={colors.grey[100]}
+                  fontWeight="600"
+                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                >
+                  METAL DETECTOR BALL REQUIRED?
+                </Typography>
+                <ToggleButtonCheck
+                  style={{ gridColumn: "span 4" }}
+                  alignment={formik.values.metalBallMultipleRequired}
+                  onChange={(value) => {
+                    formik.setFieldValue("metalBallMultipleRequired", value);
+                    setMetalBallStateSingle(value);
+                  }}
+                  error={
+                    !!formik.touched.metalBallMultipleRequired &&
+                    !!formik.errors.metalBallMultipleRequired
+                  }
+                  options={[
+                    {
+                      label: "Yes",
+                    },
+                    {
+                      label: "No",
+                    },
+                  ]}
+                />
+                <Stack
+                  direction="column"
+                  spacing={1.5}
+                  style={{
+                    display:
+                      formik.values.metalBallMultipleRequired === "Yes"
+                        ? "block"
+                        : "none",
+                  }}
+                >
+                  <Typography
+                    variant="h6"
+                    color={colors.grey[100]}
+                    fontWeight="600"
+                    sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                  >
+                    Fe 3.00 mm detected?
+                  </Typography>
+                  <ToggleButtonCheck
+                    style={{ gridColumn: "span 4" }}
+                    alignment={formik.values.metalBallMultipleFeDetected}
+                    onChange={(value) => {
+                      formik.setFieldValue(
+                        "metalBallMultipleFeDetected",
+                        value
+                      );
+                    }}
+                    error={
+                      !!formik.touched.metalBallMultipleFeDetected &&
+                      !!formik.errors.metalBallMultipleFeDetected
+                    }
+                    options={[
+                      {
+                        label: "Yes",
+                        icon: (
+                          <CheckBoxIcon
+                            sx={{
+                              fill: colors.ciboInnerGreen[500],
+                            }}
+                          />
+                        ),
+                      },
+                      {
+                        label: "No",
+                        icon: (
+                          <CloseIcon
+                            sx={{
+                              color: colors.yoggieRed[500],
+                              stroke: colors.yoggieRed[500],
+                              strokeWidth: "2",
+                            }}
+                          />
+                        ),
+                      },
+                    ]}
+                  />
+                  <Typography
+                    variant="h6"
+                    color={colors.grey[100]}
+                    fontWeight="600"
+                    sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                  >
+                    Non-Fe 4.50 mm detected?
+                  </Typography>
+                  <ToggleButtonCheck
+                    style={{ gridColumn: "span 4" }}
+                    alignment={formik.values.metalBallMultipleNonFeDetected}
+                    onChange={(value) => {
+                      formik.setFieldValue(
+                        "metalBallMultipleNonFeDetected",
+                        value
+                      );
+                    }}
+                    error={
+                      !!formik.touched.metalBallMultipleNonFeDetected &&
+                      !!formik.errors.metalBallMultipleNonFeDetected
+                    }
+                    options={[
+                      {
+                        label: "Yes",
+                        icon: (
+                          <CheckBoxIcon
+                            sx={{
+                              fill: colors.ciboInnerGreen[500],
+                            }}
+                          />
+                        ),
+                      },
+                      {
+                        label: "No",
+                        icon: (
+                          <CloseIcon
+                            sx={{
+                              color: colors.yoggieRed[500],
+                              stroke: colors.yoggieRed[500],
+                              strokeWidth: "2",
+                            }}
+                          />
+                        ),
+                      },
+                    ]}
+                  />
+                  <Typography
+                    variant="h6"
+                    color={colors.grey[100]}
+                    fontWeight="600"
+                    sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                  >
+                    SS 3.00 mm detected?
+                  </Typography>
+                  <ToggleButtonCheck
+                    style={{ gridColumn: "span 4" }}
+                    alignment={formik.values.metalBallMultipleSsDetected}
+                    onChange={(value) => {
+                      formik.setFieldValue(
+                        "metalBallMultipleSsDetected",
+                        value
+                      );
+                    }}
+                    error={
+                      !!formik.touched.metalBallMultipleSsDetected &&
+                      !!formik.errors.metalBallMultipleSsDetected
+                    }
+                    options={[
+                      {
+                        label: "Yes",
+                        icon: (
+                          <CheckBoxIcon
+                            sx={{
+                              fill: colors.ciboInnerGreen[500],
+                            }}
+                          />
+                        ),
+                      },
+                      {
+                        label: "No",
+                        icon: (
+                          <CloseIcon
+                            sx={{
+                              color: colors.yoggieRed[500],
+                              stroke: colors.yoggieRed[500],
+                              strokeWidth: "2",
+                            }}
+                          />
+                        ),
+                      },
+                    ]}
+                  />
+                </Stack>
+              </Box>
+            </AccordionDetails>
+          </Accordion>
+
           <Accordion>
             <AccordionSummary
               aria-controls="panel6d-content"
@@ -1556,17 +1758,17 @@ const QualityControlPage = (props) => {
                   fontWeight="600"
                   sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
                 >
-                  Correct Container?
+                  Correct Packaging?
                 </Typography>
                 <ToggleButtonCheck
                   style={{ gridColumn: "span 4" }}
-                  alignment={formik.values.correctContainer}
+                  alignment={formik.values.correctPackaging}
                   onChange={(value) => {
-                    formik.setFieldValue("correctContainer", value);
+                    formik.setFieldValue("correctPackaging", value);
                   }}
                   error={
-                    !!formik.touched.correctContainer &&
-                    !!formik.errors.correctContainer
+                    !!formik.touched.correctPackaging &&
+                    !!formik.errors.correctPackaging
                   }
                   options={[
                     {

@@ -422,7 +422,6 @@ const RatioFormPage = (props) => {
                   }}
                 >
                   <TextField
-                    disabled
                     variant="filled"
                     defaultValue={product.part}
                     aria-valuemin={2}
@@ -437,6 +436,7 @@ const RatioFormPage = (props) => {
                     sx={{
                       gridColumn: "span 4",
                     }}
+                    InputProps={{ readOnly: true }}
                   />
                   <Typography
                     sx={{

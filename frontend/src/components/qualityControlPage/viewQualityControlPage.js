@@ -161,11 +161,6 @@ const ViewQualityControlPage = (props) => {
       </Stack>
       <Divider />
       <Label
-        title="To"
-        subtitle="Gurkan Karaman, Rabi Alam, Joseph Ben Yakob, Moshe Ben Yahuda"
-      />
-      <Divider />
-      <Label
         title="Completed By"
         subtitle={
           data?.username +
@@ -265,14 +260,6 @@ const ViewQualityControlPage = (props) => {
           <Divider />
           <Stack direction="row" justifyContent="space-between">
             <Label
-              title="What is the unit of measure?"
-              subtitle={data?.unitOfMeasure}
-            />
-            <StatusIndicator status={Boolean(data?.unitOfMeasure)} />
-          </Stack>
-          <Divider />
-          <Stack direction="row" justifyContent="space-between">
-            <Label
               title="Is the seal correct?"
               subtitle={
                 <LabelResult
@@ -290,11 +277,11 @@ const ViewQualityControlPage = (props) => {
               subtitle={
                 <LabelResult
                   text={data?.isNotchCorrect}
-                  status={data?.isNotchCorrect === "Yes"}
+                  status={data?.isNotchCorrect !== "No"}
                 />
               }
             />
-            <StatusIndicator status={data?.isNotchCorrect === "Yes"} />
+            <StatusIndicator status={data?.isNotchCorrect !== "No"} />
           </Stack>
         </AccordionDetails>
       </Accordion>
@@ -318,7 +305,7 @@ const ViewQualityControlPage = (props) => {
                 />
               }
             />
-            <StatusIndicator status={data?.xrayRequired === "Yes"} />
+            <StatusIndicator status={Boolean(data?.xrayRequired)} />
           </Stack>
           {data?.xrayRequired === "Yes" ? (
             <div>
@@ -386,7 +373,7 @@ const ViewQualityControlPage = (props) => {
                 />
               }
             />
-            <StatusIndicator status={data?.metalCardRequired === "Yes"} />
+            <StatusIndicator status={Boolean(data?.metalCardRequired)} />
           </Stack>
           {data?.metalCardRequired === "Yes" ? (
             <div>
@@ -451,14 +438,14 @@ const ViewQualityControlPage = (props) => {
               title="METAL DETECTOR BALL REQUIRED?"
               subtitle={
                 <LabelResult
-                  text={data?.metalBallRequired}
-                  status={data?.metalBallRequired === "Yes"}
+                  text={data?.metalBallSingleRequired}
+                  status={data?.metalBallSingleRequired === "Yes"}
                 />
               }
             />
-            <StatusIndicator status={data?.metalBallRequired === "Yes"} />
+            <StatusIndicator status={Boolean(data?.metalBallSingleRequired)} />
           </Stack>
-          {data?.metalBallRequired === "Yes" ? (
+          {data?.metalBallSingleRequired === "Yes" ? (
             <div>
               <Divider />
               <Stack direction="row" justifyContent="space-between">
@@ -466,12 +453,14 @@ const ViewQualityControlPage = (props) => {
                   title="Fe 3.00 mm detected?"
                   subtitle={
                     <LabelResult
-                      text={data?.metalBallFeDetected}
-                      status={data?.metalBallFeDetected === "Yes"}
+                      text={data?.metalBallSingleFeDetected}
+                      status={data?.metalBallSingleFeDetected === "Yes"}
                     />
                   }
                 />
-                <StatusIndicator status={data?.metalBallFeDetected === "Yes"} />
+                <StatusIndicator
+                  status={data?.metalBallSingleFeDetected === "Yes"}
+                />
               </Stack>
               <Divider />
               <Stack direction="row" justifyContent="space-between">
@@ -479,13 +468,13 @@ const ViewQualityControlPage = (props) => {
                   title="Non Fe 4.50 mm detected?"
                   subtitle={
                     <LabelResult
-                      text={data?.metalBallNonFeDetected}
-                      status={data?.metalBallNonFeDetected === "Yes"}
+                      text={data?.metalBallSingleNonFeDetected}
+                      status={data?.metalBallSingleNonFeDetected === "Yes"}
                     />
                   }
                 />
                 <StatusIndicator
-                  status={data?.metalBallNonFeDetected === "Yes"}
+                  status={data?.metalBallSingleNonFeDetected === "Yes"}
                 />
               </Stack>
               <Divider />
@@ -494,12 +483,90 @@ const ViewQualityControlPage = (props) => {
                   title="SS 3.00 mm detected?"
                   subtitle={
                     <LabelResult
-                      text={data?.metalBallSsDetected}
-                      status={data?.metalBallSsDetected === "Yes"}
+                      text={data?.metalBallSingleSsDetected}
+                      status={data?.metalBallSingleSsDetected === "Yes"}
                     />
                   }
                 />
-                <StatusIndicator status={data?.metalBallSsDetected === "Yes"} />
+                <StatusIndicator
+                  status={data?.metalBallSingleSsDetected === "Yes"}
+                />
+              </Stack>
+            </div>
+          ) : undefined}
+          <Divider />
+        </AccordionDetails>
+      </Accordion>
+      <Accordion>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Stack direction="row" justifyContent="space-between" width="100%">
+            <Typography fontWeight={600} fontSize={18}>
+              METAL DETECTOR BALLS CHECK (If machine is required)
+            </Typography>
+            <Typography fontWeight={600}>4 Items</Typography>
+          </Stack>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Stack direction="row" justifyContent="space-between">
+            <Label
+              title="METAL DETECTOR BALL REQUIRED?"
+              subtitle={
+                <LabelResult
+                  text={data?.metalBallMultipleRequired}
+                  status={data?.metalBallMultipleRequired === "Yes"}
+                />
+              }
+            />
+            <StatusIndicator
+              status={Boolean(data?.metalBallMultipleRequired)}
+            />
+          </Stack>
+          {data?.metalBallMultipleRequired === "Yes" ? (
+            <div>
+              <Divider />
+              <Stack direction="row" justifyContent="space-between">
+                <Label
+                  title="Fe 3.00 mm detected?"
+                  subtitle={
+                    <LabelResult
+                      text={data?.metalBallMultipleFeDetected}
+                      status={data?.metalBallMultipleFeDetected === "Yes"}
+                    />
+                  }
+                />
+                <StatusIndicator
+                  status={data?.metalBallMultipleFeDetected === "Yes"}
+                />
+              </Stack>
+              <Divider />
+              <Stack direction="row" justifyContent="space-between">
+                <Label
+                  title="Non Fe 4.50 mm detected?"
+                  subtitle={
+                    <LabelResult
+                      text={data?.metalBallMultipleNonFeDetected}
+                      status={data?.metalBallMultipleNonFeDetected === "Yes"}
+                    />
+                  }
+                />
+                <StatusIndicator
+                  status={data?.metalBallMultipleNonFeDetected === "Yes"}
+                />
+              </Stack>
+              <Divider />
+              <Stack direction="row" justifyContent="space-between">
+                <Label
+                  title="SS 3.00 mm detected?"
+                  subtitle={
+                    <LabelResult
+                      text={data?.metalBallMultipleSsDetected}
+                      status={data?.metalBallMultipleSsDetected === "Yes"}
+                    />
+                  }
+                />
+                <StatusIndicator
+                  status={data?.metalBallMultipleSsDetected === "Yes"}
+                />
               </Stack>
             </div>
           ) : undefined}
@@ -518,10 +585,10 @@ const ViewQualityControlPage = (props) => {
         <AccordionDetails>
           <Stack direction="row" justifyContent="space-between">
             <Label
-              title="Correct Container?"
-              subtitle={data?.correctContainer}
+              title="Correct Packaging?"
+              subtitle={data?.correctPackaging}
             />
-            <StatusIndicator status={Boolean(data?.correctContainer)} />
+            <StatusIndicator status={Boolean(data?.correctPackaging)} />
           </Stack>
           <Divider />
           <Stack direction="row" justifyContent="space-between">
