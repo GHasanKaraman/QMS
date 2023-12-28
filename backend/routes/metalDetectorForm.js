@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
+const essentials = require("../utils/essentials");
 const metalDetectorFormModel = require("../models/metalDetectorFormModel");
 
 router.post("/metaldetector/get", async (req, res) => {
@@ -40,6 +41,28 @@ router.post("/metaldetector/get", async (req, res) => {
       }
     } else {
       res.sendStatus(404);
+    }
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(503);
+  }
+});
+
+router.post("/metaldetector/signoff", async (req, res) => {
+  try {
+    const { id } = req.body;
+    if (req.access === "S") {
+      const metalDetectorForm = await metalDetectorFormModel.updateOne(
+        { _id: id },
+        { signedOff: req.username, signOffDate: essentials.getEST() }
+      );
+      if (metalDetectorForm.modifiedCount == 1) {
+        res.sendStatus(200);
+      } else {
+        res.sendStatus(400);
+      }
+    } else {
+      res.sendStatus(406);
     }
   } catch (err) {
     console.log(err);

@@ -52,6 +52,7 @@ const LoginPage = (props) => {
       localStorage.setItem("token", res.data.token.token);
       axios.addToken(res.data.token.token);
       localStorage.setItem("username", res.data.token.userName);
+      localStorage.setItem("access", res.data.token.access);
       navigate("/dashboard");
     } else {
       switch (res.response?.status) {

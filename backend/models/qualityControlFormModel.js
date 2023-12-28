@@ -39,6 +39,8 @@ const qualityControlFormSchema = new mongoose.Schema(
     anyDeviations: { type: String, required: true },
     imageIDs: [{ type: mongoose.Types.ObjectId }],
     status: { type: String, default: "failed" },
+    signedOff: { type: String, default: "" },
+    signOffDate: { type: Date },
   },
   { timestamps: true }
 );

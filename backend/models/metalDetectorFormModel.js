@@ -10,6 +10,8 @@ const metalDetectorFormSchema = new mongoose.Schema(
     personBeingObserved: { type: String, required: true },
     ballOrCard: { type: String, required: true },
     status: { type: String, default: "failed" },
+    signedOff: { type: String, default: "" },
+    signOffDate: { type: Date },
   },
   { timestamps: true }
 );

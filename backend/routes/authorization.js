@@ -53,6 +53,7 @@ router.use(async (req, res, next) => {
           res.status(404).json({ error: "token" });
         } else {
           req.username = tokenData[0].userName;
+          req.access = tokenData[0].access;
           console.log(
             "\x1b[32m%s\x1b[0m",
             tokenData[0].userName + " has been succesfully authenticated!"

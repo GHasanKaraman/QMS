@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
+const essentials = require("../utils/essentials");
 const labelInspectionFormModel = require("../models/labelInspectionFormModel");
 
 router.post("/operators", async (req, res) => {
@@ -61,6 +62,28 @@ router.post("/labelinspection/get", async (req, res) => {
       }
     } else {
       res.sendStatus(404);
+    }
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(503);
+  }
+});
+
+router.post("/labelinspection/signoff", async (req, res) => {
+  try {
+    const { id } = req.body;
+    if (req.access === "S") {
+      const labelInspectionForm = await labelInspectionFormModel.updateOne(
+        { _id: id },
+        { signedOff: req.username, signOffDate: essentials.getEST() }
+      );
+      if (labelInspectionForm.modifiedCount == 1) {
+        res.sendStatus(200);
+      } else {
+        res.sendStatus(400);
+      }
+    } else {
+      res.sendStatus(406);
     }
   } catch (err) {
     console.log(err);

@@ -8,6 +8,7 @@ import {
   Typography,
   Backdrop,
   CircularProgress,
+  Button,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useTheme } from "@emotion/react";
@@ -41,6 +42,8 @@ const ViewDirectObservationLabelInspectionPage = (props) => {
   const [product, setProduct] = useState();
   const [open, setOpen] = useState(false);
 
+  const [clicked, setClicked] = useState(false);
+
   const loadLabelInspectionPage = async () => {
     setOpen(true);
     const res = await axios.post("/labelinspection/get", { id });
@@ -58,6 +61,48 @@ const ViewDirectObservationLabelInspectionPage = (props) => {
       });
     }
     setOpen(false);
+  };
+
+  const handleSignOff = async () => {
+    if (!clicked) {
+      const res = await axios.post("/metaldetector/signoff", { id });
+      if (userAuth.control(res)) {
+        switch (res.response?.status) {
+          case 200:
+            enqueueSnackbar("You have successfully signed off the form!", {
+              variant: "success",
+            });
+            break;
+          case 400:
+            enqueueSnackbar("Something went wrong while signin off the form!", {
+              variant: "error",
+            });
+            break;
+          case 406:
+            enqueueSnackbar("You don't have an access for this action!", {
+              variant: "error",
+            });
+            localStorage.removeItem("token");
+            localStorage.removeItem("username");
+            break;
+          case 503:
+            enqueueSnackbar("Something went wrong with the server!", {
+              variant: "error",
+            });
+            break;
+        }
+        await loadLabelInspectionPage();
+      } else {
+        navigate("/login");
+        localStorage.removeItem("token");
+        localStorage.removeItem("username");
+        enqueueSnackbar("Please sign in again!", {
+          variant: "error",
+        });
+      }
+    }
+
+    setClicked(true);
   };
 
   useEffect(() => {
@@ -158,17 +203,36 @@ const ViewDirectObservationLabelInspectionPage = (props) => {
       </Stack>
       <Divider />
       <Label
-        title="Completed By"
+        title="Data Sheet Signed Off"
         subtitle={
-          data?.username +
-          " • " +
-          toStringDate(data?.createdAt, {
-            month: "short",
-            year: "numeric",
-            day: "numeric",
-            hour: "numeric",
-            minute: "numeric",
-          })
+          data ? (
+            data?.signedOff === "" ? (
+              localStorage.getItem("access") === "S" ? (
+                <Button
+                  variant="contained"
+                  color="success"
+                  sx={{ fontWeight: "600" }}
+                  onClick={handleSignOff}
+                >
+                  Sign Off
+                </Button>
+              ) : (
+                "Not Signed Off"
+              )
+            ) : (
+              data?.signedOff +
+              " • " +
+              toStringDate(data?.signOffDate, {
+                month: "short",
+                year: "numeric",
+                day: "numeric",
+                hour: "numeric",
+                minute: "numeric",
+              })
+            )
+          ) : (
+            ""
+          )
         }
       />
       <Divider />

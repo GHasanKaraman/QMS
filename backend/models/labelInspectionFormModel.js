@@ -10,6 +10,8 @@ const labelInspectionFormSchema = new mongoose.Schema(
     isAllergenStatementCorrect: { type: String, required: true },
     personBeingObserved: { type: String, required: true },
     status: { type: String, default: "failed" },
+    signedOff: { type: String, default: "" },
+    signOffDate: { type: Date },
   },
   { timestamps: true }
 );

@@ -4,6 +4,7 @@ const sharp = require("sharp");
 const router = express.Router();
 const upload = require("../file");
 
+const essentials = require("../utils/essentials");
 const imageModel = require("../models/imageModel");
 const qualityControlModel = require("../models/qualityControlFormModel");
 
@@ -161,6 +162,29 @@ router.post("/qualitycontrol/get", async (req, res) => {
     res.sendStatus(503);
   }
 });
+
+router.post("/qualitycontrol/signoff", async (req, res) => {
+  try {
+    const { id } = req.body;
+    if (req.access === "S") {
+      const qualityControlForm = await qualityControlModel.updateOne(
+        { _id: id },
+        { signedOff: req.username, signOffDate: essentials.getEST() }
+      );
+      if (qualityControlForm.modifiedCount == 1) {
+        res.sendStatus(200);
+      } else {
+        res.sendStatus(400);
+      }
+    } else {
+      res.sendStatus(406);
+    }
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(503);
+  }
+});
+
 router.post("/qualitycontrol/add", upload.any(), async (req, res) => {
   try {
     //Resizing the images and saving them

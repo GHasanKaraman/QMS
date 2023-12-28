@@ -9,6 +9,7 @@ import {
   Typography,
   Backdrop,
   CircularProgress,
+  Button,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useTheme } from "@emotion/react";
@@ -42,6 +43,8 @@ const ViewQualityControlPage = (props) => {
   const [product, setProduct] = useState();
   const [open, setOpen] = useState(false);
 
+  const [clicked, setClicked] = useState(false);
+
   const loadQualityControlPage = async () => {
     setOpen(true);
     const res = await axios.post("/qualitycontrol/get", { id });
@@ -61,6 +64,48 @@ const ViewQualityControlPage = (props) => {
       });
     }
     setOpen(false);
+  };
+
+  const handleSignOff = async () => {
+    if (!clicked) {
+      const res = await axios.post("/qualitycontrol/signoff", { id });
+      if (userAuth.control(res)) {
+        switch (res.response?.status) {
+          case 200:
+            enqueueSnackbar("You have successfully signed off the form!", {
+              variant: "success",
+            });
+            break;
+          case 400:
+            enqueueSnackbar("Something went wrong while signin off the form!", {
+              variant: "error",
+            });
+            break;
+          case 406:
+            enqueueSnackbar("You don't have an access for this action!", {
+              variant: "error",
+            });
+            localStorage.removeItem("token");
+            localStorage.removeItem("username");
+            break;
+          case 503:
+            enqueueSnackbar("Something went wrong with the server!", {
+              variant: "error",
+            });
+            break;
+        }
+        await loadQualityControlPage();
+      } else {
+        navigate("/login");
+        localStorage.removeItem("token");
+        localStorage.removeItem("username");
+        enqueueSnackbar("Please sign in again!", {
+          variant: "error",
+        });
+      }
+    }
+
+    setClicked(true);
   };
 
   useEffect(() => {
@@ -175,7 +220,39 @@ const ViewQualityControlPage = (props) => {
         }
       />
       <Divider />
-      <Label title="Data Sheet Signed Off" subtitle="Not Signed Off" />
+      <Label
+        title="Data Sheet Signed Off"
+        subtitle={
+          data ? (
+            data?.signedOff === "" ? (
+              localStorage.getItem("access") === "S" ? (
+                <Button
+                  variant="contained"
+                  color="success"
+                  sx={{ fontWeight: "600" }}
+                  onClick={handleSignOff}
+                >
+                  Sign Off
+                </Button>
+              ) : (
+                "Not Signed Off"
+              )
+            ) : (
+              data?.signedOff +
+              " • " +
+              toStringDate(data?.signOffDate, {
+                month: "short",
+                year: "numeric",
+                day: "numeric",
+                hour: "numeric",
+                minute: "numeric",
+              })
+            )
+          ) : (
+            ""
+          )
+        }
+      />
       <Divider />
       <Label title="Run" subtitle="Started Dec 12, 2023 at 9.04 AM" />
       <Accordion>
