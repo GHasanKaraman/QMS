@@ -21,6 +21,7 @@ import { tokens } from "../../theme";
 import axios from "../../api/axios";
 import userAuth from "../../utils/userAuth";
 import { toStringDate } from "../../utils/helpers";
+import ToggleButtonCheck from "../ToggleButtonCheck";
 
 const DashboardPage = (props) => {
   const theme = useTheme();
@@ -34,6 +35,10 @@ const DashboardPage = (props) => {
   const [labelInspectionForms, setLabelInspectionForms] = useState([]);
 
   const [locations, setLocations] = useState([]);
+  const [dataSource, setDataSource] = useState([]);
+
+  const [toggleOption, setToggleOption] = useState("All");
+
   useEffect(() => {
     document.title = props.title || "";
   }, [props.title]);
@@ -42,6 +47,8 @@ const DashboardPage = (props) => {
     const res = await axios.post("/dashboard");
     if (userAuth.control(res)) {
       setLocations(res.data.locations);
+      setDataSource(res.data.locations);
+      console.log(res.data.locations);
       setRatioForms(res.data.ratioForms);
       setQualityControlForms(res.data.qualityControlForms);
       setMetalDetectorForms(res.data.metalDetectorForms);
@@ -60,11 +67,53 @@ const DashboardPage = (props) => {
     loadAllStations();
   }, []);
 
+  const getShift = () => {
+    const currentHour = new Date().getHours();
+    if (currentHour > 7 && currentHour < 18) {
+      return 1;
+    }
+    return 2;
+  };
+
   return (
     <Box m="0 20px">
       <Header title="My Quality Dashboard" subtitle="Locations" />
+      <ToggleButtonCheck
+        style={{
+          width: "100%",
+          textAlign: "center",
+          justifyContent: "center",
+          alignContent: "center",
+        }}
+        alignment={toggleOption}
+        onChange={(value) => {
+          setToggleOption(value);
+          if (value === "Shifts") {
+            setDataSource(
+              locations.filter((loc) => loc.shift && loc.shift === getShift())
+            );
+          } else if (value === "Runs") {
+            setDataSource(
+              locations.filter((loc) => loc.running && loc.running === true)
+            );
+          } else {
+            setDataSource([...locations]);
+          }
+        }}
+        options={[
+          {
+            label: "All",
+          },
+          {
+            label: "Shifts",
+          },
+          {
+            label: "Runs",
+          },
+        ]}
+      />
       <List>
-        {locations
+        {dataSource
           .filter((loc) => loc.type)
           .map((location, i) => {
             return [

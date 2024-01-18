@@ -53,6 +53,7 @@ const Router = () => {
   return (
     <Routes>
       <Route element={<RegularLayout />}>
+        <Route exact path="/" element={<LoginPage title="CiboQA | Login" />} />
         <Route
           exact
           path="/login"
