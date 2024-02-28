@@ -148,10 +148,38 @@ const DirectObservationLabelInspectionPage = (props) => {
     loadOperators();
   }, []);
 
-  const handleSubmit = async (values) => {
+  const handleSubmit = async (values, { resetForm }) => {
     setOpen(true);
     values.product = values.product.partNum;
     const res = await axios.post("/labelinspection/add", values);
+    if (userAuth.control(res)) {
+      if (res?.data) {
+        enqueueSnackbar("You have successfully created the form!", {
+          variant: "success",
+        });
+        resetForm();
+      } else {
+        switch (res.response?.status) {
+          case 404:
+            enqueueSnackbar("Station or product is wrong!", {
+              variant: "error",
+            });
+            break;
+          case 503:
+            enqueueSnackbar("Something went wrong with the server!", {
+              variant: "error",
+            });
+            break;
+        }
+      }
+    } else {
+      navigate("/login");
+      localStorage.removeItem("token");
+      localStorage.removeItem("username");
+      enqueueSnackbar("Please sign in again!", {
+        variant: "error",
+      });
+    }
     setOpen(false);
   };
 
