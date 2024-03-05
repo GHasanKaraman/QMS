@@ -110,7 +110,7 @@ const Sidebar = () => {
               src={logo}
               width="75%"
               alt="logo"
-              style={{ pointerEvents: "none" }}
+              style={{ pointerEvents: "none", marginBottom: "-15px" }}
             />
             {!isCollapsed ? (
               <Typography variant="h6" color={colors.grey[100]}>
@@ -195,6 +195,13 @@ const Sidebar = () => {
               title="Quality Control"
               to="/qualitycontrol"
               icon={<ContentPasteSearchIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Quality Check"
+              to="/pgqualitycontrol"
+              icon={<div style={{ fontWeight: "600" }}>P&G</div>}
               selected={selected}
               setSelected={setSelected}
             />

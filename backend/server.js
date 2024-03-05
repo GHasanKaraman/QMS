@@ -46,7 +46,10 @@ db.once("open", function () {
   app.use("/imgs", express.static(__dirname + "/imgs"));
 
   app.get("/", async (req, res) => {
-    res.send("<h2 style = color:green>Listening port...</h2>");
+    //res.send("<h2 style = color:green>Listening port...</h2>");
+    res.send(
+      "<div style='width:100%;text-align:center'><img width='50%' src='/imgs/logo.png'/><h1 style = color:green>Server is running...</h1></div>"
+    );
   });
 
   app.use("/", authentication);
