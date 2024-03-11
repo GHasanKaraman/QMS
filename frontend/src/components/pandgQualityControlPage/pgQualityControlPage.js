@@ -39,7 +39,7 @@ import ToggleButtonCheck from "../ToggleButtonCheck";
 import UploadButton from "../UploadButton";
 import { Accordion, AccordionDetails, AccordionSummary } from "../Accordion";
 
-const PnGQualityControlPage = (props) => {
+const PGQualityControlPage = (props) => {
   const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png"];
 
   const theme = useTheme();
@@ -114,13 +114,14 @@ const PnGQualityControlPage = (props) => {
   };
 
   const handleSubmit = async (values, { resetForm }) => {
+    console.log(values);
     setOpen(true);
     values.product = values.product.partNum;
     const formData = new FormData();
     for (const name in values) {
       formData.append(name, values[name]);
     }
-    const res = await axios.post("/qualitycontrol/add", formData);
+    const res = await axios.post("/pgqualitycontrol/add", formData);
     if (userAuth.control(res)) {
       if (res?.data) {
         enqueueSnackbar("You have successfully created the form!", {
@@ -156,52 +157,30 @@ const PnGQualityControlPage = (props) => {
     initialValues: {
       station: null,
       product: null,
-      areIngredientsCorrect: null,
-      pictureOfProduct: null,
-      isTasteAcceptable: null,
-      pictureMixCode: null,
-      lotCode: "",
-      expirationDate: "",
-      currentWeight: "",
-      unitOfMeasure: null,
-      isSealCorrect: null,
+      pictureOfLabelInspectionPouch: null,
+      pictureOfExpiration: null,
+      expirationDatePouch: "",
+      lotCodePouch: "",
+      currentWeightPouch: "",
       isNotchCorrect: null,
+      isSealCorrectPouch: null,
+      metalDetector: null,
+      pictureOfAllergenStatementPouch: null,
+      pictureOfPanningBatch: null,
+      pictureOfSugarShelledBatch: null,
 
-      xrayRequired: null,
-      xrayFeDetected: null,
-      xrayNonFeDetected: null,
-      xraySsDetected: null,
+      pictureOfLabelInspectionFront: null,
+      pictureOfLabelInspectionBack: null,
+      currentWeightBox: "",
+      isSealCorrectBox: null,
+      pictureOfAllergenStatementBox: null,
 
-      metalCardRequired: null,
-      metalCardFeDetected: null,
-      metalCardNonFeDetected: null,
-      metalCardSsDetected: null,
+      pictureOfLabelInspectionCase: null,
+      expirationDateCase: "",
+      lotCodeCase: "",
+      pictureOfPattern: null,
 
-      metalBallSingleRequired: null,
-      metalBallSingleFeDetected: null,
-      metalBallSingleNonFeDetected: null,
-      metalBallSingleSsDetected: null,
-
-      metalBallMultipleRequired: null,
-      metalBallMultipleFeDetected: null,
-      metalBallMultipleNonFeDetected: null,
-      metalBallMultipleSsDetected: null,
-
-      correctPackaging: null,
-      pictureLabelFront: null,
-      pictureLabelBack: null,
-      areAllergensCorrect: null,
-      allergenStatement: null,
-      pictureOfAllergenStatement: null,
-      labelPackageCorrect: null,
-      pictureOfBarcode: null,
-
-      unitsCase: null,
-      salesOrderNumber: "",
-      caseLabel: null,
-      pictureOfBoxLabel: null,
-
-      anyDeviations: null,
+      pictureOfChep: null,
     },
     onSubmit: handleSubmit,
     validationSchema: yup.object().shape({
@@ -221,11 +200,10 @@ const PnGQualityControlPage = (props) => {
             return false;
           }
         ),
-      areIngredientsCorrect: yup.string().required(),
-      pictureOfProduct: yup
+      pictureOfLabelInspectionPouch: yup
         .mixed()
         .nullable()
-        .required("Please upload the image of the item!")
+        .required("Please upload the picture of the product!")
         .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
           return !value || (value && value.size < 1024 * 1024 * 10);
         })
@@ -236,11 +214,12 @@ const PnGQualityControlPage = (props) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
           }
         ),
-      isTasteAcceptable: yup.string().required(),
-      pictureMixCode: yup
+      pictureOfExpiration: yup
         .mixed()
         .nullable()
-        .required("Please upload the image of the mix code!")
+        .required(
+          "Please upload the picture of the expiration date on the pouch!"
+        )
         .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
           return !value || (value && value.size < 1024 * 1024 * 10);
         })
@@ -251,53 +230,22 @@ const PnGQualityControlPage = (props) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
           }
         ),
-      lotCode: yup
-        .string()
-        .required("Please enter the lot code of the finished product!"),
-      expirationDate: yup
+      expirationDatePouch: yup
         .string()
         .required("Please enter the expiration date!"),
-      currentWeight: yup
+      lotCodePouch: yup
         .string()
-        .required("Please enter the weight of the item!"),
-      isSealCorrect: yup.string().required(),
+        .required("Please enter the lot code of the product!"),
+      currentWeightPouch: yup
+        .string()
+        .required("Please enter the weight of the pouch!"),
+      isSealCorrectPouch: yup.string().required(),
       isNotchCorrect: yup.string().required(),
-
-      xrayRequired: yup.string().required(),
-      xrayFeDetected: xRayState === "Yes" ? yup.string().required() : undefined,
-      xrayNonFeDetected:
-        xRayState === "Yes" ? yup.string().required() : undefined,
-      xraySsDetected: xRayState === "Yes" ? yup.string().required() : undefined,
-
-      metalCardRequired: yup.string().required(),
-      metalCardFeDetected:
-        metalCardState === "Yes" ? yup.string().required() : undefined,
-      metalCardNonFeDetected:
-        metalCardState === "Yes" ? yup.string().required() : undefined,
-      metalCardSsDetected:
-        metalCardState === "Yes" ? yup.string().required() : undefined,
-
-      metalBallSingleRequired: yup.string().required(),
-      metalBallSingleFeDetected:
-        metalBallStateSingle === "Yes" ? yup.string().required() : undefined,
-      metalBallSingleNonFeDetected:
-        metalBallStateSingle === "Yes" ? yup.string().required() : undefined,
-      metalBallSingleSsDetected:
-        metalBallStateSingle === "Yes" ? yup.string().required() : undefined,
-
-      metalBallMultipleRequired: yup.string().required(),
-      metalBallMultipleFeDetected:
-        metalBallStateMultiple === "Yes" ? yup.string().required() : undefined,
-      metalBallMultipleNonFeDetected:
-        metalBallStateMultiple === "Yes" ? yup.string().required() : undefined,
-      metalBallMultipleSsDetected:
-        metalBallStateMultiple === "Yes" ? yup.string().required() : undefined,
-
-      correctPackaging: yup.string().required(),
-      pictureLabelFront: yup
+      metalDetector: yup.string().required(),
+      pictureOfAllergenStatementPouch: yup
         .mixed()
         .nullable()
-        .required("Please upload the image of front side of the label!")
+        .required("Please upload the picture of the allergen statement!")
         .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
           return !value || (value && value.size < 1024 * 1024 * 10);
         })
@@ -308,10 +256,10 @@ const PnGQualityControlPage = (props) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
           }
         ),
-      pictureLabelBack: yup
+      pictureOfPanningBatch: yup
         .mixed()
         .nullable()
-        .required("Please upload the image of back side of the label!")
+        .required("Please upload the picture of the panning batch!")
         .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
           return !value || (value && value.size < 1024 * 1024 * 10);
         })
@@ -322,27 +270,10 @@ const PnGQualityControlPage = (props) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
           }
         ),
-      areAllergensCorrect: yup.string().required(),
-      allergenStatement: yup.string().required(),
-      pictureOfAllergenStatement: yup
+      pictureOfSugarShelledBatch: yup
         .mixed()
         .nullable()
-        .required("Please upload the image of the allergen statement!")
-        .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
-          return !value || (value && value.size < 1024 * 1024 * 10);
-        })
-        .test(
-          "FILE_FORMAT",
-          "You can only upload JPG/JPEG/PNG files!",
-          (value) => {
-            return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          }
-        ),
-      labelPackageCorrect: yup.string().required(),
-      pictureOfBarcode: yup
-        .mixed()
-        .nullable()
-        .required("Please upload the image of the barcode")
+        .required("Please upload the picture of the sugar shelled batch!")
         .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
           return !value || (value && value.size < 1024 * 1024 * 10);
         })
@@ -354,13 +285,42 @@ const PnGQualityControlPage = (props) => {
           }
         ),
 
-      unitsCase: yup.string().required(),
-      salesOrderNumber: yup.string().required(),
-      caseLabel: yup.string().required(),
-      pictureOfBoxLabel: yup
+      pictureOfLabelInspectionFront: yup
         .mixed()
         .nullable()
-        .required("Please upload the image of the box label!")
+        .required("Please upload the picture of the label!")
+        .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
+          return !value || (value && value.size < 1024 * 1024 * 10);
+        })
+        .test(
+          "FILE_FORMAT",
+          "You can only upload JPG/JPEG/PNG files!",
+          (value) => {
+            return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
+          }
+        ),
+      pictureOfLabelInspectionBack: yup
+        .mixed()
+        .nullable()
+        .required("Please upload the picture of the label!")
+        .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
+          return !value || (value && value.size < 1024 * 1024 * 10);
+        })
+        .test(
+          "FILE_FORMAT",
+          "You can only upload JPG/JPEG/PNG files!",
+          (value) => {
+            return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
+          }
+        ),
+      currentWeightBox: yup
+        .string()
+        .required("Please enter the weight of the box!"),
+      isSealCorrectBox: yup.string().required(),
+      pictureOfAllergenStatementBox: yup
+        .mixed()
+        .nullable()
+        .required("Please upload the picture of the allergen statement!")
         .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
           return !value || (value && value.size < 1024 * 1024 * 10);
         })
@@ -372,7 +332,55 @@ const PnGQualityControlPage = (props) => {
           }
         ),
 
-      anyDeviations: yup.string().required(),
+      pictureOfLabelInspectionCase: yup
+        .mixed()
+        .nullable()
+        .required("Please upload the picture of the label!")
+        .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
+          return !value || (value && value.size < 1024 * 1024 * 10);
+        })
+        .test(
+          "FILE_FORMAT",
+          "You can only upload JPG/JPEG/PNG files!",
+          (value) => {
+            return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
+          }
+        ),
+      expirationDateCase: yup
+        .string()
+        .required("Please enter the expiration date on the case!"),
+      lotCodeCase: yup
+        .string()
+        .required("Please enter the lot code of the case!"),
+      pictureOfPattern: yup
+        .mixed()
+        .nullable()
+        .required("Please upload the picture of the case pattern!")
+        .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
+          return !value || (value && value.size < 1024 * 1024 * 10);
+        })
+        .test(
+          "FILE_FORMAT",
+          "You can only upload JPG/JPEG/PNG files!",
+          (value) => {
+            return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
+          }
+        ),
+
+      pictureOfChep: yup
+        .mixed()
+        .nullable()
+        .required("Please upload the picture of the pallet label!")
+        .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
+          return !value || (value && value.size < 1024 * 1024 * 10);
+        })
+        .test(
+          "FILE_FORMAT",
+          "You can only upload JPG/JPEG/PNG files!",
+          (value) => {
+            return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
+          }
+        ),
     }),
   });
 
@@ -496,7 +504,7 @@ const PnGQualityControlPage = (props) => {
                 <Typography fontWeight={600} fontSize={18}>
                   POUCH
                 </Typography>
-                <Typography fontWeight={600}>10 Items</Typography>
+                <Typography fontWeight={600}>11 Items</Typography>
               </Stack>
             </AccordionSummary>
             <AccordionDetails>
@@ -529,26 +537,26 @@ const PnGQualityControlPage = (props) => {
                     </Typography>
 
                     <UploadButton
-                      value={formik.values.pictureOfProduct}
+                      value={formik.values.pictureOfLabelInspectionPouch}
                       onFileChange={async function (fileObject, fileState) {
                         await formik.setFieldValue(
-                          "pictureOfProduct",
+                          "pictureOfLabelInspectionPouch",
                           fileObject
                         );
                         if (fileState) {
                           await formik.setTouched({
                             ...formik.touched,
-                            pictureOfProduct: true,
+                            pictureOfLabelInspectionPouch: true,
                           });
                         }
                       }}
                       error={
-                        !!formik.touched.pictureOfProduct &&
-                        !!formik.errors.pictureOfProduct
+                        !!formik.touched.pictureOfLabelInspectionPouch &&
+                        !!formik.errors.pictureOfLabelInspectionPouch
                       }
                       helperText={
-                        formik.touched.pictureOfProduct &&
-                        formik.errors.pictureOfProduct
+                        formik.touched.pictureOfLabelInspectionPouch &&
+                        formik.errors.pictureOfLabelInspectionPouch
                       }
                     />
                   </Stack>
@@ -563,26 +571,26 @@ const PnGQualityControlPage = (props) => {
                     </Typography>
 
                     <UploadButton
-                      value={formik.values.pictureOfProduct}
+                      value={formik.values.pictureOfExpiration}
                       onFileChange={async function (fileObject, fileState) {
                         await formik.setFieldValue(
-                          "pictureOfProduct",
+                          "pictureOfExpiration",
                           fileObject
                         );
                         if (fileState) {
                           await formik.setTouched({
                             ...formik.touched,
-                            pictureOfProduct: true,
+                            pictureOfExpiration: true,
                           });
                         }
                       }}
                       error={
-                        !!formik.touched.pictureOfProduct &&
-                        !!formik.errors.pictureOfProduct
+                        !!formik.touched.pictureOfExpiration &&
+                        !!formik.errors.pictureOfExpiration
                       }
                       helperText={
-                        formik.touched.pictureOfProduct &&
-                        formik.errors.pictureOfProduct
+                        formik.touched.pictureOfExpiration &&
+                        formik.errors.pictureOfExpiration
                       }
                     />
                   </Stack>
@@ -641,22 +649,25 @@ const PnGQualityControlPage = (props) => {
                       },
                       textField: {
                         error:
-                          !!formik.touched.expirationDate &&
-                          !!formik.errors.expirationDate,
+                          !!formik.touched.expirationDatePouch &&
+                          !!formik.errors.expirationDatePouch,
                         helperText:
-                          formik.touched.expirationDate &&
-                          formik.errors.expirationDate,
+                          formik.touched.expirationDatePouch &&
+                          formik.errors.expirationDatePouch,
                       },
                     }}
                     label="Expiration Date"
                     format="MM/YYYY"
                     formatDensity="spacious"
-                    value={moment(formik.values.expirationDate)}
+                    value={moment(formik.values.expirationDatePouch)}
                     onChange={(value) => {
                       if (value != null) {
-                        formik.setFieldValue("expirationDate", value.format());
+                        formik.setFieldValue(
+                          "expirationDatePouch",
+                          value.format()
+                        );
                       } else {
-                        formik.setFieldValue("expirationDate", "");
+                        formik.setFieldValue("expirationDatePouch", "");
                       }
                     }}
                     views={["year", "month"]}
@@ -670,10 +681,15 @@ const PnGQualityControlPage = (props) => {
                   label="Lot Code"
                   onBlur={formik.handleBlur}
                   onChange={formik.handleChange}
-                  value={formik.values.lotCode}
-                  name="lotCode"
-                  error={!!formik.touched.lotCode && !!formik.errors.lotCode}
-                  helperText={formik.touched.lotCode && formik.errors.lotCode}
+                  value={formik.values.lotCodePouch}
+                  name="lotCodePouch"
+                  error={
+                    !!formik.touched.lotCodePouch &&
+                    !!formik.errors.lotCodePouch
+                  }
+                  helperText={
+                    formik.touched.lotCodePouch && formik.errors.lotCodePouch
+                  }
                   sx={{ gridColumn: "span 4" }}
                 />
 
@@ -685,14 +701,15 @@ const PnGQualityControlPage = (props) => {
                   placeholder="0.00"
                   onBlur={formik.handleBlur}
                   onChange={formik.handleChange}
-                  value={formik.values.currentWeight}
-                  name="currentWeight"
+                  value={formik.values.currentWeightPouch}
+                  name="currentWeightPouch"
                   error={
-                    !!formik.touched.currentWeight &&
-                    !!formik.errors.currentWeight
+                    !!formik.touched.currentWeightPouch &&
+                    !!formik.errors.currentWeightPouch
                   }
                   helperText={
-                    formik.touched.currentWeight && formik.errors.currentWeight
+                    formik.touched.currentWeightPouch &&
+                    formik.errors.currentWeightPouch
                   }
                   sx={{ gridColumn: "span 4" }}
                   InputProps={{
@@ -760,17 +777,17 @@ const PnGQualityControlPage = (props) => {
                   fontWeight="600"
                   sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
                 >
-                  Sealing?
+                  Is sealing correct?
                 </Typography>
                 <ToggleButtonCheck
                   style={{ gridColumn: "span 4" }}
-                  alignment={formik.values.isNotchCorrect}
+                  alignment={formik.values.isSealCorrectPouch}
                   onChange={(value) => {
-                    formik.setFieldValue("isNotchCorrect", value);
+                    formik.setFieldValue("isSealCorrectPouch", value);
                   }}
                   error={
-                    !!formik.touched.isNotchCorrect &&
-                    !!formik.errors.isNotchCorrect
+                    !!formik.touched.isSealCorrectPouch &&
+                    !!formik.errors.isSealCorrectPouch
                   }
                   options={[
                     {
@@ -818,13 +835,13 @@ const PnGQualityControlPage = (props) => {
                 </Typography>
                 <ToggleButtonCheck
                   style={{ gridColumn: "span 4" }}
-                  alignment={formik.values.isNotchCorrect}
+                  alignment={formik.values.metalDetector}
                   onChange={(value) => {
-                    formik.setFieldValue("isNotchCorrect", value);
+                    formik.setFieldValue("metalDetector", value);
                   }}
                   error={
-                    !!formik.touched.isNotchCorrect &&
-                    !!formik.errors.isNotchCorrect
+                    !!formik.touched.metalDetector &&
+                    !!formik.errors.metalDetector
                   }
                   options={[
                     {
@@ -871,23 +888,26 @@ const PnGQualityControlPage = (props) => {
                   Allergen Statement
                 </Typography>
                 <UploadButton
-                  value={formik.values.pictureOfProduct}
+                  value={formik.values.pictureOfAllergenStatementPouch}
                   onFileChange={async function (fileObject, fileState) {
-                    await formik.setFieldValue("pictureOfProduct", fileObject);
+                    await formik.setFieldValue(
+                      "pictureOfAllergenStatementPouch",
+                      fileObject
+                    );
                     if (fileState) {
                       await formik.setTouched({
                         ...formik.touched,
-                        pictureOfProduct: true,
+                        pictureOfAllergenStatementPouch: true,
                       });
                     }
                   }}
                   error={
-                    !!formik.touched.pictureOfProduct &&
-                    !!formik.errors.pictureOfProduct
+                    !!formik.touched.pictureOfAllergenStatementPouch &&
+                    !!formik.errors.pictureOfAllergenStatementPouch
                   }
                   helperText={
-                    formik.touched.pictureOfProduct &&
-                    formik.errors.pictureOfProduct
+                    formik.touched.pictureOfAllergenStatementPouch &&
+                    formik.errors.pictureOfAllergenStatementPouch
                   }
                 />
 
@@ -900,23 +920,26 @@ const PnGQualityControlPage = (props) => {
                   Panning Batch
                 </Typography>
                 <UploadButton
-                  value={formik.values.pictureOfProduct}
+                  value={formik.values.pictureOfPanningBatch}
                   onFileChange={async function (fileObject, fileState) {
-                    await formik.setFieldValue("pictureOfProduct", fileObject);
+                    await formik.setFieldValue(
+                      "pictureOfPanningBatch",
+                      fileObject
+                    );
                     if (fileState) {
                       await formik.setTouched({
                         ...formik.touched,
-                        pictureOfProduct: true,
+                        pictureOfPanningBatch: true,
                       });
                     }
                   }}
                   error={
-                    !!formik.touched.pictureOfProduct &&
-                    !!formik.errors.pictureOfProduct
+                    !!formik.touched.pictureOfPanningBatch &&
+                    !!formik.errors.pictureOfPanningBatch
                   }
                   helperText={
-                    formik.touched.pictureOfProduct &&
-                    formik.errors.pictureOfProduct
+                    formik.touched.pictureOfPanningBatch &&
+                    formik.errors.pictureOfPanningBatch
                   }
                 />
 
@@ -929,23 +952,26 @@ const PnGQualityControlPage = (props) => {
                   Sugar Shelled Batch
                 </Typography>
                 <UploadButton
-                  value={formik.values.pictureOfProduct}
+                  value={formik.values.pictureOfSugarShelledBatch}
                   onFileChange={async function (fileObject, fileState) {
-                    await formik.setFieldValue("pictureOfProduct", fileObject);
+                    await formik.setFieldValue(
+                      "pictureOfSugarShelledBatch",
+                      fileObject
+                    );
                     if (fileState) {
                       await formik.setTouched({
                         ...formik.touched,
-                        pictureOfProduct: true,
+                        pictureOfSugarShelledBatch: true,
                       });
                     }
                   }}
                   error={
-                    !!formik.touched.pictureOfProduct &&
-                    !!formik.errors.pictureOfProduct
+                    !!formik.touched.pictureOfSugarShelledBatch &&
+                    !!formik.errors.pictureOfSugarShelledBatch
                   }
                   helperText={
-                    formik.touched.pictureOfProduct &&
-                    formik.errors.pictureOfProduct
+                    formik.touched.pictureOfSugarShelledBatch &&
+                    formik.errors.pictureOfSugarShelledBatch
                   }
                 />
               </Box>
@@ -966,7 +992,7 @@ const PnGQualityControlPage = (props) => {
                 <Typography fontWeight={600} fontSize={18}>
                   BOX
                 </Typography>
-                <Typography fontWeight={600}>9 Items</Typography>
+                <Typography fontWeight={600}>5 Items</Typography>
               </Stack>
             </AccordionSummary>
             <AccordionDetails>
@@ -998,26 +1024,26 @@ const PnGQualityControlPage = (props) => {
                       Label Inspection
                     </Typography>
                     <UploadButton
-                      value={formik.values.pictureOfProduct}
+                      value={formik.values.pictureOfLabelInspectionFront}
                       onFileChange={async function (fileObject, fileState) {
                         await formik.setFieldValue(
-                          "pictureOfProduct",
+                          "pictureOfLabelInspectionFront",
                           fileObject
                         );
                         if (fileState) {
                           await formik.setTouched({
                             ...formik.touched,
-                            pictureOfProduct: true,
+                            pictureOfLabelInspectionFront: true,
                           });
                         }
                       }}
                       error={
-                        !!formik.touched.pictureOfProduct &&
-                        !!formik.errors.pictureOfProduct
+                        !!formik.touched.pictureOfLabelInspectionFront &&
+                        !!formik.errors.pictureOfLabelInspectionFront
                       }
                       helperText={
-                        formik.touched.pictureOfProduct &&
-                        formik.errors.pictureOfProduct
+                        formik.touched.pictureOfLabelInspectionFront &&
+                        formik.errors.pictureOfLabelInspectionFront
                       }
                     />
                   </Stack>
@@ -1032,26 +1058,26 @@ const PnGQualityControlPage = (props) => {
                       Label Inspection
                     </Typography>
                     <UploadButton
-                      value={formik.values.pictureOfProduct}
+                      value={formik.values.pictureOfLabelInspectionBack}
                       onFileChange={async function (fileObject, fileState) {
                         await formik.setFieldValue(
-                          "pictureOfProduct",
+                          "pictureOfLabelInspectionBack",
                           fileObject
                         );
                         if (fileState) {
                           await formik.setTouched({
                             ...formik.touched,
-                            pictureOfProduct: true,
+                            pictureOfLabelInspectionBack: true,
                           });
                         }
                       }}
                       error={
-                        !!formik.touched.pictureOfProduct &&
-                        !!formik.errors.pictureOfProduct
+                        !!formik.touched.pictureOfLabelInspectionBack &&
+                        !!formik.errors.pictureOfLabelInspectionBack
                       }
                       helperText={
-                        formik.touched.pictureOfProduct &&
-                        formik.errors.pictureOfProduct
+                        formik.touched.pictureOfLabelInspectionBack &&
+                        formik.errors.pictureOfLabelInspectionBack
                       }
                     />
                   </Stack>
@@ -1065,14 +1091,15 @@ const PnGQualityControlPage = (props) => {
                   placeholder="0.00"
                   onBlur={formik.handleBlur}
                   onChange={formik.handleChange}
-                  value={formik.values.currentWeight}
-                  name="currentWeight"
+                  value={formik.values.currentWeightBox}
+                  name="currentWeightBox"
                   error={
-                    !!formik.touched.currentWeight &&
-                    !!formik.errors.currentWeight
+                    !!formik.touched.currentWeightBox &&
+                    !!formik.errors.currentWeightBox
                   }
                   helperText={
-                    formik.touched.currentWeight && formik.errors.currentWeight
+                    formik.touched.currentWeightBox &&
+                    formik.errors.currentWeightBox
                   }
                   sx={{ gridColumn: "span 4" }}
                   InputProps={{
@@ -1086,17 +1113,17 @@ const PnGQualityControlPage = (props) => {
                   fontWeight="600"
                   sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
                 >
-                  Sealing?
+                  Is sealing correct?
                 </Typography>
                 <ToggleButtonCheck
                   style={{ gridColumn: "span 4" }}
-                  alignment={formik.values.allergenStatement}
+                  alignment={formik.values.isSealCorrectBox}
                   onChange={(value) => {
-                    formik.setFieldValue("allergenStatement", value);
+                    formik.setFieldValue("isSealCorrectBox", value);
                   }}
                   error={
-                    !!formik.touched.allergenStatement &&
-                    !!formik.errors.allergenStatement
+                    !!formik.touched.isSealCorrectBox &&
+                    !!formik.errors.isSealCorrectBox
                   }
                   options={[
                     {
@@ -1144,26 +1171,26 @@ const PnGQualityControlPage = (props) => {
                 </Typography>
 
                 <UploadButton
-                  value={formik.values.pictureOfAllergenStatement}
+                  value={formik.values.pictureOfAllergenStatementBox}
                   onFileChange={async function (fileObject, fileState) {
                     await formik.setFieldValue(
-                      "pictureOfAllergenStatement",
+                      "pictureOfAllergenStatementBox",
                       fileObject
                     );
                     if (fileState) {
                       await formik.setTouched({
                         ...formik.touched,
-                        pictureOfAllergenStatement: true,
+                        pictureOfAllergenStatementBox: true,
                       });
                     }
                   }}
                   error={
-                    !!formik.touched.pictureOfAllergenStatement &&
-                    !!formik.errors.pictureOfAllergenStatement
+                    !!formik.touched.pictureOfAllergenStatementBox &&
+                    !!formik.errors.pictureOfAllergenStatementBox
                   }
                   helperText={
-                    formik.touched.pictureOfAllergenStatement &&
-                    formik.errors.pictureOfAllergenStatement
+                    formik.touched.pictureOfAllergenStatementBox &&
+                    formik.errors.pictureOfAllergenStatementBox
                   }
                 />
               </Box>
@@ -1214,23 +1241,26 @@ const PnGQualityControlPage = (props) => {
                 </Typography>
 
                 <UploadButton
-                  value={formik.values.pictureOfProduct}
+                  value={formik.values.pictureOfLabelInspectionCase}
                   onFileChange={async function (fileObject, fileState) {
-                    await formik.setFieldValue("pictureOfProduct", fileObject);
+                    await formik.setFieldValue(
+                      "pictureOfLabelInspectionCase",
+                      fileObject
+                    );
                     if (fileState) {
                       await formik.setTouched({
                         ...formik.touched,
-                        pictureOfProduct: true,
+                        pictureOfLabelInspectionCase: true,
                       });
                     }
                   }}
                   error={
-                    !!formik.touched.pictureOfProduct &&
-                    !!formik.errors.pictureOfProduct
+                    !!formik.touched.pictureOfLabelInspectionCase &&
+                    !!formik.errors.pictureOfLabelInspectionCase
                   }
                   helperText={
-                    formik.touched.pictureOfProduct &&
-                    formik.errors.pictureOfProduct
+                    formik.touched.pictureOfLabelInspectionCase &&
+                    formik.errors.pictureOfLabelInspectionCase
                   }
                 />
 
@@ -1287,22 +1317,25 @@ const PnGQualityControlPage = (props) => {
                       },
                       textField: {
                         error:
-                          !!formik.touched.expirationDate &&
-                          !!formik.errors.expirationDate,
+                          !!formik.touched.expirationDateCase &&
+                          !!formik.errors.expirationDateCase,
                         helperText:
-                          formik.touched.expirationDate &&
-                          formik.errors.expirationDate,
+                          formik.touched.expirationDateCase &&
+                          formik.errors.expirationDateCase,
                       },
                     }}
                     label="Expiration Date"
                     format="MM/YYYY"
                     formatDensity="spacious"
-                    value={moment(formik.values.expirationDate)}
+                    value={moment(formik.values.expirationDateCase)}
                     onChange={(value) => {
                       if (value != null) {
-                        formik.setFieldValue("expirationDate", value.format());
+                        formik.setFieldValue(
+                          "expirationDateCase",
+                          value.format()
+                        );
                       } else {
-                        formik.setFieldValue("expirationDate", "");
+                        formik.setFieldValue("expirationDateCase", "");
                       }
                     }}
                     views={["year", "month"]}
@@ -1316,10 +1349,14 @@ const PnGQualityControlPage = (props) => {
                   label="Lot Code"
                   onBlur={formik.handleBlur}
                   onChange={formik.handleChange}
-                  value={formik.values.lotCode}
-                  name="lotCode"
-                  error={!!formik.touched.lotCode && !!formik.errors.lotCode}
-                  helperText={formik.touched.lotCode && formik.errors.lotCode}
+                  value={formik.values.lotCodeCase}
+                  name="lotCodeCase"
+                  error={
+                    !!formik.touched.lotCodeCase && !!formik.errors.lotCodeCase
+                  }
+                  helperText={
+                    formik.touched.lotCodeCase && formik.errors.lotCodeCase
+                  }
                   sx={{ gridColumn: "span 4" }}
                 />
 
@@ -1332,23 +1369,23 @@ const PnGQualityControlPage = (props) => {
                   Pattern
                 </Typography>
                 <UploadButton
-                  value={formik.values.pictureOfBoxLabel}
+                  value={formik.values.pictureOfPattern}
                   onFileChange={async function (fileObject, fileState) {
-                    await formik.setFieldValue("pictureOfBoxLabel", fileObject);
+                    await formik.setFieldValue("pictureOfPattern", fileObject);
                     if (fileState) {
                       await formik.setTouched({
                         ...formik.touched,
-                        pictureOfBoxLabel: true,
+                        pictureOfPattern: true,
                       });
                     }
                   }}
                   error={
-                    !!formik.touched.pictureOfBoxLabel &&
-                    !!formik.errors.pictureOfBoxLabel
+                    !!formik.touched.pictureOfPattern &&
+                    !!formik.errors.pictureOfPattern
                   }
                   helperText={
-                    formik.touched.pictureOfBoxLabel &&
-                    formik.errors.pictureOfBoxLabel
+                    formik.touched.pictureOfPattern &&
+                    formik.errors.pictureOfPattern
                   }
                 />
               </Box>
@@ -1368,7 +1405,7 @@ const PnGQualityControlPage = (props) => {
                 <Typography fontWeight={600} fontSize={18}>
                   PALLET
                 </Typography>
-                <Typography fontWeight={600}>1 Items</Typography>
+                <Typography fontWeight={600}>1 Item</Typography>
               </Stack>
             </AccordionSummary>
             <AccordionDetails>
@@ -1398,23 +1435,22 @@ const PnGQualityControlPage = (props) => {
                   CHEP
                 </Typography>
                 <UploadButton
-                  value={formik.values.pictureOfBoxLabel}
+                  value={formik.values.pictureOfChep}
                   onFileChange={async function (fileObject, fileState) {
-                    await formik.setFieldValue("pictureOfBoxLabel", fileObject);
+                    await formik.setFieldValue("pictureOfChep", fileObject);
                     if (fileState) {
                       await formik.setTouched({
                         ...formik.touched,
-                        pictureOfBoxLabel: true,
+                        pictureOfChep: true,
                       });
                     }
                   }}
                   error={
-                    !!formik.touched.pictureOfBoxLabel &&
-                    !!formik.errors.pictureOfBoxLabel
+                    !!formik.touched.pictureOfChep &&
+                    !!formik.errors.pictureOfChep
                   }
                   helperText={
-                    formik.touched.pictureOfBoxLabel &&
-                    formik.errors.pictureOfBoxLabel
+                    formik.touched.pictureOfChep && formik.errors.pictureOfChep
                   }
                 />
               </Box>
@@ -1436,4 +1472,4 @@ const PnGQualityControlPage = (props) => {
   );
 };
 
-export default PnGQualityControlPage;
+export default PGQualityControlPage;
