@@ -517,35 +517,76 @@ const PnGQualityControlPage = (props) => {
                   },
                 }}
               >
-                <Typography
-                  variant="h6"
-                  color={colors.grey[100]}
-                  fontWeight="600"
-                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
-                >
-                  Label Inspection
-                </Typography>
+                <Stack spacing={2} direction="row">
+                  <Stack spacing={1.5}>
+                    <Typography
+                      variant="h6"
+                      color={colors.grey[100]}
+                      fontWeight="600"
+                      sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                    >
+                      Label Inspection
+                    </Typography>
 
-                <UploadButton
-                  value={formik.values.pictureOfProduct}
-                  onFileChange={async function (fileObject, fileState) {
-                    await formik.setFieldValue("pictureOfProduct", fileObject);
-                    if (fileState) {
-                      await formik.setTouched({
-                        ...formik.touched,
-                        pictureOfProduct: true,
-                      });
-                    }
-                  }}
-                  error={
-                    !!formik.touched.pictureOfProduct &&
-                    !!formik.errors.pictureOfProduct
-                  }
-                  helperText={
-                    formik.touched.pictureOfProduct &&
-                    formik.errors.pictureOfProduct
-                  }
-                />
+                    <UploadButton
+                      value={formik.values.pictureOfProduct}
+                      onFileChange={async function (fileObject, fileState) {
+                        await formik.setFieldValue(
+                          "pictureOfProduct",
+                          fileObject
+                        );
+                        if (fileState) {
+                          await formik.setTouched({
+                            ...formik.touched,
+                            pictureOfProduct: true,
+                          });
+                        }
+                      }}
+                      error={
+                        !!formik.touched.pictureOfProduct &&
+                        !!formik.errors.pictureOfProduct
+                      }
+                      helperText={
+                        formik.touched.pictureOfProduct &&
+                        formik.errors.pictureOfProduct
+                      }
+                    />
+                  </Stack>
+                  <Stack spacing={1.5}>
+                    <Typography
+                      variant="h6"
+                      color={colors.grey[100]}
+                      fontWeight="600"
+                      sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                    >
+                      Picture of Expiration Date
+                    </Typography>
+
+                    <UploadButton
+                      value={formik.values.pictureOfProduct}
+                      onFileChange={async function (fileObject, fileState) {
+                        await formik.setFieldValue(
+                          "pictureOfProduct",
+                          fileObject
+                        );
+                        if (fileState) {
+                          await formik.setTouched({
+                            ...formik.touched,
+                            pictureOfProduct: true,
+                          });
+                        }
+                      }}
+                      error={
+                        !!formik.touched.pictureOfProduct &&
+                        !!formik.errors.pictureOfProduct
+                      }
+                      helperText={
+                        formik.touched.pictureOfProduct &&
+                        formik.errors.pictureOfProduct
+                      }
+                    />
+                  </Stack>
+                </Stack>
 
                 <LocalizationProvider dateAdapter={AdapterMoment}>
                   <DatePicker
@@ -634,6 +675,29 @@ const PnGQualityControlPage = (props) => {
                   error={!!formik.touched.lotCode && !!formik.errors.lotCode}
                   helperText={formik.touched.lotCode && formik.errors.lotCode}
                   sx={{ gridColumn: "span 4" }}
+                />
+
+                <TextField
+                  variant="filled"
+                  type="number"
+                  aria-valuemin={2}
+                  label="Current Weight"
+                  placeholder="0.00"
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  value={formik.values.currentWeight}
+                  name="currentWeight"
+                  error={
+                    !!formik.touched.currentWeight &&
+                    !!formik.errors.currentWeight
+                  }
+                  helperText={
+                    formik.touched.currentWeight && formik.errors.currentWeight
+                  }
+                  sx={{ gridColumn: "span 4" }}
+                  InputProps={{
+                    inputProps: { inputMode: "decimal", min: 0, step: 0.01 },
+                  }}
                 />
 
                 <Typography
@@ -744,29 +808,6 @@ const PnGQualityControlPage = (props) => {
                   ]}
                 />
 
-                <TextField
-                  variant="filled"
-                  type="number"
-                  aria-valuemin={2}
-                  label="Current Weight"
-                  placeholder="0.00"
-                  onBlur={formik.handleBlur}
-                  onChange={formik.handleChange}
-                  value={formik.values.currentWeight}
-                  name="currentWeight"
-                  error={
-                    !!formik.touched.currentWeight &&
-                    !!formik.errors.currentWeight
-                  }
-                  helperText={
-                    formik.touched.currentWeight && formik.errors.currentWeight
-                  }
-                  sx={{ gridColumn: "span 4" }}
-                  InputProps={{
-                    inputProps: { inputMode: "decimal", min: 0, step: 0.01 },
-                  }}
-                />
-
                 <Typography
                   variant="h6"
                   color={colors.grey[100]}
@@ -829,7 +870,64 @@ const PnGQualityControlPage = (props) => {
                 >
                   Allergen Statement
                 </Typography>
+                <UploadButton
+                  value={formik.values.pictureOfProduct}
+                  onFileChange={async function (fileObject, fileState) {
+                    await formik.setFieldValue("pictureOfProduct", fileObject);
+                    if (fileState) {
+                      await formik.setTouched({
+                        ...formik.touched,
+                        pictureOfProduct: true,
+                      });
+                    }
+                  }}
+                  error={
+                    !!formik.touched.pictureOfProduct &&
+                    !!formik.errors.pictureOfProduct
+                  }
+                  helperText={
+                    formik.touched.pictureOfProduct &&
+                    formik.errors.pictureOfProduct
+                  }
+                />
 
+                <Typography
+                  variant="h6"
+                  color={colors.grey[100]}
+                  fontWeight="600"
+                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                >
+                  Panning Batch
+                </Typography>
+                <UploadButton
+                  value={formik.values.pictureOfProduct}
+                  onFileChange={async function (fileObject, fileState) {
+                    await formik.setFieldValue("pictureOfProduct", fileObject);
+                    if (fileState) {
+                      await formik.setTouched({
+                        ...formik.touched,
+                        pictureOfProduct: true,
+                      });
+                    }
+                  }}
+                  error={
+                    !!formik.touched.pictureOfProduct &&
+                    !!formik.errors.pictureOfProduct
+                  }
+                  helperText={
+                    formik.touched.pictureOfProduct &&
+                    formik.errors.pictureOfProduct
+                  }
+                />
+
+                <Typography
+                  variant="h6"
+                  color={colors.grey[100]}
+                  fontWeight="600"
+                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                >
+                  Sugar Shelled Batch
+                </Typography>
                 <UploadButton
                   value={formik.values.pictureOfProduct}
                   onFileChange={async function (fileObject, fileState) {
@@ -889,35 +987,75 @@ const PnGQualityControlPage = (props) => {
                   },
                 }}
               >
-                <Typography
-                  variant="h6"
-                  color={colors.grey[100]}
-                  fontWeight="600"
-                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
-                >
-                  Label Inspection
-                </Typography>
+                <Stack spacing={2} direction="row">
+                  <Stack spacing={1.5}>
+                    <Typography
+                      variant="h6"
+                      color={colors.grey[100]}
+                      fontWeight="600"
+                      sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                    >
+                      Label Inspection
+                    </Typography>
+                    <UploadButton
+                      value={formik.values.pictureOfProduct}
+                      onFileChange={async function (fileObject, fileState) {
+                        await formik.setFieldValue(
+                          "pictureOfProduct",
+                          fileObject
+                        );
+                        if (fileState) {
+                          await formik.setTouched({
+                            ...formik.touched,
+                            pictureOfProduct: true,
+                          });
+                        }
+                      }}
+                      error={
+                        !!formik.touched.pictureOfProduct &&
+                        !!formik.errors.pictureOfProduct
+                      }
+                      helperText={
+                        formik.touched.pictureOfProduct &&
+                        formik.errors.pictureOfProduct
+                      }
+                    />
+                  </Stack>
 
-                <UploadButton
-                  value={formik.values.pictureOfProduct}
-                  onFileChange={async function (fileObject, fileState) {
-                    await formik.setFieldValue("pictureOfProduct", fileObject);
-                    if (fileState) {
-                      await formik.setTouched({
-                        ...formik.touched,
-                        pictureOfProduct: true,
-                      });
-                    }
-                  }}
-                  error={
-                    !!formik.touched.pictureOfProduct &&
-                    !!formik.errors.pictureOfProduct
-                  }
-                  helperText={
-                    formik.touched.pictureOfProduct &&
-                    formik.errors.pictureOfProduct
-                  }
-                />
+                  <Stack spacing={1.5}>
+                    <Typography
+                      variant="h6"
+                      color={colors.grey[100]}
+                      fontWeight="600"
+                      sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                    >
+                      Label Inspection
+                    </Typography>
+                    <UploadButton
+                      value={formik.values.pictureOfProduct}
+                      onFileChange={async function (fileObject, fileState) {
+                        await formik.setFieldValue(
+                          "pictureOfProduct",
+                          fileObject
+                        );
+                        if (fileState) {
+                          await formik.setTouched({
+                            ...formik.touched,
+                            pictureOfProduct: true,
+                          });
+                        }
+                      }}
+                      error={
+                        !!formik.touched.pictureOfProduct &&
+                        !!formik.errors.pictureOfProduct
+                      }
+                      helperText={
+                        formik.touched.pictureOfProduct &&
+                        formik.errors.pictureOfProduct
+                      }
+                    />
+                  </Stack>
+                </Stack>
 
                 <TextField
                   variant="filled"
