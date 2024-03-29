@@ -14,7 +14,7 @@ import DirectObservationMetalDetectorPage from "../components/directObservationM
 import ViewDirectObservationMetalDetectorPage from "../components/directObservationMetalDetectorPage/viewDirectObservationMetalDetectorPage.js";
 import DirectObservationLabelInspectionPage from "../components/directObservationLabelInspectionPage copy/directObservationLabelInspectionPage.js";
 import ViewDirectObservationLabelInspectionPage from "../components/directObservationLabelInspectionPage copy/viewDirectObservationLabelInspectionPage.js";
-import PGQualityControlPage from "../components/pandgQualityControlPage/pgQualityControlPage.js";
+import PGQualityControlPage from "../components/pgQualityControlPage/pgQualityControlPage.js";
 
 const BarLayout = () => {
   const [theme, colorMode] = useMode();
