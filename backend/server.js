@@ -55,6 +55,7 @@ db.once("open", function () {
 
   app.use("/", authentication);
   app.use("/", authorization);
+  app.use("/", user);
 
   app.use("/", user);
   app.use("/", dashboard);
