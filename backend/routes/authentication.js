@@ -1,5 +1,5 @@
 const express = require("express");
-const md5 = require("md5");
+const fetch = require("node-fetch");
 const uuid = require("uuid");
 
 const tokenModel = require("../models/tokenModel");
