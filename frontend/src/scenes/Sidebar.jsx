@@ -24,13 +24,23 @@ import { useRecoilState } from "recoil";
 
 import axios from "../api/axios";
 
-const Item = ({ title, to, icon, selected, setSelected, sub, parentTitle }) => {
+const Item = ({
+  title,
+  to,
+  icon,
+  selected,
+  setSelected,
+  sub,
+  parentTitle,
+  disabled,
+}) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
 
   return (
     <MenuItem
+      disabled={disabled}
       active={selected === title}
       style={{
         color: colors.grey[100],

@@ -33,6 +33,7 @@ const DashboardPage = (props) => {
   const [qualityControlForms, setQualityControlForms] = useState([]);
   const [metalDetectorForms, setMetalDetectorForms] = useState([]);
   const [labelInspectionForms, setLabelInspectionForms] = useState([]);
+  const [pgQualityControlForms, setPGQualityControlForms] = useState([]);
 
   const [locations, setLocations] = useState([]);
   const [dataSource, setDataSource] = useState([]);
@@ -51,6 +52,7 @@ const DashboardPage = (props) => {
       console.log(res.data.locations);
       setRatioForms(res.data.ratioForms);
       setQualityControlForms(res.data.qualityControlForms);
+      setPGQualityControlForms(res.data.pgQualityControlForms);
       setMetalDetectorForms(res.data.metalDetectorForms);
       setLabelInspectionForms(res.data.labelInspectionForms);
     } else {
@@ -260,6 +262,60 @@ const DashboardPage = (props) => {
                                   >
                                     {toStringDate(
                                       qualityControlForm.createdAt,
+                                      {
+                                        hour: "numeric",
+                                        minute: "numeric",
+                                      }
+                                    )}
+                                  </Typography>
+                                </Stack>
+                              </CardContent>
+                            </CardActionArea>
+                          </Card>
+                        );
+                      })}
+                    {pgQualityControlForms
+                      .filter(
+                        (pgqualityControlForm) =>
+                          pgqualityControlForm.station === location.name
+                      )
+                      .map((pgqualityControlForm, i) => {
+                        return (
+                          <Card
+                            key={i}
+                            sx={{
+                              background: colors.ciboInnerGreen[500],
+                              width: 200,
+                              height: 75,
+                            }}
+                          >
+                            <CardActionArea
+                              sx={{ height: "100%" }}
+                              onClick={() => {
+                                navigate(
+                                  "/pgqualitycontrol/" +
+                                    pgqualityControlForm._id
+                                );
+                              }}
+                            >
+                              <CardContent sx={{ paddingTop: 1 }}>
+                                <Stack spacing={0}>
+                                  <Typography
+                                    variant="h6"
+                                    fontWeight="bold"
+                                    color={colors.primary[400]}
+                                    sx={{ textAlign: "center" }}
+                                  >
+                                    P&G Quality Check
+                                  </Typography>
+                                  <Typography
+                                    variant="h6"
+                                    fontWeight="bold"
+                                    color={colors.primary[400]}
+                                    sx={{ textAlign: "center" }}
+                                  >
+                                    {toStringDate(
+                                      pgqualityControlForm.createdAt,
                                       {
                                         hour: "numeric",
                                         minute: "numeric",

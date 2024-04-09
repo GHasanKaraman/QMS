@@ -9,16 +9,18 @@ import { useSnackbar } from "notistack";
 import logo from "../../images/logo.png";
 import factory from "../../images/factory.gif";
 
+import { userInformations } from "../../atoms/userAtom";
+import { useRecoilState } from "recoil";
+
 import "./login.css";
-import api from "axios";
 import axios from "../../api/axios";
-import userAuth from "../../utils/userAuth";
 
 const LoginPage = (props) => {
   const theme = useTheme();
 
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const [user, setUser] = useRecoilState(userInformations);
 
   useEffect(() => {
     document.title = props.title || "";
@@ -53,6 +55,11 @@ const LoginPage = (props) => {
       axios.addToken(res.data.token.token);
       localStorage.setItem("username", res.data.token.userName);
       localStorage.setItem("access", res.data.token.access);
+      setUser({
+        username: res.data.token.userName,
+        access: res.data.token.access,
+      });
+
       navigate("/dashboard");
     } else {
       switch (res.response?.status) {

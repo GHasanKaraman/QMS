@@ -14,6 +14,8 @@ import DirectObservationMetalDetectorPage from "../components/directObservationM
 import ViewDirectObservationMetalDetectorPage from "../components/directObservationMetalDetectorPage/viewDirectObservationMetalDetectorPage.js";
 import DirectObservationLabelInspectionPage from "../components/directObservationLabelInspectionPage copy/directObservationLabelInspectionPage.js";
 import ViewDirectObservationLabelInspectionPage from "../components/directObservationLabelInspectionPage copy/viewDirectObservationLabelInspectionPage.js";
+import PGQualityControlPage from "../components/pgQualityControlPage/pgQualityControlPage.js";
+import ViewPGQualityControlPage from "../components/pgQualityControlPage/viewQualityControlPage.js";
 
 const BarLayout = () => {
   const [theme, colorMode] = useMode();
@@ -79,6 +81,21 @@ const Router = () => {
           path="/qualitycontrol/:id"
           element={
             <ViewQualityControlPage title="CiboQA | Data Sheet Results" />
+          }
+        />
+
+        <Route
+          exact
+          path="/pgqualitycontrol"
+          element={
+            <PGQualityControlPage title="CiboQA | P&G Quality Control Inspection" />
+          }
+        />
+        <Route
+          exact
+          path="/pgqualitycontrol/:id"
+          element={
+            <ViewPGQualityControlPage title="CiboQA | Data Sheet Results" />
           }
         />
 

@@ -57,6 +57,7 @@ db.once("open", function () {
   app.use("/", authorization);
   app.use("/", user);
 
+  app.use("/", user);
   app.use("/", dashboard);
   app.use("/", qualityControlForm);
   app.use("/", pgqualitycontrol);

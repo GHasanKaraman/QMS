@@ -142,7 +142,7 @@ const QualityControlPage = (props) => {
         enqueueSnackbar("You have successfully created the form!", {
           variant: "success",
         });
-        resetForm();
+        //resetForm();
       } else {
         switch (res.response?.status) {
           case 404:
