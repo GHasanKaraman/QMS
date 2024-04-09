@@ -5,6 +5,7 @@ const ratioFormModel = require("../models/ratioFormModel");
 const qualityControlFormModel = require("../models/qualityControlFormModel");
 const metalDetectorFormModel = require("../models/metalDetectorFormModel");
 const labelInspectionFormModel = require("../models/labelInspectionFormModel");
+const pgQualityControlFormModel = require("../models/pgQualityControlFormModel");
 
 router.use("/dashboard", async (req, res) => {
   try {
@@ -12,17 +13,34 @@ router.use("/dashboard", async (req, res) => {
       method: "GET",
     });
 
+    var now = new Date();
+    var startOfToday = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate()
+    );
+
     const data = await resp.json();
     const ratioForms = await ratioFormModel.find({});
-    const qualityControlForms = await qualityControlFormModel.find({});
-    const metalDetectorForms = await metalDetectorFormModel.find({});
-    const labelInspectionForms = await labelInspectionFormModel.find({});
+    const qualityControlForms = await qualityControlFormModel.find({
+      createdAt: { $gte: startOfToday },
+    });
+    const pgQualityControlForms = await pgQualityControlFormModel.find({
+      createdAt: { $gte: startOfToday },
+    }); //
+    const metalDetectorForms = await metalDetectorFormModel.find({
+      createdAt: { $gte: startOfToday },
+    });
+    const labelInspectionForms = await labelInspectionFormModel.find({
+      createdAt: { $gte: startOfToday },
+    });
     if (
       data &&
       ratioForms &&
       qualityControlForms &&
       metalDetectorForms &&
-      labelInspectionForms
+      labelInspectionForms &&
+      pgQualityControlForms
     ) {
       res.status(200).json({
         locations: data,
@@ -30,6 +48,7 @@ router.use("/dashboard", async (req, res) => {
         qualityControlForms: qualityControlForms,
         metalDetectorForms: metalDetectorForms,
         labelInspectionForms: labelInspectionForms,
+        pgQualityControlForms: pgQualityControlForms,
       });
       console.log("Fetched all locations from OC DB!");
     } else {
