@@ -6,13 +6,13 @@ const moment = require("moment-timezone");
 
 var morgan = require("morgan");
 const chalk = require("chalk");
-const md5 = require("md5");
 
 const authentication = require("./routes/authentication.js");
 const authorization = require("./routes/authorization.js");
+const user = require("./routes/user.js");
 const dashboard = require("./routes/dashboard.js");
 const qualityControlForm = require("./routes/qualityControlForm.js");
-const pgQualityControlForm = require("./routes/pgQualityControlForm.js");
+const pgqualitycontrol = require("./routes/pgQualityControlForm.js");
 const metalDetectorForm = require("./routes/metalDetectorForm.js");
 const labelInspectionForm = require("./routes/labelInspectionForm.js");
 const ratioForm = require("./routes/ratioForm.js");
@@ -36,45 +36,6 @@ db.once("open", function () {
   app.use(bodyParser.json());
   app.use(cors());
 
-  if (process.env.NODE_ENV == "production") {
-    var accessLogStream = fs.createWriteStream("./access.log", { flags: "a" });
-    app.use(
-      morgan({
-        format:
-          "[:date[clf]] :remote-addr :method :url :status :response-time ms",
-        stream: {
-          write: function (str) {
-            accessLogStream.write(str);
-            console.log(str);
-          },
-        },
-      })
-    );
-  } else {
-    app.use(
-      morgan(function (tokens, req, res) {
-        return [
-          "\n",
-          chalk.hex("#ff4757").bold("🍄  Morgan --> "),
-          chalk.hex("#34ace0").bold(tokens.method(req, res)),
-          chalk.hex("#ffb142").bold(tokens.status(req, res)),
-          chalk.hex("#ff5252").bold(tokens.url(req, res)),
-          chalk.hex("#2ed573").bold(tokens["response-time"](req, res) + " ms"),
-          chalk
-            .hex("#f78fb3")
-            .bold(
-              "@ " +
-                moment(tokens.date(req, res)).tz("America/New_York").format()
-            ),
-          chalk.yellow(tokens["remote-addr"](req, res)),
-          chalk.hex("#fffa65").bold("from " + tokens.referrer(req, res)),
-          chalk.hex("#1e90ff")(tokens["user-agent"](req, res)),
-          "\n",
-        ].join(" ");
-      })
-    );
-  }
-
   app.use((req, res, next) => {
     if ("OPTIONS" === req.method) {
       res.sendStatus(200);
@@ -86,15 +47,19 @@ db.once("open", function () {
   app.use("/imgs", express.static(__dirname + "/imgs"));
 
   app.get("/", async (req, res) => {
-    res.send("<h2 style = color:green>Listening port...</h2>");
+    //res.send("<h2 style = color:green>Listening port...</h2>");
+    res.send(
+      "<div style='width:100%;text-align:center'><img width='50%' src='/utils/logo.png'/><h1 style = color:green>Server is running...</h1></div>"
+    );
   });
 
   app.use("/", authentication);
   app.use("/", authorization);
+  app.use("/", user);
 
   app.use("/", dashboard);
-  app.use("/", pgQualityControlForm);
   app.use("/", qualityControlForm);
+  app.use("/", pgqualitycontrol);
   app.use("/", metalDetectorForm);
   app.use("/", labelInspectionForm);
   app.use("/", ratioForm);

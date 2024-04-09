@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Sidebar as ProSidebar,
   Menu,
@@ -19,10 +19,16 @@ import CollectionsBookmarkIcon from "@mui/icons-material/CollectionsBookmark";
 
 import logo from "../images/logo.png";
 
+import { userInformations } from "../atoms/userAtom";
+import { useRecoilState } from "recoil";
+
+import axios from "../api/axios";
+
 const Item = ({ title, to, icon, selected, setSelected, sub, parentTitle }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
+
   return (
     <MenuItem
       active={selected === title}
@@ -76,6 +82,20 @@ const Sidebar = () => {
     })()
   );
   const [selected, setSelected] = useState("Dashboard");
+  const [user, setUser] = useRecoilState(userInformations);
+
+  const loadUser = async () => {
+    const response = await axios.post("/user/get", null);
+    return response;
+  };
+
+  useEffect(() => {
+    if (user?.username === "") {
+      loadUser().then((res) => {
+        setUser({ username: res.data.username, access: res.data.access });
+      });
+    }
+  });
 
   return (
     <Box
@@ -110,11 +130,11 @@ const Sidebar = () => {
               src={logo}
               width="75%"
               alt="logo"
-              style={{ pointerEvents: "none" }}
+              style={{ pointerEvents: "none", marginBottom: "-15px" }}
             />
             {!isCollapsed ? (
               <Typography variant="h6" color={colors.grey[100]}>
-                v0.2b
+                v0.3b
               </Typography>
             ) : null}
           </div>
@@ -162,14 +182,14 @@ const Sidebar = () => {
                   fontWeight="bold"
                   sx={{ m: "10px 0 0 0" }}
                 >
-                  Gurkan
+                  {user.username}
                 </Typography>
                 <Typography
                   variant="h5"
                   fontWeight="600"
                   color={colors.ciboInnerGreen[500]}
                 >
-                  Admin Developer
+                  QC
                 </Typography>
               </Box>
             </Box>
@@ -195,6 +215,13 @@ const Sidebar = () => {
               title="Quality Control"
               to="/qualitycontrol"
               icon={<ContentPasteSearchIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Quality Check"
+              to="/pgqualitycontrol"
+              icon={<div style={{ fontWeight: "600" }}>P&G</div>}
               selected={selected}
               setSelected={setSelected}
             />
