@@ -25,6 +25,7 @@ import userAuth from "../../utils/userAuth";
 import { Accordion, AccordionDetails, AccordionSummary } from "../Accordion";
 import Label from "../Label";
 import StatusIndicator from "../StatusIndicator";
+import CommentAccordion from "../CommentAccordion";
 
 import "../formStatus.css";
 
@@ -293,6 +294,7 @@ const ViewDirectObservationMetalDetectorPage = (props) => {
           </Stack>
         </AccordionDetails>
       </Accordion>
+      <CommentAccordion formID={id} form="directObservationMetalDetector" />
     </Box>
   );
 };

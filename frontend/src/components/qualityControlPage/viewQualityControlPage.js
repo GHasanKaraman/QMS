@@ -28,6 +28,7 @@ import Label from "../Label";
 import LabelResult from "../LabelResult";
 import StatusIndicator from "../StatusIndicator";
 import ImageLabel from "../ImageLabel";
+import CommentAccordion from "../CommentAccordion";
 
 const ViewQualityControlPage = (props) => {
   const params = useParams();
@@ -791,7 +792,11 @@ const ViewQualityControlPage = (props) => {
           <Stack direction="row" justifyContent="space-between">
             <Label
               title="Sales Order Number"
-              subtitle={data?.salesOrderNumber}
+              subtitle={
+                data?.salesOrderNumber === "No"
+                  ? "Not Given"
+                  : data?.salesOrderNumber
+              }
             />
             <StatusIndicator status={data?.unitsCase === "Yes"} />
           </Stack>
@@ -809,7 +814,11 @@ const ViewQualityControlPage = (props) => {
             <StatusIndicator status={data?.caseLabel !== "No"} />
           </Stack>
           <Divider />
-          <Stack direction="row" justifyContent="space-between">
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            style={{ display: data?.caseLabel === "Yes" ? "block" : "none" }}
+          >
             <ImageLabel
               title="Picture Of Box-Label"
               folderIndex={images[6]?.folderIndex}
@@ -835,6 +844,7 @@ const ViewQualityControlPage = (props) => {
           </Stack>
         </AccordionDetails>
       </Accordion>
+      <CommentAccordion formID={id} form="qualityControl" />
     </Box>
   );
 };

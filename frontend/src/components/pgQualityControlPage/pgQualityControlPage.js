@@ -12,7 +12,6 @@ import {
   Stack,
   Backdrop,
   CircularProgress,
-  Chip,
 } from "@mui/material";
 
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
@@ -20,8 +19,6 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CloseIcon from "@mui/icons-material/Close";
-import InventoryIcon from "@mui/icons-material/Inventory";
-import ScaleIcon from "@mui/icons-material/Scale";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
@@ -48,17 +45,12 @@ const PGQualityControlPage = (props) => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
-  const [stations, setStations] = useState([
-    { name: "MAC-FW1", type: "Multipacks" },
-  ]);
+  const [stations, _] = useState([{ name: "MAC-FW1", type: "Multipacks" }]);
   const [products, setProducts] = useState([]);
   const [productDetails, setProductDetails] = useState(null);
   const [open, setOpen] = useState(false);
 
-  const [xRayState, setXRayState] = useState(null);
-  const [metalCardState, setMetalCardState] = useState(null);
-  const [metalBallStateSingle, setMetalBallStateSingle] = useState(null);
-  const [metalBallStateMultiple, setMetalBallStateMultiple] = useState(null);
+  const [metalBallState, setMetalBallState] = useState(null);
 
   useEffect(() => {
     document.title = props.title || "";
@@ -157,6 +149,9 @@ const PGQualityControlPage = (props) => {
     initialValues: {
       station: null,
       product: null,
+
+      rawProduct: null,
+      areIngredientsCorrect: null,
       pictureOfLabelInspectionPouch: null,
       pictureOfExpiration: null,
       expirationDatePouch: "",
@@ -164,7 +159,12 @@ const PGQualityControlPage = (props) => {
       currentWeightPouch: "",
       isNotchCorrect: null,
       isSealCorrectPouch: null,
+
       metalDetector: null,
+      metalBallFeDetected: null,
+      metalBallNonFeDetected: null,
+      metalBallSsDetected: null,
+
       pictureOfAllergenStatementPouch: null,
       pictureOfPanningBatch: null,
       pictureOfSugarShelledBatch: null,
@@ -198,6 +198,20 @@ const PGQualityControlPage = (props) => {
               }
             }
             return false;
+          }
+        ),
+      rawProduct: yup
+        .mixed()
+        .nullable()
+        .required("Please upload the picture of the raw product!")
+        .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
+          return !value || (value && value.size < 1024 * 1024 * 10);
+        })
+        .test(
+          "FILE_FORMAT",
+          "You can only upload JPG/JPEG/PNG files!",
+          (value) => {
+            return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
           }
         ),
       pictureOfLabelInspectionPouch: yup
@@ -241,7 +255,15 @@ const PGQualityControlPage = (props) => {
         .required("Please enter the weight of the pouch!"),
       isSealCorrectPouch: yup.string().required(),
       isNotchCorrect: yup.string().required(),
+
       metalDetector: yup.string().required(),
+      metalBallFeDetected:
+        metalBallState === "Yes" ? yup.string().required() : undefined,
+      metalBallNonFeDetected:
+        metalBallState === "Yes" ? yup.string().required() : undefined,
+      metalBallSsDetected:
+        metalBallState === "Yes" ? yup.string().required() : undefined,
+
       pictureOfAllergenStatementPouch: yup
         .mixed()
         .nullable()
@@ -408,7 +430,14 @@ const PGQualityControlPage = (props) => {
       <Header title="P&G Quality Check" subtitle="Please fill out the form" />
 
       <form
-        onSubmit={formik.handleSubmit}
+        onSubmit={(e) => {
+          if (!formik.isValid && !formik.isValidating) {
+            enqueueSnackbar("Please fill out all the missing fields!", {
+              variant: "error",
+            });
+          }
+          formik.handleSubmit(e);
+        }}
         style={{ paddingBottom: "10px" }}
         encType="multipart/form-data"
       >
@@ -495,16 +524,20 @@ const PGQualityControlPage = (props) => {
           }}
         >
           <Accordion defaultExpanded>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <AccordionSummary
+              aria-controls="panel4d-content"
+              id="panel4d-header"
+              expandIcon={<ExpandMoreIcon />}
+            >
               <Stack
                 direction="row"
                 justifyContent="space-between"
                 width="100%"
               >
                 <Typography fontWeight={600} fontSize={18}>
-                  POUCH
+                  METAL DETECTOR BALLS CHECK
                 </Typography>
-                <Typography fontWeight={600}>11 Items</Typography>
+                <Typography fontWeight={600}>4 Items</Typography>
               </Stack>
             </AccordionSummary>
             <AccordionDetails>
@@ -525,6 +558,288 @@ const PGQualityControlPage = (props) => {
                   },
                 }}
               >
+                <Typography
+                  variant="h6"
+                  color={colors.grey[100]}
+                  fontWeight="600"
+                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                >
+                  METAL DETECTOR BALL REQUIRED?
+                </Typography>
+                <ToggleButtonCheck
+                  style={{ gridColumn: "span 4" }}
+                  alignment={formik.values.metalDetector}
+                  onChange={(value) => {
+                    formik.setFieldValue("metalDetector", value);
+                    setMetalBallState(value);
+                  }}
+                  error={
+                    !!formik.touched.metalDetector &&
+                    !!formik.errors.metalDetector
+                  }
+                  options={[
+                    {
+                      label: "Yes",
+                    },
+                    {
+                      label: "No",
+                    },
+                  ]}
+                />
+                <Stack
+                  direction="column"
+                  spacing={1.5}
+                  style={{
+                    display:
+                      formik.values.metalDetector === "Yes" ? "block" : "none",
+                  }}
+                >
+                  <Typography
+                    variant="h6"
+                    color={colors.grey[100]}
+                    fontWeight="600"
+                    sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                  >
+                    Fe 3.00 mm detected?
+                  </Typography>
+                  <ToggleButtonCheck
+                    style={{ gridColumn: "span 4" }}
+                    alignment={formik.values.metalBallFeDetected}
+                    onChange={(value) => {
+                      formik.setFieldValue("metalBallFeDetected", value);
+                    }}
+                    error={
+                      !!formik.touched.metalBallFeDetected &&
+                      !!formik.errors.metalBallFeDetected
+                    }
+                    options={[
+                      {
+                        label: "Yes",
+                        icon: (
+                          <CheckBoxIcon
+                            sx={{
+                              fill: colors.ciboInnerGreen[500],
+                            }}
+                          />
+                        ),
+                      },
+                      {
+                        label: "No",
+                        icon: (
+                          <CloseIcon
+                            sx={{
+                              color: colors.yoggieRed[500],
+                              stroke: colors.yoggieRed[500],
+                              strokeWidth: "2",
+                            }}
+                          />
+                        ),
+                      },
+                    ]}
+                  />
+                  <Typography
+                    variant="h6"
+                    color={colors.grey[100]}
+                    fontWeight="600"
+                    sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                  >
+                    Non-Fe 4.50 mm detected?
+                  </Typography>
+                  <ToggleButtonCheck
+                    style={{ gridColumn: "span 4" }}
+                    alignment={formik.values.metalBallNonFeDetected}
+                    onChange={(value) => {
+                      formik.setFieldValue("metalBallNonFeDetected", value);
+                    }}
+                    error={
+                      !!formik.touched.metalBallNonFeDetected &&
+                      !!formik.errors.metalBallNonFeDetected
+                    }
+                    options={[
+                      {
+                        label: "Yes",
+                        icon: (
+                          <CheckBoxIcon
+                            sx={{
+                              fill: colors.ciboInnerGreen[500],
+                            }}
+                          />
+                        ),
+                      },
+                      {
+                        label: "No",
+                        icon: (
+                          <CloseIcon
+                            sx={{
+                              color: colors.yoggieRed[500],
+                              stroke: colors.yoggieRed[500],
+                              strokeWidth: "2",
+                            }}
+                          />
+                        ),
+                      },
+                    ]}
+                  />
+                  <Typography
+                    variant="h6"
+                    color={colors.grey[100]}
+                    fontWeight="600"
+                    sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                  >
+                    SS 3.00 mm detected?
+                  </Typography>
+                  <ToggleButtonCheck
+                    style={{ gridColumn: "span 4" }}
+                    alignment={formik.values.metalBallSsDetected}
+                    onChange={(value) => {
+                      formik.setFieldValue("metalBallSsDetected", value);
+                    }}
+                    error={
+                      !!formik.touched.metalBallSsDetected &&
+                      !!formik.errors.metalBallSsDetected
+                    }
+                    options={[
+                      {
+                        label: "Yes",
+                        icon: (
+                          <CheckBoxIcon
+                            sx={{
+                              fill: colors.ciboInnerGreen[500],
+                            }}
+                          />
+                        ),
+                      },
+                      {
+                        label: "No",
+                        icon: (
+                          <CloseIcon
+                            sx={{
+                              color: colors.yoggieRed[500],
+                              stroke: colors.yoggieRed[500],
+                              strokeWidth: "2",
+                            }}
+                          />
+                        ),
+                      },
+                    ]}
+                  />
+                </Stack>
+              </Box>
+            </AccordionDetails>
+          </Accordion>
+          <Accordion>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                width="100%"
+              >
+                <Typography fontWeight={600} fontSize={18}>
+                  POUCH
+                </Typography>
+                <Typography fontWeight={600}>13 Items</Typography>
+              </Stack>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Box
+                display="grid"
+                gap="30px"
+                gridTemplateColumns="repeat(4, minmax(0, 1fr))"
+                sx={{
+                  "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
+                  "& .MuiInputBase-root::after": {
+                    borderBottomColor: colors.ciboInnerGreen[500],
+                  },
+                  "& .MuiInputBase-root::before": {
+                    borderBottomColor: colors.ciboInnerGreen[600],
+                  },
+                  "& .MuiFormLabel-root.Mui-focused": {
+                    color: colors.ciboInnerGreen[300],
+                  },
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  color={colors.grey[100]}
+                  fontWeight="600"
+                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                >
+                  Are the ingredients correct?
+                </Typography>
+                <ToggleButtonCheck
+                  style={{ gridColumn: "span 4" }}
+                  alignment={formik.values.areIngredientsCorrect}
+                  onChange={(value) => {
+                    formik.setFieldValue("areIngredientsCorrect", value);
+                  }}
+                  error={
+                    !!formik.touched.areIngredientsCorrect &&
+                    !!formik.errors.areIngredientsCorrect
+                  }
+                  options={[
+                    {
+                      label: "Yes",
+                      icon: (
+                        <CheckBoxIcon
+                          sx={{
+                            fill: colors.ciboInnerGreen[500],
+                          }}
+                        />
+                      ),
+                    },
+                    {
+                      label: "No",
+                      icon: (
+                        <CloseIcon
+                          sx={{
+                            color: colors.yoggieRed[500],
+                            stroke: colors.yoggieRed[500],
+                            strokeWidth: "2",
+                          }}
+                        />
+                      ),
+                    },
+                    {
+                      label: "N/A",
+                      icon: (
+                        <CheckBoxIcon
+                          sx={{
+                            fill: colors.ciboInnerGreen[500],
+                          }}
+                        />
+                      ),
+                    },
+                  ]}
+                />
+
+                <Typography
+                  variant="h6"
+                  color={colors.grey[100]}
+                  fontWeight="600"
+                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                >
+                  Raw Product
+                </Typography>
+
+                <UploadButton
+                  value={formik.values.rawProduct}
+                  onFileChange={async function (fileObject, fileState) {
+                    await formik.setFieldValue("rawProduct", fileObject);
+                    if (fileState) {
+                      await formik.setTouched({
+                        ...formik.touched,
+                        rawProduct: true,
+                      });
+                    }
+                  }}
+                  error={
+                    !!formik.touched.rawProduct && !!formik.errors.rawProduct
+                  }
+                  helperText={
+                    formik.touched.rawProduct && formik.errors.rawProduct
+                  }
+                />
+
                 <Stack spacing={2} direction="row">
                   <Stack spacing={1.5}>
                     <Typography
@@ -788,60 +1103,6 @@ const PGQualityControlPage = (props) => {
                   error={
                     !!formik.touched.isSealCorrectPouch &&
                     !!formik.errors.isSealCorrectPouch
-                  }
-                  options={[
-                    {
-                      label: "Yes",
-                      icon: (
-                        <CheckBoxIcon
-                          sx={{
-                            fill: colors.ciboInnerGreen[500],
-                          }}
-                        />
-                      ),
-                    },
-                    {
-                      label: "No",
-                      icon: (
-                        <CloseIcon
-                          sx={{
-                            color: colors.yoggieRed[500],
-                            stroke: colors.yoggieRed[500],
-                            strokeWidth: "2",
-                          }}
-                        />
-                      ),
-                    },
-                    {
-                      label: "N/A",
-                      icon: (
-                        <CheckBoxIcon
-                          sx={{
-                            fill: colors.ciboInnerGreen[500],
-                          }}
-                        />
-                      ),
-                    },
-                  ]}
-                />
-
-                <Typography
-                  variant="h6"
-                  color={colors.grey[100]}
-                  fontWeight="600"
-                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
-                >
-                  Metal Detector?
-                </Typography>
-                <ToggleButtonCheck
-                  style={{ gridColumn: "span 4" }}
-                  alignment={formik.values.metalDetector}
-                  onChange={(value) => {
-                    formik.setFieldValue("metalDetector", value);
-                  }}
-                  error={
-                    !!formik.touched.metalDetector &&
-                    !!formik.errors.metalDetector
                   }
                   options={[
                     {

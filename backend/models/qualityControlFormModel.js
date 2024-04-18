@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const essentials = require("../utils/essentials");
 
 const qualityControlFormSchema = new mongoose.Schema(
   {
@@ -34,7 +33,7 @@ const qualityControlFormSchema = new mongoose.Schema(
     allergenStatement: { type: String, required: true },
     labelPackageCorrect: { type: String, required: true },
     unitsCase: { type: String, required: true },
-    salesOrderNumber: { type: String, required: true },
+    salesOrderNumber: { type: String, default: "No" },
     caseLabel: { type: String, required: true },
     anyDeviations: { type: String, required: true },
     imageIDs: [{ type: mongoose.Types.ObjectId }],

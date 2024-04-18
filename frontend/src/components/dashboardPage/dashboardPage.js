@@ -77,6 +77,13 @@ const DashboardPage = (props) => {
     return 2;
   };
 
+  const getStatusColor = (status) => {
+    if (status === "passed") {
+      return colors.ciboInnerGreen[500];
+    }
+    return colors.yoggieRed[500];
+  };
+
   return (
     <Box m="0 20px">
       <Header title="My Quality Dashboard" subtitle="Locations" />
@@ -183,7 +190,7 @@ const DashboardPage = (props) => {
                           <Card
                             key={i}
                             sx={{
-                              background: colors.ciboInnerGreen[500],
+                              background: getStatusColor(ratioForm.status),
                               width: 200,
                               height: 75,
                             }}
@@ -231,7 +238,9 @@ const DashboardPage = (props) => {
                           <Card
                             key={i}
                             sx={{
-                              background: colors.ciboInnerGreen[500],
+                              background: getStatusColor(
+                                qualityControlForm.status
+                              ),
                               width: 200,
                               height: 75,
                             }}
@@ -284,7 +293,9 @@ const DashboardPage = (props) => {
                           <Card
                             key={i}
                             sx={{
-                              background: colors.ciboInnerGreen[500],
+                              background: getStatusColor(
+                                pgqualityControlForm.status
+                              ),
                               width: 200,
                               height: 75,
                             }}
@@ -338,7 +349,9 @@ const DashboardPage = (props) => {
                           <Card
                             key={i}
                             sx={{
-                              background: colors.ciboInnerGreen[500],
+                              background: getStatusColor(
+                                metalDetectorForm.status
+                              ),
                               width: 200,
                               height: 75,
                             }}
@@ -388,7 +401,9 @@ const DashboardPage = (props) => {
                           <Card
                             key={i}
                             sx={{
-                              background: colors.ciboInnerGreen[500],
+                              background: getStatusColor(
+                                labelInspectionForm.status
+                              ),
                               width: 200,
                               height: 75,
                             }}

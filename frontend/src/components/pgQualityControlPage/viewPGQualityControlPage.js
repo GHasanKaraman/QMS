@@ -3,7 +3,6 @@ import { useParams, useNavigate } from "react-router-dom";
 
 import {
   Box,
-  Chip,
   Divider,
   Stack,
   Typography,
@@ -29,6 +28,7 @@ import LabelResult from "../LabelResult";
 import StatusIndicator from "../StatusIndicator";
 import ImageLabel from "../ImageLabel";
 import MultipleImageLabel from "../MultipleImageLabel";
+import CommentAccordion from "../CommentAccordion";
 
 const ViewPGQualityControlPage = (props) => {
   const params = useParams();
@@ -260,23 +260,115 @@ const ViewPGQualityControlPage = (props) => {
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Stack direction="row" justifyContent="space-between" width="100%">
             <Typography fontWeight={600} fontSize={18}>
-              POUCH
+              METAL DETECTOR BALLS CHECK
             </Typography>
-            <Typography fontWeight={600}>11 Items</Typography>
+            <Typography fontWeight={600}>4 Items</Typography>
           </Stack>
         </AccordionSummary>
         <AccordionDetails>
           <Stack direction="row" justifyContent="space-between">
+            <Label
+              title="Metal Detector Required?"
+              subtitle={
+                <LabelResult
+                  text={data?.metalDetector}
+                  status={data?.metalDetector !== "No"}
+                />
+              }
+            />
+            <StatusIndicator status={Boolean(data?.metalDetector)} />
+          </Stack>
+          {data?.metalDetector === "Yes" ? (
+            <div>
+              <Divider />
+              <Stack direction="row" justifyContent="space-between">
+                <Label
+                  title="Fe 3.00 mm detected?"
+                  subtitle={
+                    <LabelResult
+                      text={data?.metalBallFeDetected}
+                      status={data?.metalBallFeDetected === "Yes"}
+                    />
+                  }
+                />
+                <StatusIndicator status={data?.metalBallFeDetected === "Yes"} />
+              </Stack>
+              <Divider />
+              <Stack direction="row" justifyContent="space-between">
+                <Label
+                  title="Non Fe 4.50 mm detected?"
+                  subtitle={
+                    <LabelResult
+                      text={data?.metalBallNonFeDetected}
+                      status={data?.metalBallNonFeDetected === "Yes"}
+                    />
+                  }
+                />
+                <StatusIndicator
+                  status={data?.metalBallNonFeDetected === "Yes"}
+                />
+              </Stack>
+              <Divider />
+              <Stack direction="row" justifyContent="space-between">
+                <Label
+                  title="SS 3.00 mm detected?"
+                  subtitle={
+                    <LabelResult
+                      text={data?.metalBallSsDetected}
+                      status={data?.metalBallSsDetected === "Yes"}
+                    />
+                  }
+                />
+                <StatusIndicator status={data?.metalBallSsDetected === "Yes"} />
+              </Stack>
+            </div>
+          ) : undefined}
+          <Divider />
+        </AccordionDetails>
+      </Accordion>
+      <Accordion>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Stack direction="row" justifyContent="space-between" width="100%">
+            <Typography fontWeight={600} fontSize={18}>
+              POUCH
+            </Typography>
+            <Typography fontWeight={600}>13 Items</Typography>
+          </Stack>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Stack direction="row" justifyContent="space-between">
+            <ImageLabel
+              title="Raw Product"
+              folderIndex={images[0]?.folderIndex}
+              fileName={images[0]?.fileName}
+            />
+            <StatusIndicator status={Boolean(images[0])} />
+          </Stack>
+          <Divider />
+          <Stack direction="row" justifyContent="space-between">
+            <Label
+              title="Are the ingredients correct?"
+              subtitle={
+                <LabelResult
+                  text={data?.areIngredientsCorrect}
+                  status={data?.areIngredientsCorrect !== "No"}
+                />
+              }
+            />
+            <StatusIndicator status={data?.areIngredientsCorrect !== "No"} />
+          </Stack>
+          <Divider />
+          <Stack direction="row" justifyContent="space-between">
             <MultipleImageLabel
               title1="Label Inspection"
-              folderIndex1={images[0]?.folderIndex}
-              fileName1={images[0]?.fileName}
+              folderIndex1={images[1]?.folderIndex}
+              fileName1={images[1]?.fileName}
               title2="Picture of Expiration Date"
-              folderIndex2={images[1]?.folderIndex}
-              fileName2={images[1]?.fileName}
+              folderIndex2={images[2]?.folderIndex}
+              fileName2={images[2]?.fileName}
             />
             <StatusIndicator
-              status={Boolean(images[0]) && Boolean(images[1])}
+              status={Boolean(images[1]) && Boolean(images[2])}
             />
           </Stack>
           <Divider />
@@ -343,15 +435,6 @@ const ViewPGQualityControlPage = (props) => {
           <Stack direction="row" justifyContent="space-between">
             <ImageLabel
               title="Allergen Statement"
-              folderIndex={images[2]?.folderIndex}
-              fileName={images[2]?.fileName}
-            />
-            <StatusIndicator status={Boolean(images[2])} />
-          </Stack>
-          <Divider />
-          <Stack direction="row" justifyContent="space-between">
-            <ImageLabel
-              title="Panning Batch"
               folderIndex={images[3]?.folderIndex}
               fileName={images[3]?.fileName}
             />
@@ -360,11 +443,20 @@ const ViewPGQualityControlPage = (props) => {
           <Divider />
           <Stack direction="row" justifyContent="space-between">
             <ImageLabel
-              title="Sugar Shelled Batch"
+              title="Panning Batch"
               folderIndex={images[4]?.folderIndex}
               fileName={images[4]?.fileName}
             />
             <StatusIndicator status={Boolean(images[4])} />
+          </Stack>
+          <Divider />
+          <Stack direction="row" justifyContent="space-between">
+            <ImageLabel
+              title="Sugar Shelled Batch"
+              folderIndex={images[5]?.folderIndex}
+              fileName={images[5]?.fileName}
+            />
+            <StatusIndicator status={Boolean(images[5])} />
           </Stack>
           <Divider />
         </AccordionDetails>
@@ -382,14 +474,14 @@ const ViewPGQualityControlPage = (props) => {
           <Stack direction="row" justifyContent="space-between">
             <MultipleImageLabel
               title1="Label Inspection"
-              folderIndex1={images[5]?.folderIndex}
-              fileName1={images[5]?.fileName}
+              folderIndex1={images[6]?.folderIndex}
+              fileName1={images[6]?.fileName}
               title2="Label Inspection"
-              folderIndex2={images[6]?.folderIndex}
-              fileName2={images[6]?.fileName}
+              folderIndex2={images[7]?.folderIndex}
+              fileName2={images[7]?.fileName}
             />
             <StatusIndicator
-              status={Boolean(images[5]) && Boolean(images[6])}
+              status={Boolean(images[6]) && Boolean(images[7])}
             />
           </Stack>
           <Divider />
@@ -414,10 +506,10 @@ const ViewPGQualityControlPage = (props) => {
           <Stack direction="row" justifyContent="space-between">
             <ImageLabel
               title="Allergen Statement"
-              folderIndex={images[7]?.folderIndex}
-              fileName={images[7]?.fileName}
+              folderIndex={images[8]?.folderIndex}
+              fileName={images[8]?.fileName}
             />
-            <StatusIndicator status={Boolean(images[7])} />
+            <StatusIndicator status={Boolean(images[8])} />
           </Stack>
           <Divider />
         </AccordionDetails>
@@ -435,10 +527,10 @@ const ViewPGQualityControlPage = (props) => {
           <Stack direction="row" justifyContent="space-between">
             <ImageLabel
               title="Label Inspection"
-              folderIndex={images[8]?.folderIndex}
-              fileName={images[8]?.fileName}
+              folderIndex={images[9]?.folderIndex}
+              fileName={images[9]?.fileName}
             />
-            <StatusIndicator status={Boolean(images[8])} />
+            <StatusIndicator status={Boolean(images[9])} />
           </Stack>
           <Divider />
           <Stack direction="row" justifyContent="space-between">
@@ -460,10 +552,10 @@ const ViewPGQualityControlPage = (props) => {
           <Stack direction="row" justifyContent="space-between">
             <ImageLabel
               title="Pattern"
-              folderIndex={images[9]?.folderIndex}
-              fileName={images[9]?.fileName}
+              folderIndex={images[10]?.folderIndex}
+              fileName={images[10]?.fileName}
             />
-            <StatusIndicator status={Boolean(images[9])} />
+            <StatusIndicator status={Boolean(images[10])} />
           </Stack>
           <Divider />
         </AccordionDetails>
@@ -481,13 +573,14 @@ const ViewPGQualityControlPage = (props) => {
           <Stack direction="row" justifyContent="space-between">
             <ImageLabel
               title="Pattern"
-              folderIndex={images[10]?.folderIndex}
-              fileName={images[10]?.fileName}
+              folderIndex={images[11]?.folderIndex}
+              fileName={images[11]?.fileName}
             />
-            <StatusIndicator status={Boolean(images[10])} />
+            <StatusIndicator status={Boolean(images[11])} />
           </Stack>
         </AccordionDetails>
       </Accordion>
+      <CommentAccordion formID={id} form="pgQualityControl" />
     </Box>
   );
 };

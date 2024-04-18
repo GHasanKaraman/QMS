@@ -26,6 +26,7 @@ import { Accordion, AccordionDetails, AccordionSummary } from "../Accordion";
 import Label from "../Label";
 import LabelResult from "../LabelResult";
 import StatusIndicator from "../StatusIndicator";
+import CommentAccordion from "../CommentAccordion";
 
 import "../formStatus.css";
 
@@ -278,6 +279,7 @@ const ViewDirectObservationLabelInspectionPage = (props) => {
           </Stack>
         </AccordionDetails>
       </Accordion>
+      <CommentAccordion formID={id} form="directObservationLabelInspection" />
     </Box>
   );
 };

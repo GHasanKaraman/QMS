@@ -219,7 +219,11 @@ router.post("/pgqualitycontrol/add", upload.any(), async (req, res) => {
         formInformations.isSealCorrectPouch === "Yes" &&
         formInformations.isNotchCorrect === "Yes" &&
         formInformations.metalDetector === "Yes" &&
-        formInformations.isSealCorrectBox === "Yes"
+        formInformations.isSealCorrectBox === "Yes" &&
+        formInformations.areIngredientsCorrect === "Yes" &&
+        formInformations.metalBallFeDetected !== "No" &&
+        formInformations.metalBallNonFeDetected !== "No" &&
+        formInformations.metalBallSsDetected !== "No"
       ) {
         status = "passed";
       }

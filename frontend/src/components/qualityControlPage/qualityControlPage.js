@@ -20,8 +20,6 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CloseIcon from "@mui/icons-material/Close";
-import InventoryIcon from "@mui/icons-material/Inventory";
-import ScaleIcon from "@mui/icons-material/Scale";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
@@ -57,6 +55,8 @@ const QualityControlPage = (props) => {
   const [metalCardState, setMetalCardState] = useState(null);
   const [metalBallStateSingle, setMetalBallStateSingle] = useState(null);
   const [metalBallStateMultiple, setMetalBallStateMultiple] = useState(null);
+
+  const [caseLabelState, setCaseLabelState] = useState(null);
 
   useEffect(() => {
     document.title = props.title || "";
@@ -142,7 +142,7 @@ const QualityControlPage = (props) => {
         enqueueSnackbar("You have successfully created the form!", {
           variant: "success",
         });
-        //resetForm();
+        resetForm();
       } else {
         switch (res.response?.status) {
           case 404:
@@ -373,25 +373,29 @@ const QualityControlPage = (props) => {
       unitsCase: yup.string().required(),
       salesOrderNumber: yup.string().required(),
       caseLabel: yup.string().required(),
-      pictureOfBoxLabel: yup
-        .mixed()
-        .nullable()
-        .required("Please upload the image of the box label!")
-        .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
-          return !value || (value && value.size < 1024 * 1024 * 10);
-        })
-        .test(
-          "FILE_FORMAT",
-          "You can only upload JPG/JPEG/PNG files!",
-          (value) => {
-            return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          }
-        ),
+      pictureOfBoxLabel:
+        caseLabelState === "Yes"
+          ? yup
+              .mixed()
+              .nullable()
+              .required("Please upload the image of the box label!")
+              .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
+                return !value || (value && value.size < 1024 * 1024 * 10);
+              })
+              .test(
+                "FILE_FORMAT",
+                "You can only upload JPG/JPEG/PNG files!",
+                (value) => {
+                  return (
+                    !value || (value && SUPPORTED_FORMATS.includes(value?.type))
+                  );
+                }
+              )
+          : undefined,
 
       anyDeviations: yup.string().required(),
     }),
   });
-
   return (
     <Box
       m="0 20px"
@@ -419,7 +423,14 @@ const QualityControlPage = (props) => {
       />
 
       <form
-        onSubmit={formik.handleSubmit}
+        onSubmit={(e) => {
+          if (!formik.isValid && !formik.isValidating) {
+            enqueueSnackbar("Please fill out all the missing fields!", {
+              variant: "error",
+            });
+          }
+          formik.handleSubmit(e);
+        }}
         style={{ paddingBottom: "10px" }}
         encType="multipart/form-data"
       >
@@ -1577,7 +1588,7 @@ const QualityControlPage = (props) => {
                   alignment={formik.values.metalBallMultipleRequired}
                   onChange={(value) => {
                     formik.setFieldValue("metalBallMultipleRequired", value);
-                    setMetalBallStateSingle(value);
+                    setMetalBallStateMultiple(value);
                   }}
                   error={
                     !!formik.touched.metalBallMultipleRequired &&
@@ -2180,44 +2191,54 @@ const QualityControlPage = (props) => {
                     },
                   ]}
                 />
-                <Typography
-                  variant="h6"
-                  color={colors.grey[100]}
-                  fontWeight="600"
-                  sx={{ m: "0 0 -20px 0", minWidth: "360px" }}
-                >
-                  Is sales order number one of these? (If not, please select No)
-                </Typography>
-                <ToggleButtonCheck
-                  style={{ gridColumn: "span 4" }}
-                  alignment={formik.values.salesOrderNumber}
-                  onChange={(value) => {
-                    formik.setFieldValue("salesOrderNumber", value);
+                <Stack
+                  direction="column"
+                  spacing={1.5}
+                  style={{
+                    display:
+                      productDetails?.soList?.length == 0 ? "none" : "block",
+                    gridColumn: "span 4",
                   }}
-                  error={
-                    !!formik.touched.salesOrderNumber &&
-                    !!formik.errors.salesOrderNumber
-                  }
-                  options={productDetails?.soList
-                    ?.map((so) => {
-                      return { label: so };
-                    })
-                    .concat([
-                      {
-                        label: "No",
-                        icon: (
-                          <CloseIcon
-                            sx={{
-                              color: colors.yoggieRed[500],
-                              stroke: colors.yoggieRed[500],
-                              strokeWidth: "2",
-                            }}
-                          />
-                        ),
-                      },
-                    ])}
-                />
-
+                >
+                  <Typography
+                    variant="h6"
+                    color={colors.grey[100]}
+                    fontWeight="600"
+                    sx={{ m: "0 0 -20px 0", minWidth: "360px" }}
+                  >
+                    Is sales order number one of these? (If not, please select
+                    No)
+                  </Typography>
+                  <ToggleButtonCheck
+                    style={{ gridColumn: "span 4" }}
+                    alignment={formik.values.salesOrderNumber}
+                    onChange={(value) => {
+                      formik.setFieldValue("salesOrderNumber", value);
+                    }}
+                    error={
+                      !!formik.touched.salesOrderNumber &&
+                      !!formik.errors.salesOrderNumber
+                    }
+                    options={productDetails?.soList
+                      ?.map((so) => {
+                        return { label: so };
+                      })
+                      .concat([
+                        {
+                          label: "No",
+                          icon: (
+                            <CloseIcon
+                              sx={{
+                                color: colors.yoggieRed[500],
+                                stroke: colors.yoggieRed[500],
+                                strokeWidth: "2",
+                              }}
+                            />
+                          ),
+                        },
+                      ])}
+                  />
+                </Stack>
                 <Typography
                   variant="h6"
                   color={colors.grey[100]}
@@ -2231,6 +2252,7 @@ const QualityControlPage = (props) => {
                   alignment={formik.values.caseLabel}
                   onChange={(value) => {
                     formik.setFieldValue("caseLabel", value);
+                    setCaseLabelState(value);
                   }}
                   error={
                     !!formik.touched.caseLabel && !!formik.errors.caseLabel
@@ -2270,35 +2292,46 @@ const QualityControlPage = (props) => {
                     },
                   ]}
                 />
-                <Typography
-                  variant="h6"
-                  color={colors.grey[100]}
-                  fontWeight="600"
-                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
-                >
-                  Picture of Box-Label
-                </Typography>
-
-                <UploadButton
-                  value={formik.values.pictureOfBoxLabel}
-                  onFileChange={async function (fileObject, fileState) {
-                    await formik.setFieldValue("pictureOfBoxLabel", fileObject);
-                    if (fileState) {
-                      await formik.setTouched({
-                        ...formik.touched,
-                        pictureOfBoxLabel: true,
-                      });
-                    }
+                <Stack
+                  direction="column"
+                  spacing={1.5}
+                  style={{
+                    display: caseLabelState === "Yes" ? "block" : "none",
                   }}
-                  error={
-                    !!formik.touched.pictureOfBoxLabel &&
-                    !!formik.errors.pictureOfBoxLabel
-                  }
-                  helperText={
-                    formik.touched.pictureOfBoxLabel &&
-                    formik.errors.pictureOfBoxLabel
-                  }
-                />
+                >
+                  <Typography
+                    variant="h6"
+                    color={colors.grey[100]}
+                    fontWeight="600"
+                    sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                  >
+                    Picture of Box-Label
+                  </Typography>
+
+                  <UploadButton
+                    value={formik.values.pictureOfBoxLabel}
+                    onFileChange={async function (fileObject, fileState) {
+                      await formik.setFieldValue(
+                        "pictureOfBoxLabel",
+                        fileObject
+                      );
+                      if (fileState) {
+                        await formik.setTouched({
+                          ...formik.touched,
+                          pictureOfBoxLabel: true,
+                        });
+                      }
+                    }}
+                    error={
+                      !!formik.touched.pictureOfBoxLabel &&
+                      !!formik.errors.pictureOfBoxLabel
+                    }
+                    helperText={
+                      formik.touched.pictureOfBoxLabel &&
+                      formik.errors.pictureOfBoxLabel
+                    }
+                  />
+                </Stack>
               </Box>
             </AccordionDetails>
           </Accordion>

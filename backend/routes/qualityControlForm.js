@@ -62,6 +62,7 @@ router.post("/qualitycontrol/stationplan", async (req, res) => {
       },
     });
     const data = await resp.json();
+    console.log(data);
     if (data) {
       res.status(200).json({ products: data });
       console.log("Fetched all products over " + station + " from OC DB!");
@@ -99,6 +100,7 @@ router.post("/qualitycontrol/getproduct", async (req, res) => {
       },
     });
     const data = await resp.json();
+    console.log(data);
     if (data) {
       res.status(200).json({ details: data });
       console.log(
@@ -226,14 +228,16 @@ router.post("/qualitycontrol/add", upload.any(), async (req, res) => {
         formInformations.metalCardFeDetected !== "No" &&
         formInformations.metalCardNonFeDetected !== "No" &&
         formInformations.metalCardSsDetected !== "No" &&
-        formInformations.metalBallFeDetected !== "No" &&
-        formInformations.metalBallNonFeDetected !== "No" &&
-        formInformations.metalBallSsDetected !== "No" &&
+        formInformations.metalBallSingleFeDetected !== "No" &&
+        formInformations.metalBallSingleNonFeDetected !== "No" &&
+        formInformations.metalBallSingleSsDetected !== "No" &&
+        formInformations.metalBallMultipleFeDetected !== "No" &&
+        formInformations.metalBallMultipleNonFeDetected !== "No" &&
+        formInformations.metalBallMultipleSsDetected !== "No" &&
         formInformations.areAllergensCorrect === "Yes" &&
         formInformations.allergenStatement === "Yes" &&
         formInformations.labelPackageCorrect === "Yes" &&
-        formInformations.unitsCase === "Yes" &&
-        formInformations.caseLabel === "Yes"
+        formInformations.unitsCase === "Yes"
       ) {
         status = "passed";
       }

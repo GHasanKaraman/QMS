@@ -244,7 +244,17 @@ const DirectObservationLabelInspectionPage = (props) => {
         title="Direct Observation Label Inspection"
         subtitle="Please fill out the form"
       />
-      <form onSubmit={formik.handleSubmit} style={{ paddingBottom: "10px" }}>
+      <form
+        onSubmit={(e) => {
+          if (!formik.isValid && !formik.isValidating) {
+            enqueueSnackbar("Please fill out all the missing fields!", {
+              variant: "error",
+            });
+          }
+          formik.handleSubmit(e);
+        }}
+        style={{ paddingBottom: "10px" }}
+      >
         <Box
           display="grid"
           gap="30px"
