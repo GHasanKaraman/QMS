@@ -105,6 +105,18 @@ const DashboardPage = (props) => {
             setDataSource(
               locations.filter((loc) => loc.running && loc.running === true)
             );
+          } else if (value === "MAC") {
+            setDataSource(
+              locations.filter((loc) => loc.name.slice(0, 3) === "MAC")
+            );
+          } else if (value === "ROAST") {
+            setDataSource(
+              locations.filter((loc) => loc.name.slice(0, 5) === "ROAST")
+            );
+          } else if (value === "MIX") {
+            setDataSource(
+              locations.filter((loc) => loc.name.slice(0, 3) === "MIX")
+            );
           } else {
             setDataSource([...locations]);
           }
@@ -118,6 +130,15 @@ const DashboardPage = (props) => {
           },
           {
             label: "Runs",
+          },
+          {
+            label: "MAC",
+          },
+          {
+            label: "ROAST",
+          },
+          {
+            label: "MIX",
           },
         ]}
       />
