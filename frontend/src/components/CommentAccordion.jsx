@@ -335,7 +335,7 @@ const CommentAccordion = ({ formID, form }) => {
                     {comment.image ? (
                       <a
                         href={
-                          "http://10.12.11.193:4000/imgs/" +
+                          "http://10.12.0.56:4000/imgs/" +
                           comment.image.folderIndex +
                           "/" +
                           comment.image.fileName
@@ -345,7 +345,7 @@ const CommentAccordion = ({ formID, form }) => {
                         <img
                           width={50}
                           src={
-                            "http://10.12.11.193:4000/imgs/" +
+                            "http://10.12.0.56:4000/imgs/" +
                             comment.image.folderIndex +
                             "/thumbnail-" +
                             comment.image.fileName?.substr(
