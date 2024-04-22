@@ -16,6 +16,7 @@ const pgqualitycontrol = require("./routes/pgQualityControlForm.js");
 const metalDetectorForm = require("./routes/metalDetectorForm.js");
 const labelInspectionForm = require("./routes/labelInspectionForm.js");
 const ratioForm = require("./routes/ratioForm.js");
+const comment = require("./routes/comment.js");
 
 require("console-stamp")(console, {
   format: "(->).yellow :date().bold.black.bgRed",
@@ -64,6 +65,7 @@ db.once("open", function () {
   app.use("/", metalDetectorForm);
   app.use("/", labelInspectionForm);
   app.use("/", ratioForm);
+  app.use("/", comment);
 
   var txt = encodeURIComponent(
     `

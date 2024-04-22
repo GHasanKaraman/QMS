@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import moment from "moment-timezone";
 import {
   Box,
   useTheme,
@@ -10,23 +9,12 @@ import {
   Typography,
   Button,
   Stack,
-  Dialog,
-  DialogActions,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
   Backdrop,
   CircularProgress,
-  Chip,
 } from "@mui/material";
-
-import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CloseIcon from "@mui/icons-material/Close";
-import InventoryIcon from "@mui/icons-material/Inventory";
-import ScaleIcon from "@mui/icons-material/Scale";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
@@ -41,16 +29,12 @@ import { tokens } from "../../theme";
 import axios from "../../api/axios";
 import userAuth from "../../utils/userAuth";
 import ToggleButtonCheck from "../ToggleButtonCheck";
-import UploadButton from "../UploadButton";
 import { Accordion, AccordionDetails, AccordionSummary } from "../Accordion";
 
 const DirectObservationLabelInspectionPage = (props) => {
-  const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png"];
-
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const isNonMobile = useMediaQuery("(min-width:600px)");
-  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -59,7 +43,6 @@ const DirectObservationLabelInspectionPage = (props) => {
   const [productDetails, setProductDetails] = useState(null);
   const [operators, setOperators] = useState([]);
 
-  const [openDialog, setOpenDialog] = useState(false);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
