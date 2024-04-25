@@ -8,32 +8,29 @@ const metalDetectorFormModel = require("../models/metalDetectorFormModel");
 const labelInspectionFormModel = require("../models/labelInspectionFormModel");
 const pgQualityControlFormModel = require("../models/pgQualityControlFormModel");
 
-router.use("/dashboard", async (req, res) => {
+router.use("/signoff/dashboard", async (req, res) => {
   try {
+    const { start, end } = req.body;
     const resp = await fetch("http://10.12.0.15:81/qac.php?stations", {
       method: "GET",
     });
-    var now = new Date();
-    var startOfToday = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate()
-    );
+
+    var s = new Date(start);
+    var e = new Date(end);
 
     const data = await resp.json();
-
     const ratioForms = await ratioFormModel.find({});
     const qualityControlForms = await qualityControlFormModel.find({
-      createdAt: { $gte: startOfToday },
+      createdAt: { $gte: new Date(s), $lte: new Date(e) },
     });
     const pgQualityControlForms = await pgQualityControlFormModel.find({
-      createdAt: { $gte: startOfToday },
-    }); //
+      createdAt: { $gte: new Date(s), $lte: new Date(e) },
+    });
     const metalDetectorForms = await metalDetectorFormModel.find({
-      createdAt: { $gte: startOfToday },
+      createdAt: { $gte: new Date(s), $lte: new Date(e) },
     });
     const labelInspectionForms = await labelInspectionFormModel.find({
-      createdAt: { $gte: startOfToday },
+      createdAt: { $gte: new Date(s), $lte: new Date(e) },
     });
     if (
       data &&

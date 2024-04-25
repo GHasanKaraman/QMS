@@ -36,6 +36,7 @@ router.post("/login", async (req, res) => {
     });
 
     const data = await resp.json();
+    console.log(data);
     if (data.login === 1) {
       const token = await tokenModel.create({
         token: uuid.v4(),

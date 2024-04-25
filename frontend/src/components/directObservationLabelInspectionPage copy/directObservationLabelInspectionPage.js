@@ -101,6 +101,7 @@ const DirectObservationLabelInspectionPage = (props) => {
     if (userAuth.control(res)) {
       if (res?.data) {
         setProductDetails(res.data.details);
+        console.log(res.data);
       } else {
         switch (res.response?.status) {
           case 404:

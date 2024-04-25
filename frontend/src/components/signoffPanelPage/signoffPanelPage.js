@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import moment from "moment-timezone";
 import {
   Box,
   Divider,
@@ -9,21 +10,33 @@ import {
   Card,
   CardContent,
   CardActionArea,
+  CardActions,
   Typography,
+  Button,
+  Autocomplete,
+  TextField,
 } from "@mui/material";
 import { useTheme } from "@emotion/react";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
+import ModeIcon from "@mui/icons-material/Mode";
+
+import { useFormik } from "formik";
+import * as yup from "yup";
+
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import ContentPasteSearchIcon from "@mui/icons-material/ContentPasteSearch";
 
 import Header from "../Header";
 import { tokens } from "../../theme";
 import axios from "../../api/axios";
 import userAuth from "../../utils/userAuth";
 import { toStringDate } from "../../utils/helpers";
-import ToggleButtonCheck from "../ToggleButtonCheck";
 
-const DashboardPage = (props) => {
+const SignOffPanelPage = (props) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
@@ -37,24 +50,78 @@ const DashboardPage = (props) => {
 
   const [locations, setLocations] = useState([]);
   const [dataSource, setDataSource] = useState([]);
+  const [products, setProducts] = useState([]);
 
-  const [toggleOption, setToggleOption] = useState("All");
+  const dateTimeProps = {
+    popper: {
+      sx: {
+        "& .Mui-selected": {
+          background: colors.ciboInnerGreen[600] + " !important",
+        },
+        "& .Mui-selected:hover": {
+          background: colors.ciboInnerGreen[700],
+        },
+        "& .MuiButtonBase-root:hover": {
+          background: colors.ciboInnerGreen[700],
+        },
+        "& .MuiButtonBase-root": {
+          color: colors.grey[100],
+        },
+      },
+    },
+    dialog: {
+      sx: {
+        "& button.Mui-selected": {
+          color: colors.ciboInnerGreen[500] + " !important",
+        },
+        "& .Mui-selected:hover": {
+          color: colors.ciboInnerGreen[700],
+        },
+        "& .MuiButtonBase-root:hover": {
+          color: colors.ciboInnerGreen[500],
+        },
+        "& .MuiButtonBase-root": {
+          color: colors.grey[100],
+        },
+        "& .MuiTabs-indicator": {
+          background: colors.ciboInnerGreen[500],
+        },
+        "& button.MuiButtonBase-root.MuiPickersDay-root.Mui-selected": {
+          background: colors.ciboInnerGreen[500],
+          color: colors.primary[400] + " !important",
+        },
+      },
+    },
+  };
 
   useEffect(() => {
     document.title = props.title || "";
   }, [props.title]);
 
-  const loadAllStations = async () => {
-    const res = await axios.post("/dashboard");
+  const extractUniqueProducts = (...forms) => {
+    return Array.from(
+      new Set(forms.flatMap((item) => item.map((form) => form.product)))
+    );
+  };
+
+  const loadAllStations = async (range) => {
+    const res = await axios.post("/signoff/dashboard", range);
     if (userAuth.control(res)) {
       setLocations(res.data.locations);
       setDataSource(res.data.locations);
-      console.log(res.data.locations);
       setRatioForms(res.data.ratioForms);
       setQualityControlForms(res.data.qualityControlForms);
       setPGQualityControlForms(res.data.pgQualityControlForms);
       setMetalDetectorForms(res.data.metalDetectorForms);
       setLabelInspectionForms(res.data.labelInspectionForms);
+      setProducts(
+        extractUniqueProducts(
+          res.data.labelInspectionForms,
+          res.data.metalDetectorForms,
+          res.data.pgQualityControlForms,
+          res.data.qualityControlForms
+        )
+      );
     } else {
       navigate("/login");
       localStorage.removeItem("token");
@@ -63,18 +130,6 @@ const DashboardPage = (props) => {
         variant: "error",
       });
     }
-  };
-
-  useEffect(() => {
-    loadAllStations();
-  }, []);
-
-  const getShift = () => {
-    const currentHour = new Date().getHours();
-    if (currentHour > 7 && currentHour < 18) {
-      return 1;
-    }
-    return 2;
   };
 
   const getStatusColor = (form) => {
@@ -91,64 +146,117 @@ const DashboardPage = (props) => {
     }
   };
 
+  const handleSubmit = async (values) => {
+    await loadAllStations(values);
+  };
+
+  const formik = useFormik({
+    initialValues: {
+      start: "",
+      end: "",
+      product: null,
+    },
+    onSubmit: handleSubmit,
+    validationSchema: yup.object().shape({
+      start: yup.string().required(""),
+      end: yup.string().required(""),
+    }),
+  });
+
+  const productFilter = (form) => {
+    if (formik.values.product) {
+      if (form.product === formik.values.product) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    return true;
+  };
+
   return (
     <Box m="0 20px">
-      <Header title="My Quality Dashboard" subtitle="Locations" />
-      <ToggleButtonCheck
-        style={{
-          width: "100%",
-          textAlign: "center",
-          justifyContent: "center",
-          alignContent: "center",
-        }}
-        alignment={toggleOption}
-        onChange={(value) => {
-          setToggleOption(value);
-          if (value === "Shifts") {
-            setDataSource(
-              locations.filter((loc) => loc.shift && loc.shift === getShift())
-            );
-          } else if (value === "Runs") {
-            setDataSource(
-              locations.filter((loc) => loc.running && loc.running === true)
-            );
-          } else if (value === "MAC") {
-            setDataSource(
-              locations.filter((loc) => loc.name.slice(0, 3) === "MAC")
-            );
-          } else if (value === "ROAST") {
-            setDataSource(
-              locations.filter((loc) => loc.name.slice(0, 5) === "ROAST")
-            );
-          } else if (value === "MIX") {
-            setDataSource(
-              locations.filter((loc) => loc.name.slice(0, 3) === "MIX")
-            );
-          } else {
-            setDataSource([...locations]);
+      <Header title="Sign-Off Dashboard" subtitle="Locations" />
+
+      <form
+        onSubmit={(e) => {
+          if (!formik.isValid && !formik.isValidating) {
+            enqueueSnackbar("Please fill out all the missing fields!", {
+              variant: "error",
+            });
           }
+          formik.handleSubmit(e);
         }}
-        options={[
-          {
-            label: "All",
-          },
-          {
-            label: "Shifts",
-          },
-          {
-            label: "Runs",
-          },
-          {
-            label: "MAC",
-          },
-          {
-            label: "ROAST",
-          },
-          {
-            label: "MIX",
-          },
-        ]}
-      />
+      >
+        <LocalizationProvider dateAdapter={AdapterMoment}>
+          <Stack direction="row" spacing={5} sx={{ justifyContent: "center" }}>
+            <DatePicker
+              closeOnSelect
+              format="LL"
+              timeSteps={{ hours: 1, minutes: 1 }}
+              label="Start Date"
+              slotProps={dateTimeProps}
+              value={moment(formik.values.start)}
+              onChange={(value) => {
+                formik.setFieldValue("start", value.format());
+                setDataSource([]);
+              }}
+              maxDate={
+                formik.values.end === ""
+                  ? null
+                  : moment(formik.values.end).clone().subtract(1, "days")
+              }
+              formatDensity="spacious"
+            />
+            <DatePicker
+              closeOnSelect
+              format="LL"
+              timeSteps={{ hours: 1, minutes: 1 }}
+              label="End Date"
+              slotProps={dateTimeProps}
+              value={moment(formik.values.end)}
+              onChange={(value) => {
+                formik.setFieldValue("end", value.format());
+                setDataSource([]);
+              }}
+              minDate={
+                formik.values.start === ""
+                  ? null
+                  : moment(formik.values.start).clone().add(1, "days")
+              }
+              formatDensity="spacious"
+            />
+            <Autocomplete
+              disabled={dataSource.length == 0}
+              onChange={(_, value) => {
+                formik.setFieldValue("product", value);
+              }}
+              value={formik.values.product}
+              sx={{ marginBottom: "30px", width: "20%" }}
+              options={products}
+              onBlur={formik.handleBlur}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="filled"
+                  label="Products"
+                  name="product"
+                />
+              )}
+            />
+            <Button
+              type="submit"
+              variant="outlined"
+              color="secondary"
+              endIcon={<ContentPasteSearchIcon />}
+              sx={{ fontWeight: "bold", borderWidth: "2px !important" }}
+            >
+              FILTER
+            </Button>
+          </Stack>
+        </LocalizationProvider>
+      </form>
+
       <List>
         {dataSource
           .filter((loc) => loc.type)
@@ -224,7 +332,9 @@ const DashboardPage = (props) => {
                   >
                     {ratioForms
                       .filter(
-                        (ratioForm) => ratioForm.location === location.name
+                        (ratioForm) =>
+                          ratioForm.location === location.name &&
+                          productFilter(ratioForm)
                       )
                       .map((ratioForm, i) => {
                         return (
@@ -233,13 +343,16 @@ const DashboardPage = (props) => {
                             sx={{
                               background: getStatusColor(ratioForm),
                               width: 200,
-                              height: 75,
+                              height: 80,
                             }}
                           >
                             <CardActionArea
                               sx={{ height: "100%" }}
                               onClick={() => {
-                                navigate("/ratioform/" + ratioForm._id);
+                                window.open(
+                                  "/ratioform/" + ratioForm._id,
+                                  "_blank"
+                                );
                               }}
                             >
                               <CardContent sx={{ paddingTop: 1 }}>
@@ -259,6 +372,9 @@ const DashboardPage = (props) => {
                                     sx={{ textAlign: "center" }}
                                   >
                                     {toStringDate(ratioForm.createdAt, {
+                                      month: "short",
+                                      year: "numeric",
+                                      day: "numeric",
                                       hour: "numeric",
                                       minute: "numeric",
                                     })}
@@ -272,7 +388,8 @@ const DashboardPage = (props) => {
                     {qualityControlForms
                       .filter(
                         (qualityControlForm) =>
-                          qualityControlForm.station === location.name
+                          qualityControlForm.station === location.name &&
+                          productFilter(qualityControlForm)
                       )
                       .map((qualityControlForm, i) => {
                         return (
@@ -281,14 +398,15 @@ const DashboardPage = (props) => {
                             sx={{
                               background: getStatusColor(qualityControlForm),
                               width: 200,
-                              height: 75,
+                              height: 80,
                             }}
                           >
                             <CardActionArea
                               sx={{ height: "100%" }}
                               onClick={() => {
-                                navigate(
-                                  "/qualitycontrol/" + qualityControlForm._id
+                                window.open(
+                                  "/qualitycontrol/" + qualityControlForm._id,
+                                  "_blank"
                                 );
                               }}
                             >
@@ -311,6 +429,9 @@ const DashboardPage = (props) => {
                                     {toStringDate(
                                       qualityControlForm.createdAt,
                                       {
+                                        month: "short",
+                                        year: "numeric",
+                                        day: "numeric",
                                         hour: "numeric",
                                         minute: "numeric",
                                       }
@@ -325,7 +446,8 @@ const DashboardPage = (props) => {
                     {pgQualityControlForms
                       .filter(
                         (pgqualityControlForm) =>
-                          pgqualityControlForm.station === location.name
+                          pgqualityControlForm.station === location.name &&
+                          productFilter(pgqualityControlForm)
                       )
                       .map((pgqualityControlForm, i) => {
                         return (
@@ -334,15 +456,16 @@ const DashboardPage = (props) => {
                             sx={{
                               background: getStatusColor(pgqualityControlForm),
                               width: 200,
-                              height: 75,
+                              height: 80,
                             }}
                           >
                             <CardActionArea
                               sx={{ height: "100%" }}
                               onClick={() => {
-                                navigate(
+                                window.open(
                                   "/pgqualitycontrol/" +
-                                    pgqualityControlForm._id
+                                    pgqualityControlForm._id,
+                                  "_blank"
                                 );
                               }}
                             >
@@ -365,6 +488,9 @@ const DashboardPage = (props) => {
                                     {toStringDate(
                                       pgqualityControlForm.createdAt,
                                       {
+                                        month: "short",
+                                        year: "numeric",
+                                        day: "numeric",
                                         hour: "numeric",
                                         minute: "numeric",
                                       }
@@ -379,7 +505,8 @@ const DashboardPage = (props) => {
                     {metalDetectorForms
                       .filter(
                         (metalDetectorForm) =>
-                          metalDetectorForm.station === location.name
+                          metalDetectorForm.station === location.name &&
+                          productFilter(metalDetectorForm)
                       )
                       .map((metalDetectorForm, i) => {
                         return (
@@ -388,14 +515,15 @@ const DashboardPage = (props) => {
                             sx={{
                               background: getStatusColor(metalDetectorForm),
                               width: 200,
-                              height: 75,
+                              height: 80,
                             }}
                           >
                             <CardActionArea
                               sx={{ height: "100%" }}
                               onClick={() => {
-                                navigate(
-                                  "/metaldetector/" + metalDetectorForm._id
+                                window.open(
+                                  "/metaldetector/" + metalDetectorForm._id,
+                                  "_blank"
                                 );
                               }}
                             >
@@ -416,6 +544,9 @@ const DashboardPage = (props) => {
                                     sx={{ textAlign: "center" }}
                                   >
                                     {toStringDate(metalDetectorForm.createdAt, {
+                                      month: "short",
+                                      year: "numeric",
+                                      day: "numeric",
                                       hour: "numeric",
                                       minute: "numeric",
                                     })}
@@ -429,7 +560,8 @@ const DashboardPage = (props) => {
                     {labelInspectionForms
                       .filter(
                         (labelInspectionForm) =>
-                          labelInspectionForm.station === location.name
+                          labelInspectionForm.station === location.name &&
+                          productFilter(labelInspectionForm)
                       )
                       .map((labelInspectionForm, i) => {
                         return (
@@ -438,14 +570,15 @@ const DashboardPage = (props) => {
                             sx={{
                               background: getStatusColor(labelInspectionForm),
                               width: 200,
-                              height: 75,
+                              height: 80,
                             }}
                           >
                             <CardActionArea
-                              sx={{ height: "100%" }}
+                              sx={{ height: "50%" }}
                               onClick={() => {
-                                navigate(
-                                  "/labelinspection/" + labelInspectionForm._id
+                                window.open(
+                                  "/labelinspection/" + labelInspectionForm._id,
+                                  "_blank"
                                 );
                               }}
                             >
@@ -468,6 +601,9 @@ const DashboardPage = (props) => {
                                     {toStringDate(
                                       labelInspectionForm.createdAt,
                                       {
+                                        month: "short",
+                                        year: "numeric",
+                                        day: "numeric",
                                         hour: "numeric",
                                         minute: "numeric",
                                       }
@@ -490,4 +626,4 @@ const DashboardPage = (props) => {
   );
 };
 
-export default DashboardPage;
+export default SignOffPanelPage;

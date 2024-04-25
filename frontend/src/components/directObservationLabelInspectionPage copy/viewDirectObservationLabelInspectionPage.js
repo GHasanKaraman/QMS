@@ -66,7 +66,7 @@ const ViewDirectObservationLabelInspectionPage = (props) => {
 
   const handleSignOff = async () => {
     if (!clicked) {
-      const res = await axios.post("/metaldetector/signoff", { id });
+      const res = await axios.post("/labelinspection/signoff", { id });
       if (userAuth.control(res)) {
         switch (res.response?.status) {
           case 200:

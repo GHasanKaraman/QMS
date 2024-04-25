@@ -11,6 +11,7 @@ const authentication = require("./routes/authentication.js");
 const authorization = require("./routes/authorization.js");
 const user = require("./routes/user.js");
 const dashboard = require("./routes/dashboard.js");
+const signoff = require("./routes/signoff.js");
 const qualityControlForm = require("./routes/qualityControlForm.js");
 const pgqualitycontrol = require("./routes/pgQualityControlForm.js");
 const metalDetectorForm = require("./routes/metalDetectorForm.js");
@@ -60,6 +61,8 @@ db.once("open", function () {
 
   app.use("/", user);
   app.use("/", dashboard);
+  app.use("/", signoff);
+
   app.use("/", qualityControlForm);
   app.use("/", pgqualitycontrol);
   app.use("/", metalDetectorForm);

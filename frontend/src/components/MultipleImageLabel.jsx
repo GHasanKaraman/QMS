@@ -24,13 +24,13 @@ const MultipleImageLabel = ({
           </Typography>
           <a
             href={
-              "http://10.12.0.56:4000/imgs/" + folderIndex1 + "/" + fileName1
+              "http://10.12.11.193:4000/imgs/" + folderIndex1 + "/" + fileName1
             }
             target="_blank"
           >
             <img
               src={
-                "http://10.12.0.56:4000/imgs/" +
+                "http://10.12.11.193:4000/imgs/" +
                 folderIndex1 +
                 "/thumbnail-" +
                 fileName1?.substr(0, fileName1?.lastIndexOf(".")) +
@@ -49,13 +49,13 @@ const MultipleImageLabel = ({
           </Typography>
           <a
             href={
-              "http://10.12.0.56:4000/imgs/" + folderIndex2 + "/" + fileName2
+              "http://10.12.11.193:4000/imgs/" + folderIndex2 + "/" + fileName2
             }
             target="_blank"
           >
             <img
               src={
-                "http://10.12.0.56:4000/imgs/" +
+                "http://10.12.11.193:4000/imgs/" +
                 folderIndex2 +
                 "/thumbnail-" +
                 fileName2?.substr(0, fileName2?.lastIndexOf(".")) +

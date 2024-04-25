@@ -16,6 +16,7 @@ import ContentPasteSearchIcon from "@mui/icons-material/ContentPasteSearch";
 import BlenderIcon from "@mui/icons-material/Blender";
 import RadarIcon from "@mui/icons-material/Radar";
 import CollectionsBookmarkIcon from "@mui/icons-material/CollectionsBookmark";
+import EditNoteIcon from "@mui/icons-material/EditNote";
 
 import logo from "../images/logo.png";
 
@@ -102,7 +103,7 @@ const Sidebar = () => {
   useEffect(() => {
     if (user?.username === "") {
       loadUser().then((res) => {
-        setUser({ username: res.data.username, access: res.data.access });
+        setUser({ username: res.data?.username, access: res.data?.access });
       });
     }
   });
@@ -210,6 +211,13 @@ const Sidebar = () => {
               title="Dashboard"
               to="/dashboard"
               icon={<DashboardIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Sign-Off Panel"
+              to="/signoff"
+              icon={<EditNoteIcon />}
               selected={selected}
               setSelected={setSelected}
             />

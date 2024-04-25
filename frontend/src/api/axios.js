@@ -1,6 +1,6 @@
 import api from "axios";
 
-const baseUrl = "http://10.12.0.56:4000";
+const baseUrl = "http://10.12.11.193:4000";
 //baseUrl = "http://localhost:4000"
 
 const axios = {

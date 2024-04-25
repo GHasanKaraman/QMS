@@ -16,6 +16,7 @@ import DirectObservationLabelInspectionPage from "../components/directObservatio
 import ViewDirectObservationLabelInspectionPage from "../components/directObservationLabelInspectionPage copy/viewDirectObservationLabelInspectionPage.js";
 import PGQualityControlPage from "../components/pgQualityControlPage/pgQualityControlPage.js";
 import ViewPGQualityControlPage from "../components/pgQualityControlPage/viewPGQualityControlPage.js";
+import SignOffPanelPage from "../components/signoffPanelPage/signoffPanelPage.js";
 
 const BarLayout = () => {
   const [theme, colorMode] = useMode();
@@ -67,6 +68,11 @@ const Router = () => {
           exact
           path="/dashboard"
           element={<DashboardPage title="CiboQA | Dashboard" />}
+        />
+        <Route
+          exact
+          path="/signoff"
+          element={<SignOffPanelPage title="CiboQA | Sign-Off" />}
         />
 
         <Route

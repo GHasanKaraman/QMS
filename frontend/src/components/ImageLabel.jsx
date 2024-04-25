@@ -10,12 +10,12 @@ const ImageLabel = ({ title, folderIndex, fileName }) => {
         {title}
       </Typography>
       <a
-        href={"http://10.12.0.56:4000/imgs/" + folderIndex + "/" + fileName}
+        href={"http://10.12.11.193:4000/imgs/" + folderIndex + "/" + fileName}
         target="_blank"
       >
         <img
           src={
-            "http://10.12.0.56:4000/imgs/" +
+            "http://10.12.11.193:4000/imgs/" +
             folderIndex +
             "/thumbnail-" +
             fileName?.substr(0, fileName?.lastIndexOf(".")) +
