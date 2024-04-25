@@ -106,9 +106,12 @@ const PGQualityControlPage = (props) => {
   };
 
   const handleSubmit = async (values, { resetForm }) => {
-    console.log(values);
     setOpen(true);
+
     values.product = values.product.partNum;
+    values.started = Number(productDetails?.started);
+    values.startDateTime = moment(productDetails?.startDateTime);
+
     const formData = new FormData();
     for (const name in values) {
       formData.append(name, values[name]);

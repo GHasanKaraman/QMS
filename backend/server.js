@@ -27,9 +27,7 @@ require("dotenv").config();
 
 const app = express();
 mongoose.set("strictQuery", false);
-mongoose.connect(
-  "mongodb+srv://inventory:rNWsMsyxsVEXHFsw@cluster0.zjjva5g.mongodb.net/qms"
-);
+mongoose.connect(process.env.MONGO_TEST);
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 

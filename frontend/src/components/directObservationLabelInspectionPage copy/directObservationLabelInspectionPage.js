@@ -21,6 +21,8 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useFormik } from "formik";
 import * as yup from "yup";
 
+import moment from "moment-timezone";
+
 import { useSnackbar } from "notistack";
 
 import Header from "../Header";
@@ -101,7 +103,6 @@ const DirectObservationLabelInspectionPage = (props) => {
     if (userAuth.control(res)) {
       if (res?.data) {
         setProductDetails(res.data.details);
-        console.log(res.data);
       } else {
         switch (res.response?.status) {
           case 404:
@@ -134,7 +135,11 @@ const DirectObservationLabelInspectionPage = (props) => {
 
   const handleSubmit = async (values, { resetForm }) => {
     setOpen(true);
+
     values.product = values.product.partNum;
+    values.started = Number(productDetails?.started);
+    values.startDateTime = moment(productDetails?.startDateTime);
+
     const res = await axios.post("/labelinspection/add", values);
     if (userAuth.control(res)) {
       if (res?.data) {

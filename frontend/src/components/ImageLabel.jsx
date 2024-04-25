@@ -1,5 +1,6 @@
 import { Typography, Box, useTheme } from "@mui/material";
 import { tokens } from "../theme";
+import { IP } from "../env";
 
 const ImageLabel = ({ title, folderIndex, fileName }) => {
   const theme = useTheme();
@@ -10,12 +11,14 @@ const ImageLabel = ({ title, folderIndex, fileName }) => {
         {title}
       </Typography>
       <a
-        href={"http://10.12.11.193:4000/imgs/" + folderIndex + "/" + fileName}
+        href={"http://" + IP + "/imgs/" + +folderIndex + "/" + fileName}
         target="_blank"
       >
         <img
           src={
-            "http://10.12.11.193:4000/imgs/" +
+            "http://" +
+            IP +
+            "/imgs/" +
             folderIndex +
             "/thumbnail-" +
             fileName?.substr(0, fileName?.lastIndexOf(".")) +

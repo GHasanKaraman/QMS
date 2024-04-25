@@ -18,6 +18,8 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useFormik } from "formik";
 import * as yup from "yup";
 
+import moment from "moment-timezone";
+
 import { useSnackbar } from "notistack";
 
 import Header from "../Header";
@@ -131,7 +133,11 @@ const DirectObservationMetalDetectorPage = (props) => {
 
   const handleSubmit = async (values, { resetForm }) => {
     setOpen(true);
+
     values.product = values.product.partNum;
+    values.started = Number(productDetails?.started);
+    values.startDateTime = moment(productDetails?.startDateTime);
+
     const res = await axios.post("/metaldetector/add", values);
     if (userAuth.control(res)) {
       if (res?.data) {
@@ -225,6 +231,7 @@ const DirectObservationMetalDetectorPage = (props) => {
         title="Direct Observation Metal Detector"
         subtitle="Please fill out the form"
       />
+
       <form
         onSubmit={(e) => {
           if (!formik.isValid && !formik.isValidating) {

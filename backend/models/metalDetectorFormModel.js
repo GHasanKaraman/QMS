@@ -12,6 +12,8 @@ const metalDetectorFormSchema = new mongoose.Schema(
     status: { type: String, default: "failed" },
     signedOff: { type: String, default: "" },
     signOffDate: { type: Date },
+    started: { type: Number, default: 0 },
+    startDateTime: { type: Date },
   },
   { timestamps: true }
 );

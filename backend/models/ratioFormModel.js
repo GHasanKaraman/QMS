@@ -28,11 +28,8 @@ const ratioFormSchema = new mongoose.Schema(
     weight9: { type: String, default: "" },
     weight10: { type: String, default: "" },
     type: { type: String, default: "later" },
-    createdAt: {
-      type: Date,
-      default: () => essentials.getEST(),
-      required: true,
-    },
+    started: { type: Number, default: 0 },
+    startDateTime: { type: Date },
   },
   { timestamps: true }
 );

@@ -132,6 +132,9 @@ const QualityControlPage = (props) => {
   const handleSubmit = async (values, { resetForm }) => {
     setOpen(true);
     values.product = values.product.partNum;
+    values.started = Number(productDetails?.started);
+    values.startDateTime = moment(productDetails?.startDateTime);
+
     const formData = new FormData();
     for (const name in values) {
       formData.append(name, values[name]);
@@ -424,6 +427,9 @@ const QualityControlPage = (props) => {
 
       <form
         onSubmit={(e) => {
+          if (productDetails?.soList?.length == 0) {
+            formik.values.salesOrderNumber = "No";
+          }
           if (!formik.isValid && !formik.isValidating) {
             enqueueSnackbar("Please fill out all the missing fields!", {
               variant: "error",

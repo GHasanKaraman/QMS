@@ -29,6 +29,7 @@ import LabelResult from "../LabelResult";
 import StatusIndicator from "../StatusIndicator";
 import ImageLabel from "../ImageLabel";
 import CommentAccordion from "../CommentAccordion";
+import RunLabel from "../RunLabel";
 
 const ViewQualityControlPage = (props) => {
   const params = useParams();
@@ -254,8 +255,7 @@ const ViewQualityControlPage = (props) => {
           )
         }
       />
-      <Divider />
-      <Label title="Run" subtitle="Started Dec 12, 2023 at 9.04 AM" />
+      <RunLabel started={data?.started} startDateTime={data?.startDateTime} />
       <Accordion>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Stack direction="row" justifyContent="space-between" width="100%">

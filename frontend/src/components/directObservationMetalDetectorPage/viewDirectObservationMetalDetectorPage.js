@@ -28,6 +28,7 @@ import StatusIndicator from "../StatusIndicator";
 import CommentAccordion from "../CommentAccordion";
 
 import "../formStatus.css";
+import RunLabel from "../RunLabel";
 
 const ViewDirectObservationMetalDetectorPage = (props) => {
   const params = useParams();
@@ -250,8 +251,7 @@ const ViewDirectObservationMetalDetectorPage = (props) => {
           )
         }
       />
-      <Divider />
-      <Label title="Run" subtitle="Started Dec 12, 2023 at 9.04 AM" />
+      <RunLabel started={data?.started} startDateTime={data?.startDateTime} />
       <Accordion>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Stack direction="row" justifyContent="space-between" width="100%">

@@ -29,6 +29,7 @@ import StatusIndicator from "../StatusIndicator";
 import CommentAccordion from "../CommentAccordion";
 
 import "../formStatus.css";
+import RunLabel from "../RunLabel";
 
 const ViewDirectObservationLabelInspectionPage = (props) => {
   const params = useParams();
@@ -236,10 +237,7 @@ const ViewDirectObservationLabelInspectionPage = (props) => {
           )
         }
       />
-      <Divider />
-      <Label title="Data Sheet Signed Off" subtitle="Not Signed Off" />
-      <Divider />
-      <Label title="Run" subtitle="Started Dec 12, 2023 at 9.04 AM" />
+      <RunLabel started={data?.started} startDateTime={data?.startDateTime} />
       <Accordion>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Stack direction="row" justifyContent="space-between" width="100%">

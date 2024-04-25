@@ -1,5 +1,6 @@
 import { Typography, Box, useTheme, Stack } from "@mui/material";
 import { tokens } from "../theme";
+import { IP } from "../env";
 
 const MultipleImageLabel = ({
   title1,
@@ -23,14 +24,14 @@ const MultipleImageLabel = ({
             {title1}
           </Typography>
           <a
-            href={
-              "http://10.12.11.193:4000/imgs/" + folderIndex1 + "/" + fileName1
-            }
+            href={"http://" + IP + "/imgs/" + +folderIndex1 + "/" + fileName1}
             target="_blank"
           >
             <img
               src={
-                "http://10.12.11.193:4000/imgs/" +
+                "http://" +
+                IP +
+                "/imgs/" +
                 folderIndex1 +
                 "/thumbnail-" +
                 fileName1?.substr(0, fileName1?.lastIndexOf(".")) +
@@ -48,14 +49,14 @@ const MultipleImageLabel = ({
             {title2}
           </Typography>
           <a
-            href={
-              "http://10.12.11.193:4000/imgs/" + folderIndex2 + "/" + fileName2
-            }
+            href={"http://" + IP + "/imgs/" + folderIndex2 + "/" + fileName2}
             target="_blank"
           >
             <img
               src={
-                "http://10.12.11.193:4000/imgs/" +
+                "http://" +
+                IP +
+                "/imgs/" +
                 folderIndex2 +
                 "/thumbnail-" +
                 fileName2?.substr(0, fileName2?.lastIndexOf(".")) +
