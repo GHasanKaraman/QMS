@@ -782,11 +782,11 @@ const ViewQualityControlPage = (props) => {
               subtitle={
                 <LabelResult
                   text={data?.unitsCase}
-                  status={data?.unitsCase === "Yes"}
+                  status={data?.unitsCase !== "No"}
                 />
               }
             />
-            <StatusIndicator status={data?.unitsCase === "Yes"} />
+            <StatusIndicator status={data?.unitsCase !== "No"} />
           </Stack>
           <Divider />
           <Stack direction="row" justifyContent="space-between">

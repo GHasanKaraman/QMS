@@ -237,7 +237,7 @@ router.post("/qualitycontrol/add", upload.any(), async (req, res) => {
         formInformations.areAllergensCorrect === "Yes" &&
         formInformations.allergenStatement === "Yes" &&
         formInformations.labelPackageCorrect === "Yes" &&
-        formInformations.unitsCase === "Yes"
+        formInformations.unitsCase !== "No"
       ) {
         status = "passed";
       }

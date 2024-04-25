@@ -2189,6 +2189,9 @@ const QualityControlPage = (props) => {
                     {
                       label: "No",
                     },
+                    {
+                      label: "N/A",
+                    },
                   ]}
                 />
                 <Stack
