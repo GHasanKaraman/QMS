@@ -73,7 +73,7 @@ router.post("/labelinspection/get", async (req, res) => {
 router.post("/labelinspection/signoff", async (req, res) => {
   try {
     const { id } = req.body;
-    if (req.access === "S") {
+    if (req.access.includes("S")) {
       const labelInspectionForm = await labelInspectionFormModel.updateOne(
         { _id: id },
         { signedOff: req.username, signOffDate: essentials.getEST() }

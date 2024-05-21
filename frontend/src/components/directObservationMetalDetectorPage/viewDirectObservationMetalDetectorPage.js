@@ -223,7 +223,7 @@ const ViewDirectObservationMetalDetectorPage = (props) => {
         subtitle={
           data ? (
             data?.signedOff === "" ? (
-              localStorage.getItem("access") === "S" ? (
+              localStorage.getItem("access").includes("S") ? (
                 <Button
                   variant="contained"
                   color="success"

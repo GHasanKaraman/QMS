@@ -169,7 +169,7 @@ router.post("/qualitycontrol/get", async (req, res) => {
 router.post("/qualitycontrol/signoff", async (req, res) => {
   try {
     const { id } = req.body;
-    if (req.access === "S") {
+    if (req.access.includes("S")) {
       const qualityControlForm = await qualityControlModel.updateOne(
         { _id: id },
         { signedOff: req.username, signOffDate: essentials.getEST() }

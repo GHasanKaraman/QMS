@@ -52,7 +52,7 @@ router.post("/metaldetector/get", async (req, res) => {
 router.post("/metaldetector/signoff", async (req, res) => {
   try {
     const { id } = req.body;
-    if (req.access === "S") {
+    if (req.access.includes("S")) {
       const metalDetectorForm = await metalDetectorFormModel.updateOne(
         { _id: id },
         { signedOff: req.username, signOffDate: essentials.getEST() }
