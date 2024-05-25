@@ -218,10 +218,10 @@ router.post("/qualitycontrol/add", upload.any(), async (req, res) => {
       const formInformations = req.body;
       var status = undefined;
       if (
-        formInformations.areIngredientsCorrect === "Yes" &&
-        formInformations.isTasteAcceptable === "Acceptable" &&
+        formInformations.areIngredientsCorrect !== "No" &&
+        formInformations.isTasteAcceptable !== "Unacceptable" &&
         formInformations.isSealCorrect === "Yes" &&
-        formInformations.isNotchCorrect === "Yes" &&
+        formInformations.isNotchCorrect !== "No" &&
         formInformations.xrayFeDetected !== "No" &&
         formInformations.xrayNonFeDetected !== "No" &&
         formInformations.xraySsDetected !== "No" &&
@@ -235,8 +235,8 @@ router.post("/qualitycontrol/add", upload.any(), async (req, res) => {
         formInformations.metalBallMultipleNonFeDetected !== "No" &&
         formInformations.metalBallMultipleSsDetected !== "No" &&
         formInformations.areAllergensCorrect === "Yes" &&
-        formInformations.allergenStatement === "Yes" &&
-        formInformations.labelPackageCorrect === "Yes" &&
+        formInformations.allergenStatement !== "No" &&
+        formInformations.labelPackageCorrect !== "No" &&
         formInformations.unitsCase !== "No"
       ) {
         status = "passed";
