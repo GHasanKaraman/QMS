@@ -28,7 +28,9 @@ const BarLayout = () => {
           <Sidebar />
           <main className="content">
             <Topbar />
-            <Outlet />
+            <div id="printarea">
+              <Outlet />
+            </div>
           </main>
         </div>
       </ThemeProvider>

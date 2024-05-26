@@ -16,6 +16,7 @@ import { useTheme } from "@emotion/react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
+import PrintIcon from "@mui/icons-material/Print";
 
 import { toStringDate } from "../../utils/helpers";
 import Header from "../Header";
@@ -217,6 +218,18 @@ const ViewDirectObservationMetalDetectorPage = (props) => {
           })
         }
       />
+      <Button
+        sx={{ marginY: "3px", borderWidth: "2px", fontWeight: "700" }}
+        variant="outlined"
+        id="button"
+        color="secondary"
+        startIcon={<PrintIcon />}
+        onClick={() => {
+          window.print();
+        }}
+      >
+        Print
+      </Button>
       <Divider />
       <Label
         title="Data Sheet Signed Off"
@@ -252,7 +265,7 @@ const ViewDirectObservationMetalDetectorPage = (props) => {
         }
       />
       <RunLabel started={data?.started} startDateTime={data?.startDateTime} />
-      <Accordion>
+      <Accordion defaultExpanded>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Stack direction="row" justifyContent="space-between" width="100%">
             <Typography fontWeight={600} fontSize={18}>

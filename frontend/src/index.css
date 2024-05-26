@@ -33,3 +33,18 @@ body,
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+@media print {
+  body {
+    visibility: hidden;
+  }
+  #button {
+    display: none;
+  }
+  #printarea {
+    visibility: visible;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+}
