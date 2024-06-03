@@ -55,9 +55,6 @@ const ViewPGQualityControlPage = (props) => {
       setData(res.data.qualityControlForm);
       setImages(res.data.images);
       setProduct(res.data.product);
-      console.log(res.data.images);
-      console.log(res.data.qualityControlForm);
-      console.log(res.data.product);
     } else {
       navigate("/login");
       localStorage.removeItem("token");

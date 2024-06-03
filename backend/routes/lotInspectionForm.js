@@ -12,12 +12,10 @@ const lotInspectionFormModel = require("../models/lotInspectionFormModel");
 router.post("/lotinspection/get", async (req, res) => {
   try {
     const { id } = req.body;
-    const labelInspectionForm = await lotInspectionFormModel.find({
-      _id: id,
-    });
-    if (labelInspectionForm) {
+    const lotInspectionForm = await lotInspectionFormModel.find({ _id: id });
+    if (lotInspectionForm) {
       var details = {
-        part: labelInspectionForm[0].product,
+        part: lotInspectionForm[0].product,
       };
       var formBody = [];
       for (var property in details) {
@@ -35,12 +33,18 @@ router.post("/lotinspection/get", async (req, res) => {
         },
       });
       const product = await resp.json();
-      if (product) {
+      const images = await imageModel.find({
+        _id: { $in: lotInspectionForm[0].imageIDs },
+      });
+      if (images) {
         res.status(200).json({
-          labelInspectionForm: labelInspectionForm[0],
+          lotInspectionForm: lotInspectionForm[0],
+          images: images,
           product: product,
         });
-        console.log("Fetched " + id + " label inspection data sheet result!");
+        console.log(
+          "Fetched " + id + " quality control inspection data sheet result!"
+        );
       } else {
         res.sendStatus(404);
       }
@@ -57,11 +61,11 @@ router.post("/lotinspection/signoff", async (req, res) => {
   try {
     const { id } = req.body;
     if (req.access.includes("S")) {
-      const labelInspectionForm = await lotInspectionFormModel.updateOne(
+      const lotInspectionForm = await lotInspectionFormModel.updateOne(
         { _id: id },
         { signedOff: req.username, signOffDate: essentials.getEST() }
       );
-      if (labelInspectionForm.modifiedCount == 1) {
+      if (lotInspectionForm.modifiedCount == 1) {
         res.sendStatus(200);
       } else {
         res.sendStatus(400);

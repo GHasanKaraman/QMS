@@ -18,6 +18,7 @@ import PGQualityControlPage from "../components/pgQualityControlPage/pgQualityCo
 import ViewPGQualityControlPage from "../components/pgQualityControlPage/viewPGQualityControlPage.js";
 import SignOffPanelPage from "../components/signoffPanelPage/signoffPanelPage.js";
 import LotInspectionPage from "../components/lotInspectionPage/lotInspectionPage.js";
+import ViewLotInspectionPage from "../components/lotInspectionPage/viewLotInspectionPage.js";
 
 const BarLayout = () => {
   const [theme, colorMode] = useMode();
@@ -97,6 +98,13 @@ const Router = () => {
           exact
           path="/lotinspection"
           element={<LotInspectionPage title="CiboQA | LOT Inspection" />}
+        />
+        <Route
+          exact
+          path="/lotinspection/:id"
+          element={
+            <ViewLotInspectionPage title="CiboQA | Data Sheet Results" />
+          }
         />
 
         <Route
