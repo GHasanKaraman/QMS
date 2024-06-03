@@ -9,6 +9,7 @@ const qualityControlFormSchema = new mongoose.Schema(
     isTasteAcceptable: { type: String, required: true },
     lotCode: { type: String, required: true },
     expirationDate: { type: String, required: true },
+    unitOfMeasure: { type: String, default: "oz" },
     currentWeight: { type: String, required: true },
     isSealCorrect: { type: String, required: true },
     isNotchCorrect: { type: String, required: true },

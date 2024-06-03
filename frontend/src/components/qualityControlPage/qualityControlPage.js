@@ -20,6 +20,8 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CloseIcon from "@mui/icons-material/Close";
+import ScaleIcon from "@mui/icons-material/Scale";
+import BalanceIcon from "@mui/icons-material/Balance";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
@@ -276,6 +278,7 @@ const QualityControlPage = (props) => {
       expirationDate: yup
         .string()
         .required("Please enter the expiration date!"),
+      unitOfMeasure: yup.string().required(),
       currentWeight: yup
         .string()
         .required("Please enter the weight of the item!"),
@@ -532,7 +535,7 @@ const QualityControlPage = (props) => {
                 <Typography fontWeight={600} fontSize={18}>
                   PRODUCT INFORMATION
                 </Typography>
-                <Typography fontWeight={600}>10 Items</Typography>
+                <Typography fontWeight={600}>11 Items</Typography>
               </Stack>
             </AccordionSummary>
             <AccordionDetails>
@@ -804,7 +807,67 @@ const QualityControlPage = (props) => {
                     sx={{ gridColumn: "span 4" }}
                   />
                 </LocalizationProvider>
-
+                <Typography
+                  variant="h6"
+                  color={colors.grey[100]}
+                  fontWeight="600"
+                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                >
+                  What is the unit of measure?
+                </Typography>
+                <ToggleButtonCheck
+                  style={{ gridColumn: "span 4" }}
+                  alignment={formik.values.unitOfMeasure}
+                  onChange={(value) => {
+                    formik.setFieldValue("unitOfMeasure", value);
+                  }}
+                  error={
+                    !!formik.touched.unitOfMeasure &&
+                    !!formik.errors.unitOfMeasure
+                  }
+                  options={[
+                    {
+                      label: "lb",
+                      icon: (
+                        <ScaleIcon
+                          sx={{
+                            fill: colors.ciboInnerGreen[500],
+                          }}
+                        />
+                      ),
+                    },
+                    {
+                      label: "oz",
+                      icon: (
+                        <ScaleIcon
+                          sx={{
+                            fill: colors.ciboInnerGreen[500],
+                          }}
+                        />
+                      ),
+                    },
+                    {
+                      label: "gr",
+                      icon: (
+                        <BalanceIcon
+                          sx={{
+                            fill: colors.ciboInnerGreen[500],
+                          }}
+                        />
+                      ),
+                    },
+                    {
+                      label: "kg",
+                      icon: (
+                        <BalanceIcon
+                          sx={{
+                            fill: colors.ciboInnerGreen[500],
+                          }}
+                        />
+                      ),
+                    },
+                  ]}
+                />
                 <TextField
                   variant="filled"
                   type="number"

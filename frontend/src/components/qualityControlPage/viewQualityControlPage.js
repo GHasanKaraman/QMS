@@ -272,7 +272,7 @@ const ViewQualityControlPage = (props) => {
             <Typography fontWeight={600} fontSize={18}>
               PRODUCT INFORMATION
             </Typography>
-            <Typography fontWeight={600}>10 Items</Typography>
+            <Typography fontWeight={600}>11 Items</Typography>
           </Stack>
         </AccordionSummary>
         <AccordionDetails>
@@ -339,6 +339,19 @@ const ViewQualityControlPage = (props) => {
               })}
             />
             <StatusIndicator status={Boolean(data?.expirationDate)} />
+          </Stack>
+          <Divider />
+          <Stack direction="row" justifyContent="space-between">
+            <Label
+              title="What is the unit of measure?"
+              subtitle={
+                <LabelResult
+                  text={data?.unitOfMeasure}
+                  status={Boolean(data?.unitOfMeasure)}
+                />
+              }
+            />
+            <StatusIndicator status={Boolean(data?.unitOfMeasure)} />
           </Stack>
           <Divider />
           <Stack direction="row" justifyContent="space-between">
