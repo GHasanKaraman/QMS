@@ -17,6 +17,7 @@ const pgqualitycontrol = require("./routes/pgQualityControlForm.js");
 const metalDetectorForm = require("./routes/metalDetectorForm.js");
 const labelInspectionForm = require("./routes/labelInspectionForm.js");
 const ratioForm = require("./routes/ratioForm.js");
+const lotInspectionForm = require("./routes/lotInspectionForm.js");
 const comment = require("./routes/comment.js");
 
 require("console-stamp")(console, {
@@ -59,12 +60,13 @@ db.once("open", function () {
 
   app.use("/", user);
   app.use("/", dashboard);
-  app.use("/", signoff);
+  app.use("/", signoff);  
 
   app.use("/", qualityControlForm);
   app.use("/", pgqualitycontrol);
   app.use("/", metalDetectorForm);
   app.use("/", labelInspectionForm);
+  app.use("/", lotInspectionForm);
   app.use("/", ratioForm);
   app.use("/", comment);
 

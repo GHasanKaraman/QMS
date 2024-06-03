@@ -7,6 +7,7 @@ const qualityControlFormModel = require("../models/qualityControlFormModel");
 const metalDetectorFormModel = require("../models/metalDetectorFormModel");
 const labelInspectionFormModel = require("../models/labelInspectionFormModel");
 const pgQualityControlFormModel = require("../models/pgQualityControlFormModel");
+const lotInspectionFormModel = require("../models/lotInspectionFormModel");
 
 router.use("/dashboard", async (req, res) => {
   try {
@@ -35,13 +36,17 @@ router.use("/dashboard", async (req, res) => {
     const labelInspectionForms = await labelInspectionFormModel.find({
       createdAt: { $gte: startOfToday },
     });
+    const lotInspectionForms = await lotInspectionFormModel.find({
+      createdAt: { $gte: startOfToday },
+    });
     if (
       data &&
       ratioForms &&
       qualityControlForms &&
       metalDetectorForms &&
       labelInspectionForms &&
-      pgQualityControlForms
+      pgQualityControlForms &&
+      lotInspectionForms
     ) {
       res.status(200).json({
         locations: data,
@@ -49,6 +54,7 @@ router.use("/dashboard", async (req, res) => {
         qualityControlForms: qualityControlForms,
         metalDetectorForms: metalDetectorForms,
         labelInspectionForms: labelInspectionForms,
+        lotInspectionForms: lotInspectionForms,
         pgQualityControlForms: pgQualityControlForms,
       });
       console.log("Fetched all locations from OC DB!");

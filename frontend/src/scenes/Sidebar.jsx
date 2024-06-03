@@ -17,6 +17,7 @@ import BlenderIcon from "@mui/icons-material/Blender";
 import RadarIcon from "@mui/icons-material/Radar";
 import CollectionsBookmarkIcon from "@mui/icons-material/CollectionsBookmark";
 import EditNoteIcon from "@mui/icons-material/EditNote";
+import TagIcon from "@mui/icons-material/Tag";
 
 import logo from "../images/logo.png";
 
@@ -145,7 +146,7 @@ const Sidebar = () => {
             />
             {!isCollapsed ? (
               <Typography variant="h6" color={colors.grey[100]}>
-                v0.4b
+                v0.5b
               </Typography>
             ) : null}
           </div>
@@ -240,6 +241,13 @@ const Sidebar = () => {
               title="Quality Check"
               to="/pgqualitycontrol"
               icon={<div style={{ fontWeight: "600" }}>P&G</div>}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="LOT Inspection"
+              to="/lotinspection"
+              icon={<TagIcon />}
               selected={selected}
               setSelected={setSelected}
             />

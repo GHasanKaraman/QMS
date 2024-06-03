@@ -33,6 +33,7 @@ const DashboardPage = (props) => {
   const [qualityControlForms, setQualityControlForms] = useState([]);
   const [metalDetectorForms, setMetalDetectorForms] = useState([]);
   const [labelInspectionForms, setLabelInspectionForms] = useState([]);
+  const [lotInspectionForms, setLotInspectionForms] = useState([]);
   const [pgQualityControlForms, setPGQualityControlForms] = useState([]);
 
   const [locations, setLocations] = useState([]);
@@ -55,6 +56,7 @@ const DashboardPage = (props) => {
       setPGQualityControlForms(res.data.pgQualityControlForms);
       setMetalDetectorForms(res.data.metalDetectorForms);
       setLabelInspectionForms(res.data.labelInspectionForms);
+      setLotInspectionForms(res.data.lotInspectionForms);
     } else {
       navigate("/login");
       localStorage.removeItem("token");
@@ -472,6 +474,56 @@ const DashboardPage = (props) => {
                                         minute: "numeric",
                                       }
                                     )}
+                                  </Typography>
+                                </Stack>
+                              </CardContent>
+                            </CardActionArea>
+                          </Card>
+                        );
+                      })}
+                    {lotInspectionForms
+                      .filter(
+                        (lotInspectionForm) =>
+                          lotInspectionForm.station === location.name
+                      )
+                      .map((lotInspectionForm, i) => {
+                        return (
+                          <Card
+                            key={i}
+                            sx={{
+                              background: getStatusColor(lotInspectionForm),
+                              width: 200,
+                              height: 75,
+                            }}
+                          >
+                            <CardActionArea
+                              sx={{ height: "100%" }}
+                              onClick={() => {
+                                navigate(
+                                  "/lotinspection/" + lotInspectionForm._id
+                                );
+                              }}
+                            >
+                              <CardContent sx={{ paddingTop: 1 }}>
+                                <Stack spacing={0}>
+                                  <Typography
+                                    variant="h6"
+                                    fontWeight="bold"
+                                    color={colors.primary[400]}
+                                    sx={{ textAlign: "center" }}
+                                  >
+                                    LOT Inspection
+                                  </Typography>
+                                  <Typography
+                                    variant="h6"
+                                    fontWeight="bold"
+                                    color={colors.primary[400]}
+                                    sx={{ textAlign: "center" }}
+                                  >
+                                    {toStringDate(lotInspectionForm.createdAt, {
+                                      hour: "numeric",
+                                      minute: "numeric",
+                                    })}
                                   </Typography>
                                 </Stack>
                               </CardContent>

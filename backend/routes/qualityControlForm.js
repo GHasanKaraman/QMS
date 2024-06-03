@@ -214,7 +214,6 @@ router.post("/qualitycontrol/add", upload.any(), async (req, res) => {
 
     const result = await imageModel.insertMany(imageDetails);
     if (result) {
-      console.log(result);
       const formInformations = req.body;
       var status = undefined;
       if (

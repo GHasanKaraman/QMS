@@ -17,6 +17,7 @@ import ViewDirectObservationLabelInspectionPage from "../components/directObserv
 import PGQualityControlPage from "../components/pgQualityControlPage/pgQualityControlPage.js";
 import ViewPGQualityControlPage from "../components/pgQualityControlPage/viewPGQualityControlPage.js";
 import SignOffPanelPage from "../components/signoffPanelPage/signoffPanelPage.js";
+import LotInspectionPage from "../components/lotInspectionPage/lotInspectionPage.js";
 
 const BarLayout = () => {
   const [theme, colorMode] = useMode();
@@ -94,6 +95,12 @@ const Router = () => {
 
         <Route
           exact
+          path="/lotinspection"
+          element={<LotInspectionPage title="CiboQA | LOT Inspection" />}
+        />
+
+        <Route
+          exact
           path="/pgqualitycontrol"
           element={
             <PGQualityControlPage title="CiboQA | P&G Quality Control Inspection" />
@@ -126,7 +133,7 @@ const Router = () => {
           exact
           path="/labelinspection"
           element={
-            <DirectObservationLabelInspectionPage title="CiboQA | Metal Detector Inspection" />
+            <DirectObservationLabelInspectionPage title="CiboQA | Label Inspection" />
           }
         />
         <Route
