@@ -393,7 +393,7 @@ const ViewLotInspectionPage = (props) => {
         </Accordion>
       ) : undefined}
 
-      <CommentAccordion formID={id} form="qualityControl" />
+      <CommentAccordion formID={id} form="lotinspection" />
     </Box>
   );
 };

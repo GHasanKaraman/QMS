@@ -49,7 +49,7 @@ const CommentAccordion = ({ formID, form }) => {
   const [comments, setComments] = useState([]);
 
   const loadComments = async () => {
-    const res = await axios.post("/comment", { formID });
+    const res = await axios.post("/comment", { formID, form });
     if (userAuth.control(res)) {
       if (res?.data) {
         setComments(res.data.comments);

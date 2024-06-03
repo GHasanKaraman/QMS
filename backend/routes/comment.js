@@ -10,10 +10,17 @@ const router = express.Router();
 
 router.post("/comment", async (req, res) => {
   try {
-    const { formID } = req.body;
+    const { formID, form } = req.body;
     const comments = await commentModel
       .aggregate([
-        { $match: { formID: new mongoose.Types.ObjectId(formID) } },
+        {
+          $match: {
+            $and: [
+              { formID: new mongoose.Types.ObjectId(formID) },
+              { form: form },
+            ],
+          },
+        },
         {
           $lookup: {
             from: "images",
