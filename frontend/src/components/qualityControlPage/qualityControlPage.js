@@ -184,7 +184,7 @@ const QualityControlPage = (props) => {
       lotCode: "",
       expirationDate: "",
       currentWeight: "",
-      unitOfMeasure: null,
+      unitOfMeasure: "oz",
       isSealCorrect: null,
       isNotchCorrect: null,
 
