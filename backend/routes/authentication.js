@@ -26,7 +26,6 @@ router.post("/login", async (req, res) => {
       formBody.push(encodedKey + "=" + encodedValue);
     }
     formBody = formBody.join("&");
-
     const resp = await fetch("http://10.12.0.15:81/qac.php?login", {
       method: "POST",
       body: formBody,

@@ -9,6 +9,12 @@ import {
   Backdrop,
   CircularProgress,
   Button,
+  Dialog,
+  DialogTitle,
+  DialogContentText,
+  DialogContent,
+  DialogActions,
+  useMediaQuery,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useTheme } from "@emotion/react";
@@ -41,9 +47,12 @@ const ViewDirectObservationLabelInspectionPage = (props) => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
+  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
+
   const [data, setData] = useState();
   const [product, setProduct] = useState();
   const [open, setOpen] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
 
   const [clicked, setClicked] = useState(false);
 
@@ -93,8 +102,11 @@ const ViewDirectObservationLabelInspectionPage = (props) => {
               variant: "error",
             });
             break;
+          default:
+            break;
         }
         await loadLabelInspectionPage();
+        setOpenDialog(false);
       } else {
         navigate("/login");
         localStorage.removeItem("token");
@@ -131,6 +143,44 @@ const ViewDirectObservationLabelInspectionPage = (props) => {
         },
       }}
     >
+      <Dialog
+        fullScreen={fullScreen}
+        open={openDialog}
+        onClose={() => {
+          setOpenDialog(false);
+        }}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Confirm the action"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Do you really want to sign-off this form?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => {
+              setOpenDialog(false);
+            }}
+          >
+            Disagree
+          </Button>
+          <Button
+            variant="contained"
+            color="info"
+            onClick={handleSignOff}
+            autoFocus
+          >
+            Agree
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <Backdrop
         sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={open}
@@ -242,7 +292,9 @@ const ViewDirectObservationLabelInspectionPage = (props) => {
                   variant="contained"
                   color="success"
                   sx={{ fontWeight: "600" }}
-                  onClick={handleSignOff}
+                  onClick={() => {
+                    setOpenDialog(true);
+                  }}
                 >
                   Sign Off
                 </Button>

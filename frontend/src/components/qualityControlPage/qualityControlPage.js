@@ -35,8 +35,9 @@ import { tokens } from "../../theme";
 
 import axios from "../../api/axios";
 import userAuth from "../../utils/userAuth";
+
+import UploadImage from "../UploadImage";
 import ToggleButtonCheck from "../ToggleButtonCheck";
-import UploadButton from "../UploadButton";
 import { Accordion, AccordionDetails, AccordionSummary } from "../Accordion";
 
 const QualityControlPage = (props) => {
@@ -192,6 +193,8 @@ const QualityControlPage = (props) => {
       xrayFeDetected: null,
       xrayNonFeDetected: null,
       xraySsDetected: null,
+      xrayGlassDetected: null,
+      xrayCeramicDetected: null,
 
       metalCardRequired: null,
       metalCardFeDetected: null,
@@ -240,7 +243,7 @@ const QualityControlPage = (props) => {
               }
             }
             return false;
-          }
+          },
         ),
       areIngredientsCorrect: yup.string().required(),
       pictureOfProduct: yup
@@ -255,7 +258,7 @@ const QualityControlPage = (props) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          }
+          },
         ),
       isTasteAcceptable: yup.string().required(),
       pictureMixCode: yup
@@ -270,7 +273,7 @@ const QualityControlPage = (props) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          }
+          },
         ),
       lotCode: yup
         .string()
@@ -290,6 +293,10 @@ const QualityControlPage = (props) => {
       xrayNonFeDetected:
         xRayState === "Yes" ? yup.string().required() : undefined,
       xraySsDetected: xRayState === "Yes" ? yup.string().required() : undefined,
+      xrayGlassDetected:
+        xRayState === "Yes" ? yup.string().required() : undefined,
+      xrayCeramicDetected:
+        xRayState === "Yes" ? yup.string().required() : undefined,
 
       metalCardRequired: yup.string().required(),
       metalCardFeDetected:
@@ -328,7 +335,7 @@ const QualityControlPage = (props) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          }
+          },
         ),
       pictureLabelBack: yup
         .mixed()
@@ -342,7 +349,7 @@ const QualityControlPage = (props) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          }
+          },
         ),
       areAllergensCorrect: yup.string().required(),
       allergenStatement: yup.string().required(),
@@ -358,7 +365,7 @@ const QualityControlPage = (props) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          }
+          },
         ),
       labelPackageCorrect: yup.string().required(),
       pictureOfBarcode: yup
@@ -373,7 +380,7 @@ const QualityControlPage = (props) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          }
+          },
         ),
 
       unitsCase: yup.string().required(),
@@ -395,7 +402,7 @@ const QualityControlPage = (props) => {
                   return (
                     !value || (value && SUPPORTED_FORMATS.includes(value?.type))
                   );
-                }
+                },
               )
           : undefined,
 
@@ -618,18 +625,9 @@ const QualityControlPage = (props) => {
                 >
                   Picture of Product
                 </Typography>
-
-                <UploadButton
+                <UploadImage
+                  sx={{ gridColumn: "span 4", justifySelf: "start" }}
                   value={formik.values.pictureOfProduct}
-                  onFileChange={async function (fileObject, fileState) {
-                    await formik.setFieldValue("pictureOfProduct", fileObject);
-                    if (fileState) {
-                      await formik.setTouched({
-                        ...formik.touched,
-                        pictureOfProduct: true,
-                      });
-                    }
-                  }}
                   error={
                     !!formik.touched.pictureOfProduct &&
                     !!formik.errors.pictureOfProduct
@@ -638,7 +636,11 @@ const QualityControlPage = (props) => {
                     formik.touched.pictureOfProduct &&
                     formik.errors.pictureOfProduct
                   }
+                  onChange={(blob) => {
+                    formik.setFieldValue("pictureOfProduct", blob);
+                  }}
                 />
+
                 <Typography
                   variant="h6"
                   color={colors.grey[100]}
@@ -700,17 +702,9 @@ const QualityControlPage = (props) => {
                 >
                   Mix Code
                 </Typography>
-                <UploadButton
+                <UploadImage
+                  sx={{ gridColumn: "span 4", justifySelf: "start" }}
                   value={formik.values.pictureMixCode}
-                  onFileChange={async function (fileObject, fileState) {
-                    await formik.setFieldValue("pictureMixCode", fileObject);
-                    if (fileState) {
-                      formik.setTouched({
-                        ...formik.touched,
-                        pictureMixCode: true,
-                      });
-                    }
-                  }}
                   error={
                     !!formik.touched.pictureMixCode &&
                     !!formik.errors.pictureMixCode
@@ -719,6 +713,9 @@ const QualityControlPage = (props) => {
                     formik.touched.pictureMixCode &&
                     formik.errors.pictureMixCode
                   }
+                  onChange={(blob) => {
+                    formik.setFieldValue("pictureMixCode", blob);
+                  }}
                 />
                 <TextField
                   variant="filled"
@@ -1189,6 +1186,92 @@ const QualityControlPage = (props) => {
                       },
                     ]}
                   />
+                  <Typography
+                    variant="h6"
+                    color={colors.grey[100]}
+                    fontWeight="600"
+                    sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                  >
+                    Glass 8.0 mm detected?
+                  </Typography>
+                  <ToggleButtonCheck
+                    style={{ gridColumn: "span 4" }}
+                    alignment={formik.values.xrayGlassDetected}
+                    onChange={(value) => {
+                      formik.setFieldValue("xrayGlassDetected", value);
+                    }}
+                    error={
+                      !!formik.touched.xrayGlassDetected &&
+                      !!formik.errors.xrayGlassDetected
+                    }
+                    options={[
+                      {
+                        label: "Yes",
+                        icon: (
+                          <CheckBoxIcon
+                            sx={{
+                              fill: colors.ciboInnerGreen[500],
+                            }}
+                          />
+                        ),
+                      },
+                      {
+                        label: "No",
+                        icon: (
+                          <CloseIcon
+                            sx={{
+                              color: colors.yoggieRed[500],
+                              stroke: colors.yoggieRed[500],
+                              strokeWidth: "2",
+                            }}
+                          />
+                        ),
+                      },
+                    ]}
+                  />
+                  <Typography
+                    variant="h6"
+                    color={colors.grey[100]}
+                    fontWeight="600"
+                    sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                  >
+                    Ceramic 6.00 mm detected?
+                  </Typography>
+                  <ToggleButtonCheck
+                    style={{ gridColumn: "span 4" }}
+                    alignment={formik.values.xrayCeramicDetected}
+                    onChange={(value) => {
+                      formik.setFieldValue("xrayCeramicDetected", value);
+                    }}
+                    error={
+                      !!formik.touched.xrayCeramicDetected &&
+                      !!formik.errors.xrayCeramicDetected
+                    }
+                    options={[
+                      {
+                        label: "Yes",
+                        icon: (
+                          <CheckBoxIcon
+                            sx={{
+                              fill: colors.ciboInnerGreen[500],
+                            }}
+                          />
+                        ),
+                      },
+                      {
+                        label: "No",
+                        icon: (
+                          <CloseIcon
+                            sx={{
+                              color: colors.yoggieRed[500],
+                              stroke: colors.yoggieRed[500],
+                              strokeWidth: "2",
+                            }}
+                          />
+                        ),
+                      },
+                    ]}
+                  />
                 </Stack>
               </Box>
             </AccordionDetails>
@@ -1529,7 +1612,7 @@ const QualityControlPage = (props) => {
                     onChange={(value) => {
                       formik.setFieldValue(
                         "metalBallSingleNonFeDetected",
-                        value
+                        value,
                       );
                     }}
                     error={
@@ -1696,7 +1779,7 @@ const QualityControlPage = (props) => {
                     onChange={(value) => {
                       formik.setFieldValue(
                         "metalBallMultipleFeDetected",
-                        value
+                        value,
                       );
                     }}
                     error={
@@ -1742,7 +1825,7 @@ const QualityControlPage = (props) => {
                     onChange={(value) => {
                       formik.setFieldValue(
                         "metalBallMultipleNonFeDetected",
-                        value
+                        value,
                       );
                     }}
                     error={
@@ -1788,7 +1871,7 @@ const QualityControlPage = (props) => {
                     onChange={(value) => {
                       formik.setFieldValue(
                         "metalBallMultipleSsDetected",
-                        value
+                        value,
                       );
                     }}
                     error={
@@ -1901,18 +1984,9 @@ const QualityControlPage = (props) => {
                 >
                   Picture(Front)
                 </Typography>
-
-                <UploadButton
+                <UploadImage
+                  sx={{ gridColumn: "span 4", justifySelf: "start" }}
                   value={formik.values.pictureLabelFront}
-                  onFileChange={async function (fileObject, fileState) {
-                    await formik.setFieldValue("pictureLabelFront", fileObject);
-                    if (fileState) {
-                      await formik.setTouched({
-                        ...formik.touched,
-                        pictureLabelFront: true,
-                      });
-                    }
-                  }}
                   error={
                     !!formik.touched.pictureLabelFront &&
                     !!formik.errors.pictureLabelFront
@@ -1921,6 +1995,9 @@ const QualityControlPage = (props) => {
                     formik.touched.pictureLabelFront &&
                     formik.errors.pictureLabelFront
                   }
+                  onChange={(blob) => {
+                    formik.setFieldValue("pictureLabelFront", blob);
+                  }}
                 />
                 <Typography
                   variant="h6"
@@ -1930,18 +2007,9 @@ const QualityControlPage = (props) => {
                 >
                   Picture(Back)
                 </Typography>
-
-                <UploadButton
+                <UploadImage
+                  sx={{ gridColumn: "span 4", justifySelf: "start" }}
                   value={formik.values.pictureLabelBack}
-                  onFileChange={async function (fileObject, fileState) {
-                    await formik.setFieldValue("pictureLabelBack", fileObject);
-                    if (fileState) {
-                      await formik.setTouched({
-                        ...formik.touched,
-                        pictureLabelBack: true,
-                      });
-                    }
-                  }}
                   error={
                     !!formik.touched.pictureLabelBack &&
                     !!formik.errors.pictureLabelBack
@@ -1950,6 +2018,9 @@ const QualityControlPage = (props) => {
                     formik.touched.pictureLabelBack &&
                     formik.errors.pictureLabelBack
                   }
+                  onChange={(blob) => {
+                    formik.setFieldValue("pictureLabelBack", blob);
+                  }}
                 />
                 <Stack direction="column" spacing={2}>
                   <Typography
@@ -2078,21 +2149,9 @@ const QualityControlPage = (props) => {
                 >
                   Picture of Allergen Statement
                 </Typography>
-
-                <UploadButton
+                <UploadImage
+                  sx={{ gridColumn: "span 4", justifySelf: "start" }}
                   value={formik.values.pictureOfAllergenStatement}
-                  onFileChange={async function (fileObject, fileState) {
-                    await formik.setFieldValue(
-                      "pictureOfAllergenStatement",
-                      fileObject
-                    );
-                    if (fileState) {
-                      await formik.setTouched({
-                        ...formik.touched,
-                        pictureOfAllergenStatement: true,
-                      });
-                    }
-                  }}
                   error={
                     !!formik.touched.pictureOfAllergenStatement &&
                     !!formik.errors.pictureOfAllergenStatement
@@ -2101,6 +2160,9 @@ const QualityControlPage = (props) => {
                     formik.touched.pictureOfAllergenStatement &&
                     formik.errors.pictureOfAllergenStatement
                   }
+                  onChange={(blob) => {
+                    formik.setFieldValue("pictureOfAllergenStatement", blob);
+                  }}
                 />
                 <Typography
                   variant="h6"
@@ -2163,18 +2225,9 @@ const QualityControlPage = (props) => {
                 >
                   Picture of Barcode
                 </Typography>
-
-                <UploadButton
+                <UploadImage
+                  sx={{ gridColumn: "span 4", justifySelf: "start" }}
                   value={formik.values.pictureOfBarcode}
-                  onFileChange={async function (fileObject, fileState) {
-                    await formik.setFieldValue("pictureOfBarcode", fileObject);
-                    if (fileState) {
-                      await formik.setTouched({
-                        ...formik.touched,
-                        pictureOfBarcode: true,
-                      });
-                    }
-                  }}
                   error={
                     !!formik.touched.pictureOfBarcode &&
                     !!formik.errors.pictureOfBarcode
@@ -2183,6 +2236,9 @@ const QualityControlPage = (props) => {
                     formik.touched.pictureOfBarcode &&
                     formik.errors.pictureOfBarcode
                   }
+                  onChange={(blob) => {
+                    formik.setFieldValue("pictureOfBarcode", blob);
+                  }}
                 />
               </Box>
             </AccordionDetails>
@@ -2380,20 +2436,9 @@ const QualityControlPage = (props) => {
                     Picture of Box-Label
                   </Typography>
 
-                  <UploadButton
+                  <UploadImage
+                    sx={{ gridColumn: "span 4", justifySelf: "start" }}
                     value={formik.values.pictureOfBoxLabel}
-                    onFileChange={async function (fileObject, fileState) {
-                      await formik.setFieldValue(
-                        "pictureOfBoxLabel",
-                        fileObject
-                      );
-                      if (fileState) {
-                        await formik.setTouched({
-                          ...formik.touched,
-                          pictureOfBoxLabel: true,
-                        });
-                      }
-                    }}
                     error={
                       !!formik.touched.pictureOfBoxLabel &&
                       !!formik.errors.pictureOfBoxLabel
@@ -2402,6 +2447,9 @@ const QualityControlPage = (props) => {
                       formik.touched.pictureOfBoxLabel &&
                       formik.errors.pictureOfBoxLabel
                     }
+                    onChange={(blob) => {
+                      formik.setFieldValue("pictureOfBoxLabel", blob);
+                    }}
                   />
                 </Stack>
               </Box>

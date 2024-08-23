@@ -17,6 +17,8 @@ const qualityControlFormSchema = new mongoose.Schema(
     xrayFeDetected: { type: String, default: "" },
     xrayNonFeDetected: { type: String, default: "" },
     xraySsDetected: { type: String, default: "" },
+    xrayGlassDetected: { type: String, default: "" },
+    xrayCeramicDetected: { type: String, default: "" },
     metalCardRequired: { type: String, required: true },
     metalCardFeDetected: { type: String, default: "" },
     metalCardNonFeDetected: { type: String, default: "" },
@@ -44,12 +46,12 @@ const qualityControlFormSchema = new mongoose.Schema(
     started: { type: Number, default: 0 },
     startDateTime: { type: Date },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const qualityControlFormModel = mongoose.model(
   "qualityControlForms",
-  qualityControlFormSchema
+  qualityControlFormSchema,
 );
 
 module.exports = qualityControlFormModel;

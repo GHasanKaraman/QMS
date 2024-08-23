@@ -10,6 +10,12 @@ import {
   Backdrop,
   CircularProgress,
   Button,
+  Dialog,
+  DialogTitle,
+  DialogContentText,
+  DialogContent,
+  DialogActions,
+  useMediaQuery,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useTheme } from "@emotion/react";
@@ -41,10 +47,13 @@ const ViewQualityControlPage = (props) => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
+  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
+
   const [data, setData] = useState();
   const [images, setImages] = useState([]);
   const [product, setProduct] = useState();
   const [open, setOpen] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
 
   const [clicked, setClicked] = useState(false);
 
@@ -93,8 +102,11 @@ const ViewQualityControlPage = (props) => {
               variant: "error",
             });
             break;
+          default:
+            break;
         }
         await loadQualityControlPage();
+        setOpenDialog(false);
       } else {
         navigate("/login");
         localStorage.removeItem("token");
@@ -131,6 +143,44 @@ const ViewQualityControlPage = (props) => {
         },
       }}
     >
+      <Dialog
+        fullScreen={fullScreen}
+        open={openDialog}
+        onClose={() => {
+          setOpenDialog(false);
+        }}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Confirm the action"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Do you really want to sign-off this form?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => {
+              setOpenDialog(false);
+            }}
+          >
+            Disagree
+          </Button>
+          <Button
+            variant="contained"
+            color="info"
+            onClick={handleSignOff}
+            autoFocus
+          >
+            Agree
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <Backdrop
         sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={open}
@@ -242,7 +292,9 @@ const ViewQualityControlPage = (props) => {
                   variant="contained"
                   color="success"
                   sx={{ fontWeight: "600" }}
-                  onClick={handleSignOff}
+                  onClick={() => {
+                    setOpenDialog(true);
+                  }}
                 >
                   Sign Off
                 </Button>
@@ -334,8 +386,6 @@ const ViewQualityControlPage = (props) => {
                 month: "short",
                 year: "numeric",
                 day: "numeric",
-                hour: "numeric",
-                minute: "numeric",
               })}
             />
             <StatusIndicator status={Boolean(data?.expirationDate)} />
@@ -449,6 +499,44 @@ const ViewQualityControlPage = (props) => {
                 />
                 <StatusIndicator status={data?.xraySsDetected === "Yes"} />
               </Stack>
+              {data?.xrayGlassDetected !== "" ? (
+                <div>
+                  <Divider />
+                  <Stack direction="row" justifyContent="space-between">
+                    <Label
+                      title="Glass 8.00 mm detected?"
+                      subtitle={
+                        <LabelResult
+                          text={data?.xrayGlassDetected}
+                          status={data?.xrayGlassDetected === "Yes"}
+                        />
+                      }
+                    />
+                    <StatusIndicator
+                      status={data?.xrayGlassDetected === "Yes"}
+                    />
+                  </Stack>
+                </div>
+              ) : undefined}
+              {data?.xrayCeramicDetected !== "" ? (
+                <div>
+                  <Divider />
+                  <Stack direction="row" justifyContent="space-between">
+                    <Label
+                      title="Ceramic 6.00 mm detected?"
+                      subtitle={
+                        <LabelResult
+                          text={data?.xrayCeramicDetected}
+                          status={data?.xrayCeramicDetected === "Yes"}
+                        />
+                      }
+                    />
+                    <StatusIndicator
+                      status={data?.xrayCeramicDetected === "Yes"}
+                    />
+                  </Stack>
+                </div>
+              ) : undefined}
             </div>
           ) : undefined}
           <Divider />

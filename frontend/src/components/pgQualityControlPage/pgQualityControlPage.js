@@ -32,8 +32,9 @@ import { tokens } from "../../theme";
 
 import axios from "../../api/axios";
 import userAuth from "../../utils/userAuth";
+
+import UploadImage from "../UploadImage";
 import ToggleButtonCheck from "../ToggleButtonCheck";
-import UploadButton from "../UploadButton";
 import { Accordion, AccordionDetails, AccordionSummary } from "../Accordion";
 
 const PGQualityControlPage = (props) => {
@@ -201,7 +202,7 @@ const PGQualityControlPage = (props) => {
               }
             }
             return false;
-          }
+          },
         ),
       rawProduct: yup
         .mixed()
@@ -215,7 +216,7 @@ const PGQualityControlPage = (props) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          }
+          },
         ),
       pictureOfLabelInspectionPouch: yup
         .mixed()
@@ -229,13 +230,13 @@ const PGQualityControlPage = (props) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          }
+          },
         ),
       pictureOfExpiration: yup
         .mixed()
         .nullable()
         .required(
-          "Please upload the picture of the expiration date on the pouch!"
+          "Please upload the picture of the expiration date on the pouch!",
         )
         .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
           return !value || (value && value.size < 1024 * 1024 * 10);
@@ -245,7 +246,7 @@ const PGQualityControlPage = (props) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          }
+          },
         ),
       expirationDatePouch: yup
         .string()
@@ -279,7 +280,7 @@ const PGQualityControlPage = (props) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          }
+          },
         ),
       pictureOfPanningBatch: yup
         .mixed()
@@ -293,7 +294,7 @@ const PGQualityControlPage = (props) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          }
+          },
         ),
       pictureOfSugarShelledBatch: yup
         .mixed()
@@ -307,7 +308,7 @@ const PGQualityControlPage = (props) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          }
+          },
         ),
 
       pictureOfLabelInspectionFront: yup
@@ -322,7 +323,7 @@ const PGQualityControlPage = (props) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          }
+          },
         ),
       pictureOfLabelInspectionBack: yup
         .mixed()
@@ -336,7 +337,7 @@ const PGQualityControlPage = (props) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          }
+          },
         ),
       currentWeightBox: yup
         .string()
@@ -354,7 +355,7 @@ const PGQualityControlPage = (props) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          }
+          },
         ),
 
       pictureOfLabelInspectionCase: yup
@@ -369,7 +370,7 @@ const PGQualityControlPage = (props) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          }
+          },
         ),
       expirationDateCase: yup
         .string()
@@ -389,7 +390,7 @@ const PGQualityControlPage = (props) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          }
+          },
         ),
 
       pictureOfChep: yup
@@ -404,7 +405,7 @@ const PGQualityControlPage = (props) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          }
+          },
         ),
     }),
   });
@@ -823,24 +824,18 @@ const PGQualityControlPage = (props) => {
                 >
                   Raw Product
                 </Typography>
-
-                <UploadButton
+                <UploadImage
+                  sx={{ gridColumn: "span 4", justifySelf: "start" }}
                   value={formik.values.rawProduct}
-                  onFileChange={async function (fileObject, fileState) {
-                    await formik.setFieldValue("rawProduct", fileObject);
-                    if (fileState) {
-                      await formik.setTouched({
-                        ...formik.touched,
-                        rawProduct: true,
-                      });
-                    }
-                  }}
                   error={
                     !!formik.touched.rawProduct && !!formik.errors.rawProduct
                   }
                   helperText={
                     formik.touched.rawProduct && formik.errors.rawProduct
                   }
+                  onChange={(blob) => {
+                    formik.setFieldValue("rawProduct", blob);
+                  }}
                 />
 
                 <Stack spacing={2} direction="row">
@@ -854,20 +849,9 @@ const PGQualityControlPage = (props) => {
                       Label Inspection
                     </Typography>
 
-                    <UploadButton
+                    <UploadImage
+                      sx={{ gridColumn: "span 4", justifySelf: "start" }}
                       value={formik.values.pictureOfLabelInspectionPouch}
-                      onFileChange={async function (fileObject, fileState) {
-                        await formik.setFieldValue(
-                          "pictureOfLabelInspectionPouch",
-                          fileObject
-                        );
-                        if (fileState) {
-                          await formik.setTouched({
-                            ...formik.touched,
-                            pictureOfLabelInspectionPouch: true,
-                          });
-                        }
-                      }}
                       error={
                         !!formik.touched.pictureOfLabelInspectionPouch &&
                         !!formik.errors.pictureOfLabelInspectionPouch
@@ -876,6 +860,12 @@ const PGQualityControlPage = (props) => {
                         formik.touched.pictureOfLabelInspectionPouch &&
                         formik.errors.pictureOfLabelInspectionPouch
                       }
+                      onChange={(blob) => {
+                        formik.setFieldValue(
+                          "pictureOfLabelInspectionPouch",
+                          blob,
+                        );
+                      }}
                     />
                   </Stack>
                   <Stack spacing={1.5}>
@@ -888,20 +878,9 @@ const PGQualityControlPage = (props) => {
                       Picture of Expiration Date
                     </Typography>
 
-                    <UploadButton
+                    <UploadImage
+                      sx={{ gridColumn: "span 4", justifySelf: "start" }}
                       value={formik.values.pictureOfExpiration}
-                      onFileChange={async function (fileObject, fileState) {
-                        await formik.setFieldValue(
-                          "pictureOfExpiration",
-                          fileObject
-                        );
-                        if (fileState) {
-                          await formik.setTouched({
-                            ...formik.touched,
-                            pictureOfExpiration: true,
-                          });
-                        }
-                      }}
                       error={
                         !!formik.touched.pictureOfExpiration &&
                         !!formik.errors.pictureOfExpiration
@@ -910,6 +889,9 @@ const PGQualityControlPage = (props) => {
                         formik.touched.pictureOfExpiration &&
                         formik.errors.pictureOfExpiration
                       }
+                      onChange={(blob) => {
+                        formik.setFieldValue("pictureOfExpiration", blob);
+                      }}
                     />
                   </Stack>
                 </Stack>
@@ -982,7 +964,7 @@ const PGQualityControlPage = (props) => {
                       if (value != null) {
                         formik.setFieldValue(
                           "expirationDatePouch",
-                          value.format()
+                          value.format(),
                         );
                       } else {
                         formik.setFieldValue("expirationDatePouch", "");
@@ -1151,20 +1133,9 @@ const PGQualityControlPage = (props) => {
                 >
                   Allergen Statement
                 </Typography>
-                <UploadButton
+                <UploadImage
+                  sx={{ gridColumn: "span 4", justifySelf: "start" }}
                   value={formik.values.pictureOfAllergenStatementPouch}
-                  onFileChange={async function (fileObject, fileState) {
-                    await formik.setFieldValue(
-                      "pictureOfAllergenStatementPouch",
-                      fileObject
-                    );
-                    if (fileState) {
-                      await formik.setTouched({
-                        ...formik.touched,
-                        pictureOfAllergenStatementPouch: true,
-                      });
-                    }
-                  }}
                   error={
                     !!formik.touched.pictureOfAllergenStatementPouch &&
                     !!formik.errors.pictureOfAllergenStatementPouch
@@ -1173,6 +1144,12 @@ const PGQualityControlPage = (props) => {
                     formik.touched.pictureOfAllergenStatementPouch &&
                     formik.errors.pictureOfAllergenStatementPouch
                   }
+                  onChange={(blob) => {
+                    formik.setFieldValue(
+                      "pictureOfAllergenStatementPouch",
+                      blob,
+                    );
+                  }}
                 />
 
                 <Typography
@@ -1183,19 +1160,11 @@ const PGQualityControlPage = (props) => {
                 >
                   Panning Batch
                 </Typography>
-                <UploadButton
+                <UploadImage
                   value={formik.values.pictureOfPanningBatch}
-                  onFileChange={async function (fileObject, fileState) {
-                    await formik.setFieldValue(
-                      "pictureOfPanningBatch",
-                      fileObject
-                    );
-                    if (fileState) {
-                      await formik.setTouched({
-                        ...formik.touched,
-                        pictureOfPanningBatch: true,
-                      });
-                    }
+                  sx={{ gridColumn: "span 4", justifySelf: "start" }}
+                  onChange={(blob) => {
+                    formik.setFieldValue("pictureOfPanningBatch", blob);
                   }}
                   error={
                     !!formik.touched.pictureOfPanningBatch &&
@@ -1215,19 +1184,11 @@ const PGQualityControlPage = (props) => {
                 >
                   Sugar Shelled Batch
                 </Typography>
-                <UploadButton
+                <UploadImage
                   value={formik.values.pictureOfSugarShelledBatch}
-                  onFileChange={async function (fileObject, fileState) {
-                    await formik.setFieldValue(
-                      "pictureOfSugarShelledBatch",
-                      fileObject
-                    );
-                    if (fileState) {
-                      await formik.setTouched({
-                        ...formik.touched,
-                        pictureOfSugarShelledBatch: true,
-                      });
-                    }
+                  sx={{ gridColumn: "span 4", justifySelf: "start" }}
+                  onChange={(blob) => {
+                    formik.setFieldValue("pictureOfSugarShelledBatch", blob);
                   }}
                   error={
                     !!formik.touched.pictureOfSugarShelledBatch &&
@@ -1287,19 +1248,14 @@ const PGQualityControlPage = (props) => {
                     >
                       Label Inspection
                     </Typography>
-                    <UploadButton
+                    <UploadImage
                       value={formik.values.pictureOfLabelInspectionFront}
-                      onFileChange={async function (fileObject, fileState) {
-                        await formik.setFieldValue(
+                      sx={{ gridColumn: "span 4", justifySelf: "start" }}
+                      onChange={(blob) => {
+                        formik.setFieldValue(
                           "pictureOfLabelInspectionFront",
-                          fileObject
+                          blob,
                         );
-                        if (fileState) {
-                          await formik.setTouched({
-                            ...formik.touched,
-                            pictureOfLabelInspectionFront: true,
-                          });
-                        }
                       }}
                       error={
                         !!formik.touched.pictureOfLabelInspectionFront &&
@@ -1321,19 +1277,14 @@ const PGQualityControlPage = (props) => {
                     >
                       Label Inspection
                     </Typography>
-                    <UploadButton
+                    <UploadImage
                       value={formik.values.pictureOfLabelInspectionBack}
-                      onFileChange={async function (fileObject, fileState) {
-                        await formik.setFieldValue(
+                      sx={{ gridColumn: "span 4", justifySelf: "start" }}
+                      onChange={(blob) => {
+                        formik.setFieldValue(
                           "pictureOfLabelInspectionBack",
-                          fileObject
+                          blob,
                         );
-                        if (fileState) {
-                          await formik.setTouched({
-                            ...formik.touched,
-                            pictureOfLabelInspectionBack: true,
-                          });
-                        }
                       }}
                       error={
                         !!formik.touched.pictureOfLabelInspectionBack &&
@@ -1434,19 +1385,11 @@ const PGQualityControlPage = (props) => {
                   Allergen Statement
                 </Typography>
 
-                <UploadButton
+                <UploadImage
                   value={formik.values.pictureOfAllergenStatementBox}
-                  onFileChange={async function (fileObject, fileState) {
-                    await formik.setFieldValue(
-                      "pictureOfAllergenStatementBox",
-                      fileObject
-                    );
-                    if (fileState) {
-                      await formik.setTouched({
-                        ...formik.touched,
-                        pictureOfAllergenStatementBox: true,
-                      });
-                    }
+                  sx={{ gridColumn: "span 4", justifySelf: "start" }}
+                  onChange={(blob) => {
+                    formik.setFieldValue("pictureOfAllergenStatementBox", blob);
                   }}
                   error={
                     !!formik.touched.pictureOfAllergenStatementBox &&
@@ -1504,19 +1447,11 @@ const PGQualityControlPage = (props) => {
                   Label Inspection
                 </Typography>
 
-                <UploadButton
+                <UploadImage
                   value={formik.values.pictureOfLabelInspectionCase}
-                  onFileChange={async function (fileObject, fileState) {
-                    await formik.setFieldValue(
-                      "pictureOfLabelInspectionCase",
-                      fileObject
-                    );
-                    if (fileState) {
-                      await formik.setTouched({
-                        ...formik.touched,
-                        pictureOfLabelInspectionCase: true,
-                      });
-                    }
+                  sx={{ gridColumn: "span 4", justifySelf: "start" }}
+                  onChange={(blob) => {
+                    formik.setFieldValue("pictureOfLabelInspectionCase", blob);
                   }}
                   error={
                     !!formik.touched.pictureOfLabelInspectionCase &&
@@ -1596,7 +1531,7 @@ const PGQualityControlPage = (props) => {
                       if (value != null) {
                         formik.setFieldValue(
                           "expirationDateCase",
-                          value.format()
+                          value.format(),
                         );
                       } else {
                         formik.setFieldValue("expirationDateCase", "");
@@ -1632,16 +1567,11 @@ const PGQualityControlPage = (props) => {
                 >
                   Pattern
                 </Typography>
-                <UploadButton
+                <UploadImage
                   value={formik.values.pictureOfPattern}
-                  onFileChange={async function (fileObject, fileState) {
-                    await formik.setFieldValue("pictureOfPattern", fileObject);
-                    if (fileState) {
-                      await formik.setTouched({
-                        ...formik.touched,
-                        pictureOfPattern: true,
-                      });
-                    }
+                  sx={{ gridColumn: "span 4", justifySelf: "start" }}
+                  onChange={(blob) => {
+                    formik.setFieldValue("pictureOfPattern", blob);
                   }}
                   error={
                     !!formik.touched.pictureOfPattern &&
@@ -1698,16 +1628,11 @@ const PGQualityControlPage = (props) => {
                 >
                   CHEP
                 </Typography>
-                <UploadButton
+                <UploadImage
                   value={formik.values.pictureOfChep}
-                  onFileChange={async function (fileObject, fileState) {
-                    await formik.setFieldValue("pictureOfChep", fileObject);
-                    if (fileState) {
-                      await formik.setTouched({
-                        ...formik.touched,
-                        pictureOfChep: true,
-                      });
-                    }
+                  sx={{ gridColumn: "span 4", justifySelf: "start" }}
+                  onChange={(blob) => {
+                    formik.setFieldValue("pictureOfChep", blob);
                   }}
                   error={
                     !!formik.touched.pictureOfChep &&

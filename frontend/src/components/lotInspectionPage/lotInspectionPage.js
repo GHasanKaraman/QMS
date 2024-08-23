@@ -27,8 +27,8 @@ import { tokens } from "../../theme";
 
 import axios from "../../api/axios";
 import userAuth from "../../utils/userAuth";
-import UploadButton from "../UploadButton";
 import { Accordion, AccordionDetails, AccordionSummary } from "../Accordion";
+import UploadImage from "../UploadImage";
 
 const LotInspectionPage = (props) => {
   const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png"];
@@ -100,6 +100,8 @@ const LotInspectionPage = (props) => {
               variant: "error",
             });
             break;
+          default:
+            break;
         }
       }
     } else {
@@ -125,11 +127,14 @@ const LotInspectionPage = (props) => {
 
     const formData = new FormData();
     for (const name in values) {
-      formData.append(name, values[name]);
+      if (values[name]?.constructor?.name === "Blob") {
+        formData.append(name, values[name], name + ".jpeg");
+      } else {
+        formData.append(name, values[name]);
+      }
     }
 
     const res = await axios.post("/lotinspection/add", formData);
-    console.log(res.data);
     if (userAuth.control(res)) {
       if (res?.data) {
         enqueueSnackbar("You have successfully created the form!", {
@@ -148,6 +153,8 @@ const LotInspectionPage = (props) => {
               variant: "error",
             });
             break;
+          default:
+            break;
         }
       }
     } else {
@@ -165,6 +172,7 @@ const LotInspectionPage = (props) => {
     initialValues: {
       station: null,
       product: null,
+      salesOrderNumber: "",
       itemCode1: "",
       lotCode1: "",
       picture1: null,
@@ -191,13 +199,14 @@ const LotInspectionPage = (props) => {
           "Please select the running product!",
           (value) => {
             if (value) {
-              if (value?.partnum != "") {
+              if (value?.partnum !== "") {
                 return true;
               }
             }
             return false;
-          }
+          },
         ),
+      salesOrderNumber: yup.string().required("Please enter the PO number!"),
       itemCode1: yup
         .string()
         .required("Please enter the item code of the product!"),
@@ -216,7 +225,7 @@ const LotInspectionPage = (props) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          }
+          },
         ),
     }),
   });
@@ -349,6 +358,66 @@ const LotInspectionPage = (props) => {
                 width="100%"
               >
                 <Typography fontWeight={600} fontSize={18}>
+                  SALES ORDER NUMBER
+                </Typography>
+                <Typography fontWeight={600}>1 Item</Typography>
+              </Stack>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Box
+                display="grid"
+                gap="30px"
+                gridTemplateColumns="repeat(4, minmax(0, 1fr))"
+                sx={{
+                  "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
+                  "& .MuiInputBase-root::after": {
+                    borderBottomColor: colors.ciboInnerGreen[500],
+                  },
+                  "& .MuiInputBase-root::before": {
+                    borderBottomColor: colors.ciboInnerGreen[600],
+                  },
+                  "& .MuiFormLabel-root.Mui-focused": {
+                    color: colors.ciboInnerGreen[300],
+                  },
+                }}
+              >
+                <TextField
+                  variant="filled"
+                  type="text"
+                  label="Item Code #"
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  value={formik.values.salesOrderNumber}
+                  name="salesOrderNumber"
+                  error={
+                    !!formik.touched.salesOrderNumber &&
+                    !!formik.errors.salesOrderNumber
+                  }
+                  helperText={
+                    formik.touched.salesOrderNumber &&
+                    formik.errors.salesOrderNumber
+                  }
+                  sx={{ gridColumn: "span 4" }}
+                />
+              </Box>
+            </AccordionDetails>
+          </Accordion>
+
+          <Accordion
+            expanded={formik.values.salesOrderNumber !== ""}
+            disabled={formik.values.salesOrderNumber === ""}
+          >
+            <AccordionSummary
+              aria-controls="panel8d-content"
+              id="panel8d-header"
+              expandIcon={<ExpandMoreIcon />}
+            >
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                width="100%"
+              >
+                <Typography fontWeight={600} fontSize={18}>
                   1. ITEM NAME
                 </Typography>
                 <Typography fontWeight={600}>3 Items</Typography>
@@ -400,39 +469,28 @@ const LotInspectionPage = (props) => {
                   helperText={formik.touched.lotCode1 && formik.errors.lotCode1}
                   sx={{ gridColumn: "span 4" }}
                 />
-                <Stack direction="column" spacing={1.5}>
-                  <Typography
-                    variant="h6"
-                    color={colors.grey[100]}
-                    fontWeight="600"
-                    sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
-                  >
-                    Picture of Back, Single (Multipack )
-                  </Typography>
 
-                  <UploadButton
-                    value={formik.values.picture1}
-                    onFileChange={async function (fileObject, fileState) {
-                      await formik.setFieldValue("picture1", fileObject);
-                      if (fileState) {
-                        await formik.setTouched({
-                          ...formik.touched,
-                          picture1: true,
-                        });
-                      }
-                    }}
-                    error={
-                      !!formik.touched.picture1 && !!formik.errors.picture1
-                    }
-                    helperText={
-                      formik.touched.picture1 && formik.errors.picture1
-                    }
-                  />
-                </Stack>
+                <Typography
+                  variant="h6"
+                  color={colors.grey[100]}
+                  fontWeight="600"
+                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                >
+                  Picture of Back, Single (Multipack )
+                </Typography>
+                <UploadImage
+                  sx={{ gridColumn: "span 4", justifySelf: "start" }}
+                  value={formik.values.picture1}
+                  error={!!formik.touched.picture1 && !!formik.errors.picture1}
+                  helperText={formik.touched.picture1 && formik.errors.picture1}
+                  onChange={(blob) => {
+                    formik.setFieldValue("picture1", blob);
+                  }}
+                />
               </Box>
             </AccordionDetails>
           </Accordion>
-          <Accordion>
+          <Accordion disabled={!formik.isValid} expanded={formik.isValid}>
             <AccordionSummary
               aria-controls="panel8d-content"
               id="panel8d-header"
@@ -495,39 +553,40 @@ const LotInspectionPage = (props) => {
                   helperText={formik.touched.lotCode2 && formik.errors.lotCode2}
                   sx={{ gridColumn: "span 4" }}
                 />
-                <Stack direction="column" spacing={1.5}>
-                  <Typography
-                    variant="h6"
-                    color={colors.grey[100]}
-                    fontWeight="600"
-                    sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
-                  >
-                    Picture of Back, Single (Multipack )
-                  </Typography>
-
-                  <UploadButton
-                    value={formik.values.picture2}
-                    onFileChange={async function (fileObject, fileState) {
-                      await formik.setFieldValue("picture2", fileObject);
-                      if (fileState) {
-                        await formik.setTouched({
-                          ...formik.touched,
-                          picture2: true,
-                        });
-                      }
-                    }}
-                    error={
-                      !!formik.touched.picture2 && !!formik.errors.picture2
-                    }
-                    helperText={
-                      formik.touched.picture2 && formik.errors.picture2
-                    }
-                  />
-                </Stack>
+                <Typography
+                  variant="h6"
+                  color={colors.grey[100]}
+                  fontWeight="600"
+                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                >
+                  Picture of Back, Single (Multipack )
+                </Typography>
+                <UploadImage
+                  sx={{ gridColumn: "span 4", justifySelf: "start" }}
+                  value={formik.values.picture2}
+                  error={!!formik.touched.picture2 && !!formik.errors.picture2}
+                  helperText={formik.touched.picture2 && formik.errors.picture2}
+                  onChange={(blob) => {
+                    formik.setFieldValue("picture2", blob);
+                  }}
+                />
               </Box>
             </AccordionDetails>
           </Accordion>
-          <Accordion>
+          <Accordion
+            expanded={
+              formik.isValid &&
+              formik.values.picture2 !== null &&
+              formik.values.itemCode2 !== "" &&
+              formik.values.lotCode2 !== ""
+            }
+            disabled={
+              !formik.isValid ||
+              formik.values.picture2 === null ||
+              formik.values.itemCode2 === "" ||
+              formik.values.lotCode2 === ""
+            }
+          >
             <AccordionSummary
               aria-controls="panel8d-content"
               id="panel8d-header"
@@ -590,39 +649,46 @@ const LotInspectionPage = (props) => {
                   helperText={formik.touched.lotCode3 && formik.errors.lotCode3}
                   sx={{ gridColumn: "span 4" }}
                 />
-                <Stack direction="column" spacing={1.5}>
-                  <Typography
-                    variant="h6"
-                    color={colors.grey[100]}
-                    fontWeight="600"
-                    sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
-                  >
-                    Picture of Back, Single (Multipack )
-                  </Typography>
-
-                  <UploadButton
-                    value={formik.values.picture3}
-                    onFileChange={async function (fileObject, fileState) {
-                      await formik.setFieldValue("picture1", fileObject);
-                      if (fileState) {
-                        await formik.setTouched({
-                          ...formik.touched,
-                          picture3: true,
-                        });
-                      }
-                    }}
-                    error={
-                      !!formik.touched.picture3 && !!formik.errors.picture3
-                    }
-                    helperText={
-                      formik.touched.picture3 && formik.errors.picture3
-                    }
-                  />
-                </Stack>
+                <Typography
+                  variant="h6"
+                  color={colors.grey[100]}
+                  fontWeight="600"
+                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                >
+                  Picture of Back, Single (Multipack )
+                </Typography>
+                <UploadImage
+                  sx={{ gridColumn: "span 4", justifySelf: "start" }}
+                  value={formik.values.picture3}
+                  error={!!formik.touched.picture3 && !!formik.errors.picture3}
+                  helperText={formik.touched.picture3 && formik.errors.picture3}
+                  onChange={(blob) => {
+                    formik.setFieldValue("picture3", blob);
+                  }}
+                />
               </Box>
             </AccordionDetails>
           </Accordion>
-          <Accordion>
+          <Accordion
+            expanded={
+              formik.isValid &&
+              formik.values.picture2 !== null &&
+              formik.values.itemCode2 !== "" &&
+              formik.values.lotCode2 !== "" &&
+              formik.values.picture3 !== null &&
+              formik.values.itemCode3 !== "" &&
+              formik.values.lotCode3 !== ""
+            }
+            disabled={
+              !formik.isValid ||
+              formik.values.picture3 === null ||
+              formik.values.itemCode3 === "" ||
+              formik.values.lotCode3 === "" ||
+              formik.values.picture2 === null ||
+              formik.values.itemCode2 === "" ||
+              formik.values.lotCode2 === ""
+            }
+          >
             <AccordionSummary
               aria-controls="panel8d-content"
               id="panel8d-header"
@@ -685,35 +751,23 @@ const LotInspectionPage = (props) => {
                   helperText={formik.touched.lotCode4 && formik.errors.lotCode4}
                   sx={{ gridColumn: "span 4" }}
                 />
-                <Stack direction="column" spacing={1.5}>
-                  <Typography
-                    variant="h6"
-                    color={colors.grey[100]}
-                    fontWeight="600"
-                    sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
-                  >
-                    Picture of Back, Single (Multipack )
-                  </Typography>
-
-                  <UploadButton
-                    value={formik.values.picture4}
-                    onFileChange={async function (fileObject, fileState) {
-                      await formik.setFieldValue("picture1", fileObject);
-                      if (fileState) {
-                        await formik.setTouched({
-                          ...formik.touched,
-                          picture4: true,
-                        });
-                      }
-                    }}
-                    error={
-                      !!formik.touched.picture4 && !!formik.errors.picture4
-                    }
-                    helperText={
-                      formik.touched.picture4 && formik.errors.picture4
-                    }
-                  />
-                </Stack>
+                <Typography
+                  variant="h6"
+                  color={colors.grey[100]}
+                  fontWeight="600"
+                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                >
+                  Picture of Back, Single (Multipack )
+                </Typography>
+                <UploadImage
+                  sx={{ gridColumn: "span 4", justifySelf: "start" }}
+                  value={formik.values.picture4}
+                  error={!!formik.touched.picture4 && !!formik.errors.picture4}
+                  helperText={formik.touched.picture4 && formik.errors.picture4}
+                  onChange={(blob) => {
+                    formik.setFieldValue("picture4", blob);
+                  }}
+                />
               </Box>
             </AccordionDetails>
           </Accordion>

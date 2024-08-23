@@ -43,7 +43,7 @@ router.post("/lotinspection/get", async (req, res) => {
           product: product,
         });
         console.log(
-          "Fetched " + id + " quality control inspection data sheet result!"
+          "Fetched " + id + " quality control inspection data sheet result!",
         );
       } else {
         res.sendStatus(404);
@@ -63,7 +63,7 @@ router.post("/lotinspection/signoff", async (req, res) => {
     if (req.access.includes("S")) {
       const lotInspectionForm = await lotInspectionFormModel.updateOne(
         { _id: id },
-        { signedOff: req.username, signOffDate: essentials.getEST() }
+        { signedOff: req.username, signOffDate: essentials.getEST() },
       );
       if (lotInspectionForm.modifiedCount == 1) {
         res.sendStatus(200);
@@ -91,7 +91,7 @@ router.post("/lotinspection/add", upload.any(), async (req, res) => {
           .toFormat("jpeg")
           .jpeg({ quality: 90 })
           .toFile(`${file.destination}/${newFilename}`);
-      })
+      }),
     );
 
     const imageDetails = req.files.map((file) => {
@@ -118,7 +118,7 @@ router.post("/lotinspection/add", upload.any(), async (req, res) => {
       });
       if (form) {
         console.log(
-          req.username + " successfully created a lot inspection form!"
+          req.username + " successfully created a lot inspection form!",
         );
         res.status(200).json({ form });
       } else {

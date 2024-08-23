@@ -108,7 +108,7 @@ router.post("/qualitycontrol/getproduct", async (req, res) => {
           station +
           " and " +
           product +
-          " from OC DB!"
+          " from OC DB!",
       );
     } else {
       res.sendStatus(404);
@@ -152,7 +152,7 @@ router.post("/qualitycontrol/get", async (req, res) => {
           product: product,
         });
         console.log(
-          "Fetched " + id + " quality control inspection data sheet result!"
+          "Fetched " + id + " quality control inspection data sheet result!",
         );
       } else {
         res.sendStatus(404);
@@ -172,7 +172,7 @@ router.post("/qualitycontrol/signoff", async (req, res) => {
     if (req.access.includes("S")) {
       const qualityControlForm = await qualityControlModel.updateOne(
         { _id: id },
-        { signedOff: req.username, signOffDate: essentials.getEST() }
+        { signedOff: req.username, signOffDate: essentials.getEST() },
       );
       if (qualityControlForm.modifiedCount == 1) {
         res.sendStatus(200);
@@ -201,7 +201,7 @@ router.post("/qualitycontrol/add", upload.any(), async (req, res) => {
           .toFormat("jpeg")
           .jpeg({ quality: 90 })
           .toFile(`${file.destination}/${newFilename}`);
-      })
+      }),
     );
 
     const imageDetails = req.files.map((file) => {
@@ -224,6 +224,8 @@ router.post("/qualitycontrol/add", upload.any(), async (req, res) => {
         formInformations.xrayFeDetected !== "No" &&
         formInformations.xrayNonFeDetected !== "No" &&
         formInformations.xraySsDetected !== "No" &&
+        formInformations.xrayGlassDetected !== "No" &&
+        formInformations.xrayCeramicDetected !== "No" &&
         formInformations.metalCardFeDetected !== "No" &&
         formInformations.metalCardNonFeDetected !== "No" &&
         formInformations.metalCardSsDetected !== "No" &&
@@ -249,12 +251,12 @@ router.post("/qualitycontrol/add", upload.any(), async (req, res) => {
       });
       if (form) {
         console.log(
-          req.username + " successfully created a quality control form!"
+          req.username + " successfully created a quality control form!",
         );
         res.status(200).json({ form });
       } else {
         console.log(
-          "Something went wrong while creating quality control form!"
+          "Something went wrong while creating quality control form!",
         );
         res.sendStatus(500);
       }

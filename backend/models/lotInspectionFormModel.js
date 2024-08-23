@@ -5,6 +5,7 @@ const lotInspectionFormSchema = new mongoose.Schema(
     station: { type: String, required: true },
     product: { type: String, required: true },
     username: { type: String, required: true },
+    salesOrderNumber: { type: String, required: true, default: "" },
     itemCode1: { type: String, required: true },
     lotCode1: { type: String, required: true },
     itemCode2: { type: String, default: "" },
@@ -20,12 +21,12 @@ const lotInspectionFormSchema = new mongoose.Schema(
     started: { type: Number, default: 0 },
     startDateTime: { type: Date },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const lotInspectionFormModel = mongoose.model(
   "lotInspectionForms",
-  lotInspectionFormSchema
+  lotInspectionFormSchema,
 );
 
 module.exports = lotInspectionFormModel;
