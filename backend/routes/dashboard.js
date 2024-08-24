@@ -10,6 +10,7 @@ const labelInspectionFormModel = require("../models/labelInspectionFormModel");
 const pgQualityControlFormModel = require("../models/pgQualityControlFormModel");
 const lotInspectionFormModel = require("../models/lotInspectionFormModel");
 const preOperationalFormModel = require("../models/preOperationalFormModel.js");
+const mixingQualityFormModel = require("../models/mixingQualityFormModel");
 
 router.use("/dashboard", async (req, res) => {
   try {
@@ -44,6 +45,9 @@ router.use("/dashboard", async (req, res) => {
     const preOperationalForms = await preOperationalFormModel.find({
       createdAt: { $gte: startOfToday },
     });
+    const mixingQualityForms = await mixingQualityFormModel.find({
+      createdAt: { $gte: startOfToday },
+    });
     const lotInspectionForms = await lotInspectionFormModel.find({
       createdAt: { $gte: startOfToday },
     });
@@ -51,6 +55,7 @@ router.use("/dashboard", async (req, res) => {
       data &&
       ratioForms &&
       qualityControlForms &&
+      mixingQualityForms &&
       metalDetectorForms &&
       xRayForms &&
       labelInspectionForms &&
@@ -62,6 +67,7 @@ router.use("/dashboard", async (req, res) => {
         locations: data,
         ratioForms: ratioForms,
         xRayForms: xRayForms,
+        mixingQualityForms: mixingQualityForms,
         preOperationalForms: preOperationalForms,
         qualityControlForms: qualityControlForms,
         metalDetectorForms: metalDetectorForms,

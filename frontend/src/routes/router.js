@@ -117,14 +117,14 @@ const Router = () => {
 
         <Route
           exact
-          path="/mixingqualitycontrol"
+          path="/mixingquality"
           element={
             <MixingQualityControlPage title="CiboQA | Mixing Quality Control Inspection" />
           }
         />
         <Route
           exact
-          path="/mixingqualitycontrol/:id"
+          path="/mixingquality/:id"
           element={
             <ViewMixingQualityControlPage title="CiboQA | Data Sheet Results" />
           }

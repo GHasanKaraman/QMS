@@ -263,7 +263,7 @@ const Sidebar = () => {
             />
             <Item
               title="Mixing Quality Check"
-              to="/mixingqualitycontrol"
+              to="/mixingquality"
               icon={<SvgIcon inheritViewBox component={MixingIcon} />}
               selected={selected}
               setSelected={setSelected}

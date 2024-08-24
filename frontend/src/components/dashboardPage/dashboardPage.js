@@ -37,6 +37,7 @@ const DashboardPage = (props) => {
   const [lotInspectionForms, setLotInspectionForms] = useState([]);
   const [pgQualityControlForms, setPGQualityControlForms] = useState([]);
   const [preOperationalForms, setPreOperationalForms] = useState([]);
+  const [mixingQualityForms, setMixingQualityForms] = useState([]);
 
   const [locations, setLocations] = useState([]);
   const [dataSource, setDataSource] = useState([]);
@@ -54,6 +55,7 @@ const DashboardPage = (props) => {
       setDataSource(res.data.locations);
       setRatioForms(res.data.ratioForms);
       setQualityControlForms(res.data.qualityControlForms);
+      setMixingQualityForms(res.data.mixingQualityForms);
       setPGQualityControlForms(res.data.pgQualityControlForms);
       setMetalDetectorForms(res.data.metalDetectorForms);
       setXRayForms(res.data.xRayForms);
@@ -427,6 +429,56 @@ const DashboardPage = (props) => {
                                         minute: "numeric",
                                       },
                                     )}
+                                  </Typography>
+                                </Stack>
+                              </CardContent>
+                            </CardActionArea>
+                          </Card>
+                        );
+                      })}
+                    {mixingQualityForms
+                      .filter(
+                        (mixingQualityForm) =>
+                          mixingQualityForm.station === location.name,
+                      )
+                      .map((mixingQualityForm, i) => {
+                        return (
+                          <Card
+                            key={i}
+                            sx={{
+                              background: getStatusColor(mixingQualityForm),
+                              width: 200,
+                              height: 75,
+                            }}
+                          >
+                            <CardActionArea
+                              sx={{ height: "100%" }}
+                              onClick={() => {
+                                navigate(
+                                  "/mixingquality/" + mixingQualityForm._id,
+                                );
+                              }}
+                            >
+                              <CardContent sx={{ paddingTop: 1 }}>
+                                <Stack spacing={0}>
+                                  <Typography
+                                    variant="h6"
+                                    fontWeight="bold"
+                                    color={colors.primary[400]}
+                                    sx={{ textAlign: "center" }}
+                                  >
+                                    Mixing Quality Check
+                                  </Typography>
+                                  <Typography
+                                    variant="h6"
+                                    fontWeight="bold"
+                                    color={colors.primary[400]}
+                                    sx={{ textAlign: "center" }}
+                                  >
+                                    {toStringDate(mixingQualityForm.createdAt, {
+                                      hour: "numeric",
+                                      minute: "numeric",
+                                    })}
                                   </Typography>
                                 </Stack>
                               </CardContent>

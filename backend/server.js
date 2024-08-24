@@ -19,7 +19,8 @@ const xRayForm = require("./routes/xRayForm.js");
 const labelInspectionForm = require("./routes/labelInspectionForm.js");
 const ratioForm = require("./routes/ratioForm.js");
 const lotInspectionForm = require("./routes/lotInspectionForm.js");
-const preOperationalForm = require("./routes/preOperationaForm.js");
+const preOperationalForm = require("./routes/preOperationalForm.js");
+const mixingQualityForm = require("./routes/mixingQualityForm.js");
 const comment = require("./routes/comment.js");
 
 require("console-stamp")(console, {
@@ -66,6 +67,7 @@ db.once("open", function () {
 
   app.use("/", preOperationalForm);
   app.use("/", qualityControlForm);
+  app.use("/", mixingQualityForm);
   app.use("/", pgqualitycontrol);
   app.use("/", metalDetectorForm);
   app.use("/", xRayForm);
