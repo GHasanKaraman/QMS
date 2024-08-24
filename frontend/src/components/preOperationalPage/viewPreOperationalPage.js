@@ -34,6 +34,7 @@ import Label from "../Label";
 import StatusIndicator from "../StatusIndicator";
 import CommentAccordion from "../CommentAccordion";
 import RunLabel from "../RunLabel";
+import LabelResult from "../LabelResult";
 
 const ViewPreOperationalPage = (props) => {
   const params = useParams();
@@ -323,52 +324,123 @@ const ViewPreOperationalPage = (props) => {
         </AccordionSummary>
         <AccordionDetails>
           <Stack direction="row" justifyContent="space-between">
-            <Label title="Dumper" subtitle={data?.dumper} />
+            <Label
+              title="Dumper"
+              subtitle={
+                <LabelResult
+                  text={data?.dumper}
+                  status={data?.dumper !== "No"}
+                />
+              }
+            />
             <StatusIndicator status={data?.dumper !== "No"} />
           </Stack>
           <Divider />
           <Stack direction="row" justifyContent="space-between">
-            <Label title="Elevator" subtitle={data?.elevator} />
+            <Label
+              title="Elevator"
+              subtitle={
+                <LabelResult
+                  text={data?.elevator}
+                  status={data?.elevator !== "No"}
+                />
+              }
+            />
             <StatusIndicator status={data?.elevator !== "No"} />
           </Stack>
           <Divider />
           <Stack direction="row" justifyContent="space-between">
-            <Label title="Metal Detector" subtitle={data?.metalDetector} />
+            <Label
+              title="Metal Detector"
+              subtitle={
+                <LabelResult
+                  text={data?.metalDetector}
+                  status={data?.metalDetector !== "No"}
+                />
+              }
+            />
             <StatusIndicator status={data?.metalDetector !== "No"} />
           </Stack>
           <Divider />
           <Stack direction="row" justifyContent="space-between">
-            <Label title="Conveyor" subtitle={data?.conveyor} />
+            <Label
+              title="Conveyor"
+              subtitle={
+                <LabelResult
+                  text={data?.conveyor}
+                  status={data?.conveyor !== "No"}
+                />
+              }
+            />
             <StatusIndicator status={data?.conveyor !== "No"} />
           </Stack>
           <Divider />
           <Stack direction="row" justifyContent="space-between">
-            <Label title="Sealer" subtitle={data?.sealer} />
+            <Label
+              title="Sealer"
+              subtitle={
+                <LabelResult
+                  text={data?.sealer}
+                  status={data?.sealer !== "No"}
+                />
+              }
+            />
             <StatusIndicator status={data?.sealer !== "No"} />
           </Stack>
           <Divider />
           <Stack direction="row" justifyContent="space-between">
-            <Label title="Turntable" subtitle={data?.turntable} />
+            <Label
+              title="Turntable"
+              subtitle={
+                <LabelResult
+                  text={data?.turntable}
+                  status={data?.turntable !== "No"}
+                />
+              }
+            />
             <StatusIndicator status={data?.turntable !== "No"} />
           </Stack>
           <Divider />
           <Stack direction="row" justifyContent="space-between">
-            <Label title="Platform" subtitle={data?.platform} />
+            <Label
+              title="Platform"
+              subtitle={
+                <LabelResult
+                  text={data?.platform}
+                  status={data?.platform !== "No"}
+                />
+              }
+            />
             <StatusIndicator status={data?.platform !== "No"} />
           </Stack>
           <Divider />
           <Stack direction="row" justifyContent="space-between">
-            <Label title="Floor" subtitle={data?.floor} />
+            <Label
+              title="Floor"
+              subtitle={
+                <LabelResult text={data?.floor} status={data?.floor !== "No"} />
+              }
+            />
             <StatusIndicator status={data?.floor !== "No"} />
           </Stack>
           <Divider />
           <Stack direction="row" justifyContent="space-between">
-            <Label title="Drum" subtitle={data?.drum} />
+            <Label
+              title="Drum"
+              subtitle={
+                <LabelResult text={data?.drum} status={data?.drum !== "No"} />
+              }
+            />
             <StatusIndicator status={data?.drum !== "No"} />
           </Stack>
           <Divider />
           <Stack direction="row" justifyContent="space-between">
-            <Label title="Belts" subtitle={data?.belts} />
+            <Label
+              title="Belts"
+              subtitle={
+                <LabelResult text={data?.belts} status={data?.belts !== "No"} />
+              }
+            />
             <StatusIndicator status={data?.belts !== "No"} />
           </Stack>
         </AccordionDetails>
@@ -386,7 +458,12 @@ const ViewPreOperationalPage = (props) => {
           <Stack direction="row" justifyContent="space-between">
             <Label
               title="Plant & equipment in good condition. No broken equipment?"
-              subtitle={data?.goodCondition}
+              subtitle={
+                <LabelResult
+                  text={data?.goodCondition}
+                  status={data?.goodCondition === "Pass"}
+                />
+              }
             />
             <StatusIndicator status={data?.goodCondition === "Pass"} />
           </Stack>
@@ -394,7 +471,12 @@ const ViewPreOperationalPage = (props) => {
           <Stack direction="row" justifyContent="space-between">
             <Label
               title="No loose/frayed part on machines?"
-              subtitle={data?.noLoose}
+              subtitle={
+                <LabelResult
+                  text={data?.noLoose}
+                  status={data?.noLoose === "Pass"}
+                />
+              }
             />
             <StatusIndicator status={data?.noLoose === "Pass"} />
           </Stack>
@@ -402,7 +484,12 @@ const ViewPreOperationalPage = (props) => {
           <Stack direction="row" justifyContent="space-between">
             <Label
               title="No chemicals containers left out on equipment/tables?"
-              subtitle={data?.noChemicals}
+              subtitle={
+                <LabelResult
+                  text={data?.noChemicals}
+                  status={data?.noChemicals === "Pass"}
+                />
+              }
             />
             <StatusIndicator status={data?.noChemicals === "Pass"} />
           </Stack>
@@ -410,7 +497,12 @@ const ViewPreOperationalPage = (props) => {
           <Stack direction="row" justifyContent="space-between">
             <Label
               title="No glass or other contaminants?"
-              subtitle={data?.noGlass}
+              subtitle={
+                <LabelResult
+                  text={data?.noGlass}
+                  status={data?.noGlass === "Pass"}
+                />
+              }
             />
             <StatusIndicator status={data?.noGlass === "Pass"} />
           </Stack>
@@ -418,7 +510,12 @@ const ViewPreOperationalPage = (props) => {
           <Stack direction="row" justifyContent="space-between">
             <Label
               title="Garbage and empty boxes are removed from the area?"
-              subtitle={data?.garbageRemoved}
+              subtitle={
+                <LabelResult
+                  text={data?.garbageRemoved}
+                  status={data?.garbageRemoved === "Pass"}
+                />
+              }
             />
             <StatusIndicator status={data?.garbageRemoved === "Pass"} />
           </Stack>
@@ -438,7 +535,12 @@ const ViewPreOperationalPage = (props) => {
           <Stack direction="row" justifyContent="space-between">
             <Label
               title="Wearing clean lab coats, hairnets, and beard nets?"
-              subtitle={data?.wearingCoat}
+              subtitle={
+                <LabelResult
+                  text={data?.wearingCoat}
+                  status={data?.wearingCoat === "Pass"}
+                />
+              }
             />
             <StatusIndicator status={data?.wearingCoat === "Pass"} />
           </Stack>
@@ -446,7 +548,12 @@ const ViewPreOperationalPage = (props) => {
           <Stack direction="row" justifyContent="space-between">
             <Label
               title="Complying with GMPs. No jewelry, no outside food/drinks?"
-              subtitle={data?.complyingGMP}
+              subtitle={
+                <LabelResult
+                  text={data?.complyingGMP}
+                  status={data?.complyingGMP === "Pass"}
+                />
+              }
             />
             <StatusIndicator status={data?.complyingGMP === "Pass"} />
           </Stack>
@@ -454,7 +561,12 @@ const ViewPreOperationalPage = (props) => {
           <Stack direction="row" justifyContent="space-between">
             <Label
               title="No sick employees observed?"
-              subtitle={data?.noSick}
+              subtitle={
+                <LabelResult
+                  text={data?.noSick}
+                  status={data?.noSick === "Pass"}
+                />
+              }
             />
             <StatusIndicator status={data?.noSick === "Pass"} />
           </Stack>
@@ -471,7 +583,15 @@ const ViewPreOperationalPage = (props) => {
         </AccordionSummary>
         <AccordionDetails>
           <Stack direction="row" justifyContent="space-between">
-            <Label title="OK to start production?" subtitle={data?.okStart} />
+            <Label
+              title="OK to start production?"
+              subtitle={
+                <LabelResult
+                  text={data?.okStart}
+                  status={data?.okStart === "Yes"}
+                />
+              }
+            />
             <StatusIndicator status={data?.okStart === "Yes"} />
           </Stack>
         </AccordionDetails>

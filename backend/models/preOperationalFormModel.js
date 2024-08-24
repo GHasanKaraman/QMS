@@ -28,6 +28,7 @@ const preOperationalFormSchema = new mongoose.Schema(
     signedOff: { type: String, default: "" },
     signOffDate: { type: Date },
     started: { type: Number, default: 0 },
+    startDateTime: { type: Date },
   },
   { timestamps: true },
 );

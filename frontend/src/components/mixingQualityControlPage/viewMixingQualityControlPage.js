@@ -34,6 +34,7 @@ import Label from "../Label";
 import StatusIndicator from "../StatusIndicator";
 import CommentAccordion from "../CommentAccordion";
 import RunLabel from "../RunLabel";
+import LabelResult from "../LabelResult";
 
 const ViewMixingQualityControlPage = (props) => {
   const params = useParams();
@@ -325,7 +326,12 @@ const ViewMixingQualityControlPage = (props) => {
           <Stack direction="row" justifyContent="space-between">
             <Label
               title="Probiotic jars correctly labelled?"
-              subtitle={data?.correctLabel}
+              subtitle={
+                <LabelResult
+                  text={data?.correctLabel}
+                  status={data?.correctLabel !== "No"}
+                />
+              }
             />
             <StatusIndicator status={data?.correctLabel !== "No"} />
           </Stack>
@@ -333,7 +339,12 @@ const ViewMixingQualityControlPage = (props) => {
           <Stack direction="row" justifyContent="space-between">
             <Label
               title="Probiotic Mix Lot Code?"
-              subtitle={data?.probioticMixLot}
+              subtitle={
+                <LabelResult
+                  text={data?.probioticMixLot}
+                  status={data?.probioticMixLot !== "No"}
+                />
+              }
             />
             <StatusIndicator status={data?.probioticMixLot !== "No"} />
           </Stack>
@@ -341,7 +352,12 @@ const ViewMixingQualityControlPage = (props) => {
           <Stack direction="row" justifyContent="space-between">
             <Label
               title="Cleaning by Allergen or Quality?"
-              subtitle={data?.cleaning}
+              subtitle={
+                <LabelResult
+                  text={data?.cleaning}
+                  status={data?.cleaning !== "Quality"}
+                />
+              }
             />
             <StatusIndicator status={data?.cleaning !== "Quality"} />
           </Stack>
@@ -349,25 +365,51 @@ const ViewMixingQualityControlPage = (props) => {
           <Stack direction="row" justifyContent="space-between">
             <Label
               title="Allergens kept separate?"
-              subtitle={data?.allergensSeparate}
+              subtitle={
+                <LabelResult
+                  text={data?.allergensSeparate}
+                  status={data?.allergensSeparate === "Yes"}
+                />
+              }
             />
             <StatusIndicator status={data?.allergensSeparate === "Yes"} />
           </Stack>
           <Divider />
           <Stack direction="row" justifyContent="space-between">
-            <Label title="Sensory evaluation?" subtitle={data?.sensory} />
+            <Label
+              title="Sensory evaluation?"
+              subtitle={
+                <LabelResult
+                  text={data?.sensory}
+                  status={data?.sensory === "Yes"}
+                />
+              }
+            />
             <StatusIndicator status={data?.sensory === "Yes"} />
           </Stack>
           <Divider />
           <Stack direction="row" justifyContent="space-between">
-            <Label title="Floor is clean?" subtitle={data?.cleanFloor} />
+            <Label
+              title="Floor is clean?"
+              subtitle={
+                <LabelResult
+                  text={data?.cleanFloor}
+                  status={data?.cleanFloor === "Yes"}
+                />
+              }
+            />
             <StatusIndicator status={data?.cleanFloor === "Yes"} />
           </Stack>
           <Divider />
           <Stack direction="row" justifyContent="space-between">
             <Label
-              title="Allergens kept separate?"
-              subtitle={data?.garbageOrganized}
+              title="Garbage Organized?"
+              subtitle={
+                <LabelResult
+                  text={data?.garbageOrganized}
+                  status={data?.garbageOrganized === "Yes"}
+                />
+              }
             />
             <StatusIndicator status={data?.garbageOrganized === "Yes"} />
           </Stack>
