@@ -5,7 +5,14 @@ import {
   SubMenu,
   MenuItem,
 } from "react-pro-sidebar";
-import { Box, IconButton, Typography, Avatar, useTheme } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  Typography,
+  Avatar,
+  useTheme,
+  SvgIcon,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 import { tokens } from "../theme";
@@ -25,6 +32,9 @@ import { userInformations } from "../atoms/userAtom";
 import { useRecoilState } from "recoil";
 
 import axios from "../api/axios";
+import { PrecisionManufacturing } from "@mui/icons-material";
+import { ReactComponent as NuclearIcon } from "../images/nuclearIcon.svg";
+import { ReactComponent as MixingIcon } from "../images/mixingIcon.svg";
 
 const Item = ({
   title,
@@ -91,7 +101,7 @@ const Sidebar = () => {
         return true;
       }
       return false;
-    })()
+    })(),
   );
   const [selected, setSelected] = useState("Dashboard");
   const [user, setUser] = useRecoilState(userInformations);
@@ -146,7 +156,7 @@ const Sidebar = () => {
             />
             {!isCollapsed ? (
               <Typography variant="h6" color={colors.grey[100]}>
-                v0.5b
+                v0.6b
               </Typography>
             ) : null}
           </div>
@@ -222,13 +232,27 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
             />
+            <Typography
+              variant="h6"
+              color={colors.grey[300]}
+              sx={{ m: "15px 0 5px 0px", ml: isCollapsed ? "5px" : "20px" }}
+            >
+              Operational Checks
+            </Typography>
+            <Item
+              title="Pre-Operational"
+              to="/preoperational"
+              icon={<PrecisionManufacturing />}
+              selected={selected}
+              setSelected={setSelected}
+            />
 
             <Typography
               variant="h6"
               color={colors.grey[300]}
-              sx={{ m: "15px 0 5px 0px", ml: isCollapsed ? "10px" : "20px" }}
+              sx={{ m: "15px 0 5px 0px", ml: isCollapsed ? "15px" : "20px" }}
             >
-              Create
+              Quality Checks
             </Typography>
             <Item
               title="Quality Control"
@@ -238,12 +262,28 @@ const Sidebar = () => {
               setSelected={setSelected}
             />
             <Item
+              title="Mixing Quality Check"
+              to="/mixingqualitycontrol"
+              icon={<SvgIcon inheritViewBox component={MixingIcon} />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+
+            <Item
               title="Quality Check"
               to="/pgqualitycontrol"
               icon={<div style={{ fontWeight: "600" }}>P&G</div>}
               selected={selected}
               setSelected={setSelected}
             />
+            <Typography
+              variant="h6"
+              color={colors.grey[300]}
+              sx={{ m: "15px 0 5px 0px", ml: isCollapsed ? "5px" : "20px" }}
+            >
+              Inspections
+            </Typography>
+
             <Item
               title="LOT Inspection"
               to="/lotinspection"
@@ -265,6 +305,14 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
             />
+            <Item
+              title="X-Ray Inspection"
+              to="/xray"
+              icon={<SvgIcon inheritViewBox component={NuclearIcon} />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+
             <Item
               title="Ratio Form"
               to="/ratioform"

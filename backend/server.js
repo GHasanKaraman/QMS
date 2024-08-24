@@ -15,9 +15,11 @@ const signoff = require("./routes/signoff.js");
 const qualityControlForm = require("./routes/qualityControlForm.js");
 const pgqualitycontrol = require("./routes/pgQualityControlForm.js");
 const metalDetectorForm = require("./routes/metalDetectorForm.js");
+const xRayForm = require("./routes/xRayForm.js");
 const labelInspectionForm = require("./routes/labelInspectionForm.js");
 const ratioForm = require("./routes/ratioForm.js");
 const lotInspectionForm = require("./routes/lotInspectionForm.js");
+const preOperationalForm = require("./routes/preOperationaForm.js");
 const comment = require("./routes/comment.js");
 
 require("console-stamp")(console, {
@@ -50,7 +52,7 @@ db.once("open", function () {
   app.get("/", async (req, res) => {
     //res.send("<h2 style = color:green>Listening port...</h2>");
     res.send(
-      "<div style='width:100%;text-align:center'><img width='50%' src='/utils/logo.png'/><h1 style = color:green>Server is running...</h1></div>"
+      "<div style='width:100%;text-align:center'><img width='50%' src='/utils/logo.png'/><h1 style = color:green>Server is running...</h1></div>",
     );
   });
 
@@ -60,11 +62,13 @@ db.once("open", function () {
 
   app.use("/", user);
   app.use("/", dashboard);
-  app.use("/", signoff);  
+  app.use("/", signoff);
 
+  app.use("/", preOperationalForm);
   app.use("/", qualityControlForm);
   app.use("/", pgqualitycontrol);
   app.use("/", metalDetectorForm);
+  app.use("/", xRayForm);
   app.use("/", labelInspectionForm);
   app.use("/", lotInspectionForm);
   app.use("/", ratioForm);
@@ -78,7 +82,7 @@ db.once("open", function () {
 / /___/ / /_/ / /_/ / /_/ / / ___ |
 \\____/_/_.___/\\____/\\___\\_\\/_/  |_|
                                    
-  `
+  `,
   );
   txt = decodeURIComponent(txt);
   console.log("\x1b[35m%s\x1b[0m", txt);
@@ -86,7 +90,7 @@ db.once("open", function () {
   app.listen(process.env.PORT, (req, res) => {
     console.log(
       "\x1b[33m%s\x1b[0m",
-      "mongo connection established successfully!"
+      "mongo connection established successfully!",
     );
     console.log("\x1b[34m%s\x1b[0m", "Listening on port " + process.env.PORT);
   });

@@ -5,9 +5,11 @@ const router = express.Router();
 const ratioFormModel = require("../models/ratioFormModel");
 const qualityControlFormModel = require("../models/qualityControlFormModel");
 const metalDetectorFormModel = require("../models/metalDetectorFormModel");
+const xRayFormModel = require("../models/xRayFormModel.js");
 const labelInspectionFormModel = require("../models/labelInspectionFormModel");
 const pgQualityControlFormModel = require("../models/pgQualityControlFormModel");
 const lotInspectionFormModel = require("../models/lotInspectionFormModel");
+const preOperationalFormModel = require("../models/preOperationalFormModel.js");
 
 router.use("/dashboard", async (req, res) => {
   try {
@@ -18,7 +20,7 @@ router.use("/dashboard", async (req, res) => {
     var startOfToday = new Date(
       now.getFullYear(),
       now.getMonth(),
-      now.getDate()
+      now.getDate(),
     );
 
     const data = await resp.json();
@@ -30,10 +32,16 @@ router.use("/dashboard", async (req, res) => {
     const pgQualityControlForms = await pgQualityControlFormModel.find({
       createdAt: { $gte: startOfToday },
     }); //
+    const xRayForms = await xRayFormModel.find({
+      createdAt: { $gte: startOfToday },
+    });
     const metalDetectorForms = await metalDetectorFormModel.find({
       createdAt: { $gte: startOfToday },
     });
     const labelInspectionForms = await labelInspectionFormModel.find({
+      createdAt: { $gte: startOfToday },
+    });
+    const preOperationalForms = await preOperationalFormModel.find({
       createdAt: { $gte: startOfToday },
     });
     const lotInspectionForms = await lotInspectionFormModel.find({
@@ -44,13 +52,17 @@ router.use("/dashboard", async (req, res) => {
       ratioForms &&
       qualityControlForms &&
       metalDetectorForms &&
+      xRayForms &&
       labelInspectionForms &&
       pgQualityControlForms &&
+      preOperationalForms &&
       lotInspectionForms
     ) {
       res.status(200).json({
         locations: data,
         ratioForms: ratioForms,
+        xRayForms: xRayForms,
+        preOperationalForms: preOperationalForms,
         qualityControlForms: qualityControlForms,
         metalDetectorForms: metalDetectorForms,
         labelInspectionForms: labelInspectionForms,

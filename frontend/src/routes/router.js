@@ -19,6 +19,12 @@ import ViewPGQualityControlPage from "../components/pgQualityControlPage/viewPGQ
 import SignOffPanelPage from "../components/signoffPanelPage/signoffPanelPage.js";
 import LotInspectionPage from "../components/lotInspectionPage/lotInspectionPage.js";
 import ViewLotInspectionPage from "../components/lotInspectionPage/viewLotInspectionPage.js";
+import PreOperationalPage from "../components/preOperationalPage/preOperationalPage.js";
+import ViewPreOperationalPage from "../components/preOperationalPage/viewPreOperationalPage.js";
+import DirectObservationXRayPage from "../components/directObservationXRayPage/directObservationXRayPage.js";
+import ViewDirectObservationXRayPage from "../components/directObservationXRayPage/viewDirectObservationXRayPage.js";
+import MixingQualityControlPage from "../components/mixingQualityControlPage/mixingQualityControlPage.js";
+import ViewMixingQualityControlPage from "../components/mixingQualityControlPage/viewMixingQualityControlPage.js";
 
 const BarLayout = () => {
   const [theme, colorMode] = useMode();
@@ -81,6 +87,21 @@ const Router = () => {
 
         <Route
           exact
+          path="/preoperational"
+          element={
+            <PreOperationalPage title="CiboQA | Pre-Operational Inspection" />
+          }
+        />
+        <Route
+          exact
+          path="/preoperational/:id"
+          element={
+            <ViewPreOperationalPage title="CiboQA | Data Sheet Results" />
+          }
+        />
+
+        <Route
+          exact
           path="/qualitycontrol"
           element={
             <QualityControlPage title="CiboQA | Quality Control Inspection" />
@@ -91,6 +112,21 @@ const Router = () => {
           path="/qualitycontrol/:id"
           element={
             <ViewQualityControlPage title="CiboQA | Data Sheet Results" />
+          }
+        />
+
+        <Route
+          exact
+          path="/mixingqualitycontrol"
+          element={
+            <MixingQualityControlPage title="CiboQA | Mixing Quality Control Inspection" />
+          }
+        />
+        <Route
+          exact
+          path="/mixingqualitycontrol/:id"
+          element={
+            <ViewMixingQualityControlPage title="CiboQA | Data Sheet Results" />
           }
         />
 
@@ -134,6 +170,21 @@ const Router = () => {
           path="/metaldetector/:id"
           element={
             <ViewDirectObservationMetalDetectorPage title="CiboQA | Data Sheet Results" />
+          }
+        />
+
+        <Route
+          exact
+          path="/xray"
+          element={
+            <DirectObservationXRayPage title="CiboQA | X-Ray Inspection" />
+          }
+        />
+        <Route
+          exact
+          path="/xray/:id"
+          element={
+            <ViewDirectObservationXRayPage title="CiboQA | Data Sheet Results" />
           }
         />
 

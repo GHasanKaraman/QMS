@@ -32,9 +32,11 @@ const DashboardPage = (props) => {
   const [ratioForms, setRatioForms] = useState([]);
   const [qualityControlForms, setQualityControlForms] = useState([]);
   const [metalDetectorForms, setMetalDetectorForms] = useState([]);
+  const [xRayForms, setXRayForms] = useState([]);
   const [labelInspectionForms, setLabelInspectionForms] = useState([]);
   const [lotInspectionForms, setLotInspectionForms] = useState([]);
   const [pgQualityControlForms, setPGQualityControlForms] = useState([]);
+  const [preOperationalForms, setPreOperationalForms] = useState([]);
 
   const [locations, setLocations] = useState([]);
   const [dataSource, setDataSource] = useState([]);
@@ -50,11 +52,12 @@ const DashboardPage = (props) => {
     if (userAuth.control(res)) {
       setLocations(res.data.locations);
       setDataSource(res.data.locations);
-      console.log(res.data.locations);
       setRatioForms(res.data.ratioForms);
       setQualityControlForms(res.data.qualityControlForms);
       setPGQualityControlForms(res.data.pgQualityControlForms);
       setMetalDetectorForms(res.data.metalDetectorForms);
+      setXRayForms(res.data.xRayForms);
+      setPreOperationalForms(res.data.preOperationalForms);
       setLabelInspectionForms(res.data.labelInspectionForms);
       setLotInspectionForms(res.data.lotInspectionForms);
     } else {
@@ -108,23 +111,23 @@ const DashboardPage = (props) => {
           setToggleOption(value);
           if (value === "Shifts") {
             setDataSource(
-              locations.filter((loc) => loc.shift && loc.shift === getShift())
+              locations.filter((loc) => loc.shift && loc.shift === getShift()),
             );
           } else if (value === "Runs") {
             setDataSource(
-              locations.filter((loc) => loc.running && loc.running === true)
+              locations.filter((loc) => loc.running && loc.running === true),
             );
           } else if (value === "MAC") {
             setDataSource(
-              locations.filter((loc) => loc.name.slice(0, 3) === "MAC")
+              locations.filter((loc) => loc.name.slice(0, 3) === "MAC"),
             );
           } else if (value === "ROAST") {
             setDataSource(
-              locations.filter((loc) => loc.name.slice(0, 5) === "ROAST")
+              locations.filter((loc) => loc.name.slice(0, 5) === "ROAST"),
             );
           } else if (value === "MIX") {
             setDataSource(
-              locations.filter((loc) => loc.name.slice(0, 3) === "MIX")
+              locations.filter((loc) => loc.name.slice(0, 3) === "MIX"),
             );
           } else {
             setDataSource([...locations]);
@@ -203,7 +206,7 @@ const DashboardPage = (props) => {
                     })()}
                     {(function () {
                       const length = ratioForms.filter(
-                        (ratioForm) => ratioForm.location === location.name
+                        (ratioForm) => ratioForm.location === location.name,
                       ).length;
                       if (length == 0) {
                         return "No";
@@ -226,7 +229,7 @@ const DashboardPage = (props) => {
                   >
                     {ratioForms
                       .filter(
-                        (ratioForm) => ratioForm.location === location.name
+                        (ratioForm) => ratioForm.location === location.name,
                       )
                       .map((ratioForm, i) => {
                         return (
@@ -274,7 +277,7 @@ const DashboardPage = (props) => {
                     {qualityControlForms
                       .filter(
                         (qualityControlForm) =>
-                          qualityControlForm.station === location.name
+                          qualityControlForm.station === location.name,
                       )
                       .map((qualityControlForm, i) => {
                         return (
@@ -290,7 +293,7 @@ const DashboardPage = (props) => {
                               sx={{ height: "100%" }}
                               onClick={() => {
                                 navigate(
-                                  "/qualitycontrol/" + qualityControlForm._id
+                                  "/qualitycontrol/" + qualityControlForm._id,
                                 );
                               }}
                             >
@@ -315,7 +318,7 @@ const DashboardPage = (props) => {
                                       {
                                         hour: "numeric",
                                         minute: "numeric",
-                                      }
+                                      },
                                     )}
                                   </Typography>
                                 </Stack>
@@ -327,7 +330,7 @@ const DashboardPage = (props) => {
                     {pgQualityControlForms
                       .filter(
                         (pgqualityControlForm) =>
-                          pgqualityControlForm.station === location.name
+                          pgqualityControlForm.station === location.name,
                       )
                       .map((pgqualityControlForm, i) => {
                         return (
@@ -344,7 +347,7 @@ const DashboardPage = (props) => {
                               onClick={() => {
                                 navigate(
                                   "/pgqualitycontrol/" +
-                                    pgqualityControlForm._id
+                                    pgqualityControlForm._id,
                                 );
                               }}
                             >
@@ -369,7 +372,7 @@ const DashboardPage = (props) => {
                                       {
                                         hour: "numeric",
                                         minute: "numeric",
-                                      }
+                                      },
                                     )}
                                   </Typography>
                                 </Stack>
@@ -378,10 +381,64 @@ const DashboardPage = (props) => {
                           </Card>
                         );
                       })}
+                    {preOperationalForms
+                      .filter(
+                        (preOperationalForm) =>
+                          preOperationalForm.station === location.name,
+                      )
+                      .map((preOperationalForm, i) => {
+                        return (
+                          <Card
+                            key={i}
+                            sx={{
+                              background: getStatusColor(preOperationalForm),
+                              width: 200,
+                              height: 75,
+                            }}
+                          >
+                            <CardActionArea
+                              sx={{ height: "100%" }}
+                              onClick={() => {
+                                navigate(
+                                  "/preoperational/" + preOperationalForm._id,
+                                );
+                              }}
+                            >
+                              <CardContent sx={{ paddingTop: 1 }}>
+                                <Stack spacing={0}>
+                                  <Typography
+                                    variant="h6"
+                                    fontWeight="bold"
+                                    color={colors.primary[400]}
+                                    sx={{ textAlign: "center" }}
+                                  >
+                                    Pre-Operational Inspection
+                                  </Typography>
+                                  <Typography
+                                    variant="h6"
+                                    fontWeight="bold"
+                                    color={colors.primary[400]}
+                                    sx={{ textAlign: "center" }}
+                                  >
+                                    {toStringDate(
+                                      preOperationalForm.createdAt,
+                                      {
+                                        hour: "numeric",
+                                        minute: "numeric",
+                                      },
+                                    )}
+                                  </Typography>
+                                </Stack>
+                              </CardContent>
+                            </CardActionArea>
+                          </Card>
+                        );
+                      })}
+
                     {metalDetectorForms
                       .filter(
                         (metalDetectorForm) =>
-                          metalDetectorForm.station === location.name
+                          metalDetectorForm.station === location.name,
                       )
                       .map((metalDetectorForm, i) => {
                         return (
@@ -397,7 +454,7 @@ const DashboardPage = (props) => {
                               sx={{ height: "100%" }}
                               onClick={() => {
                                 navigate(
-                                  "/metaldetector/" + metalDetectorForm._id
+                                  "/metaldetector/" + metalDetectorForm._id,
                                 );
                               }}
                             >
@@ -428,10 +485,55 @@ const DashboardPage = (props) => {
                           </Card>
                         );
                       })}
+                    {xRayForms
+                      .filter((xRayForm) => xRayForm.station === location.name)
+                      .map((xRayForm, i) => {
+                        return (
+                          <Card
+                            key={i}
+                            sx={{
+                              background: getStatusColor(xRayForm),
+                              width: 200,
+                              height: 75,
+                            }}
+                          >
+                            <CardActionArea
+                              sx={{ height: "100%" }}
+                              onClick={() => {
+                                navigate("/xray/" + xRayForm._id);
+                              }}
+                            >
+                              <CardContent sx={{ paddingTop: 1 }}>
+                                <Stack spacing={0}>
+                                  <Typography
+                                    variant="h6"
+                                    fontWeight="bold"
+                                    color={colors.primary[400]}
+                                    sx={{ textAlign: "center" }}
+                                  >
+                                    Direct Observation X-Ray
+                                  </Typography>
+                                  <Typography
+                                    variant="h6"
+                                    fontWeight="bold"
+                                    color={colors.primary[400]}
+                                    sx={{ textAlign: "center" }}
+                                  >
+                                    {toStringDate(xRayForm.createdAt, {
+                                      hour: "numeric",
+                                      minute: "numeric",
+                                    })}
+                                  </Typography>
+                                </Stack>
+                              </CardContent>
+                            </CardActionArea>
+                          </Card>
+                        );
+                      })}
                     {labelInspectionForms
                       .filter(
                         (labelInspectionForm) =>
-                          labelInspectionForm.station === location.name
+                          labelInspectionForm.station === location.name,
                       )
                       .map((labelInspectionForm, i) => {
                         return (
@@ -447,7 +549,7 @@ const DashboardPage = (props) => {
                               sx={{ height: "100%" }}
                               onClick={() => {
                                 navigate(
-                                  "/labelinspection/" + labelInspectionForm._id
+                                  "/labelinspection/" + labelInspectionForm._id,
                                 );
                               }}
                             >
@@ -472,7 +574,7 @@ const DashboardPage = (props) => {
                                       {
                                         hour: "numeric",
                                         minute: "numeric",
-                                      }
+                                      },
                                     )}
                                   </Typography>
                                 </Stack>
@@ -484,7 +586,7 @@ const DashboardPage = (props) => {
                     {lotInspectionForms
                       .filter(
                         (lotInspectionForm) =>
-                          lotInspectionForm.station === location.name
+                          lotInspectionForm.station === location.name,
                       )
                       .map((lotInspectionForm, i) => {
                         return (
@@ -500,7 +602,7 @@ const DashboardPage = (props) => {
                               sx={{ height: "100%" }}
                               onClick={() => {
                                 navigate(
-                                  "/lotinspection/" + lotInspectionForm._id
+                                  "/lotinspection/" + lotInspectionForm._id,
                                 );
                               }}
                             >
