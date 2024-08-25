@@ -7,6 +7,9 @@ const qualityControlFormModel = require("../models/qualityControlFormModel");
 const metalDetectorFormModel = require("../models/metalDetectorFormModel");
 const labelInspectionFormModel = require("../models/labelInspectionFormModel");
 const pgQualityControlFormModel = require("../models/pgQualityControlFormModel");
+const xRayFormModel = require("../models/xRayFormModel.js");
+const mixingQualityFormModel = require("../models/mixingQualityFormModel");
+const preOperationalFormModel = require("../models/preOperationalFormModel.js");
 
 router.use("/signoff/dashboard", async (req, res) => {
   try {
@@ -32,13 +35,25 @@ router.use("/signoff/dashboard", async (req, res) => {
     const labelInspectionForms = await labelInspectionFormModel.find({
       createdAt: { $gte: new Date(s), $lte: new Date(e) },
     });
+    const xRayForms = await xRayFormModel.find({
+      createdAt: { $gte: new Date(s), $lte: new Date(e) },
+    });
+    const preOperationalForms = await preOperationalFormModel.find({
+      createdAt: { $gte: new Date(s), $lte: new Date(e) },
+    });
+    const mixingQualityForms = await mixingQualityFormModel.find({
+      createdAt: { $gte: new Date(s), $lte: new Date(e) },
+    });
     if (
       data &&
       ratioForms &&
       qualityControlForms &&
       metalDetectorForms &&
       labelInspectionForms &&
-      pgQualityControlForms
+      pgQualityControlForms &&
+      xRayForms &&
+      preOperationalForms &&
+      mixingQualityForms
     ) {
       res.status(200).json({
         locations: data,
@@ -47,6 +62,9 @@ router.use("/signoff/dashboard", async (req, res) => {
         metalDetectorForms: metalDetectorForms,
         labelInspectionForms: labelInspectionForms,
         pgQualityControlForms: pgQualityControlForms,
+        xRayForms: xRayForms,
+        preOperationalForms: preOperationalForms,
+        mixingQualityForms: mixingQualityForms,
       });
       console.log("Fetched all locations from OC DB!");
     } else {

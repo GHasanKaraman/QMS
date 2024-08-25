@@ -92,7 +92,7 @@ const RatioFormPage = (props) => {
           ...new Set(res.data.recipe.recipe.map((item) => item.groupName)),
         ]);
         console.log(
-          ...new Set(res.data.recipe.recipe.map((item) => item.groupName))
+          ...new Set(res.data.recipe.recipe.map((item) => item.groupName)),
         );
         console.log(res.data.recipe);
       } else {
@@ -154,7 +154,7 @@ const RatioFormPage = (props) => {
               }
             }
             return false;
-          }
+          },
         ),
       lotCode: yup
         .string()
@@ -318,7 +318,7 @@ const RatioFormPage = (props) => {
                     getOptionLabel={({ part }) => part}
                     defaultValue={
                       productRecipe?.recipe.filter(
-                        (r) => r.groupName === group
+                        (r) => r.groupName === group,
                       )[0]
                     }
                     onChange={async (_, value) => {}}
@@ -328,7 +328,7 @@ const RatioFormPage = (props) => {
                       gridColumn: "span 4",
                     }}
                     options={productRecipe.recipe.filter(
-                      (r) => r.groupName === group
+                      (r) => r.groupName === group,
                     )}
                     onBlur={formik.handleBlur}
                     renderInput={(params) => (
@@ -358,11 +358,11 @@ const RatioFormPage = (props) => {
                       textAlign: "center",
                     }}
                   >
-                    {productRecipe?.recipe.filter(
-                      (r) => r.groupName === group
-                    )[0].qty *
-                      100 +
-                      "%"}
+                    {(
+                      productRecipe?.recipe.filter(
+                        (r) => r.groupName === group,
+                      )[0].qty * 100
+                    ).toFixed(2) + "%"}
                   </Typography>
                   <TextField
                     variant="filled"
@@ -454,7 +454,7 @@ const RatioFormPage = (props) => {
                       textAlign: "center",
                     }}
                   >
-                    {product.qty * 100 + "%"}
+                    {(product.qty * 100).toFixed(2) + "%"}
                   </Typography>
                   <TextField
                     variant="filled"

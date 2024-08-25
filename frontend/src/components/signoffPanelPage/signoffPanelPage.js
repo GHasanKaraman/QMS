@@ -10,7 +10,6 @@ import {
   Card,
   CardContent,
   CardActionArea,
-  CardActions,
   Typography,
   Button,
   Autocomplete,
@@ -20,7 +19,6 @@ import { useTheme } from "@emotion/react";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
-import ModeIcon from "@mui/icons-material/Mode";
 
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -47,6 +45,9 @@ const SignOffPanelPage = (props) => {
   const [metalDetectorForms, setMetalDetectorForms] = useState([]);
   const [labelInspectionForms, setLabelInspectionForms] = useState([]);
   const [pgQualityControlForms, setPGQualityControlForms] = useState([]);
+  const [mixingQualityForms, setMixingQualityForms] = useState([]);
+  const [xRayForms, setXRayForms] = useState([]);
+  const [preOperationalForms, setPreOperationalForms] = useState([]);
 
   const [locations, setLocations] = useState([]);
   const [dataSource, setDataSource] = useState([]);
@@ -100,7 +101,7 @@ const SignOffPanelPage = (props) => {
 
   const extractUniqueProducts = (...forms) => {
     return Array.from(
-      new Set(forms.flatMap((item) => item.map((form) => form.product)))
+      new Set(forms.flatMap((item) => item.map((form) => form.product))),
     );
   };
 
@@ -114,13 +115,19 @@ const SignOffPanelPage = (props) => {
       setPGQualityControlForms(res.data.pgQualityControlForms);
       setMetalDetectorForms(res.data.metalDetectorForms);
       setLabelInspectionForms(res.data.labelInspectionForms);
+      setPreOperationalForms(res.data.preOperationalForms);
+      setXRayForms(res.data.xRayForms);
+      setMixingQualityForms(res.data.mixingQualityForms);
       setProducts(
         extractUniqueProducts(
           res.data.labelInspectionForms,
           res.data.metalDetectorForms,
           res.data.pgQualityControlForms,
-          res.data.qualityControlForms
-        )
+          res.data.qualityControlForms,
+          res.data.xRayForms,
+          res.data.preOperationalForms,
+          res.data.mixingQualityForms,
+        ),
       );
     } else {
       navigate("/login");
@@ -309,7 +316,7 @@ const SignOffPanelPage = (props) => {
                     })()}
                     {(function () {
                       const length = ratioForms.filter(
-                        (ratioForm) => ratioForm.location === location.name
+                        (ratioForm) => ratioForm.location === location.name,
                       ).length;
                       if (length == 0) {
                         return "No";
@@ -334,7 +341,7 @@ const SignOffPanelPage = (props) => {
                       .filter(
                         (ratioForm) =>
                           ratioForm.location === location.name &&
-                          productFilter(ratioForm)
+                          productFilter(ratioForm),
                       )
                       .map((ratioForm, i) => {
                         return (
@@ -351,7 +358,7 @@ const SignOffPanelPage = (props) => {
                               onClick={() => {
                                 window.open(
                                   "/ratioform/" + ratioForm._id,
-                                  "_blank"
+                                  "_blank",
                                 );
                               }}
                             >
@@ -385,11 +392,69 @@ const SignOffPanelPage = (props) => {
                           </Card>
                         );
                       })}
+                    {preOperationalForms
+                      .filter(
+                        (preOperationalForm) =>
+                          preOperationalForm.station === location.name &&
+                          productFilter(preOperationalForm),
+                      )
+                      .map((preOperationalForm, i) => {
+                        return (
+                          <Card
+                            key={i}
+                            sx={{
+                              background: getStatusColor(preOperationalForm),
+                              width: 200,
+                              height: 80,
+                            }}
+                          >
+                            <CardActionArea
+                              sx={{ height: "100%" }}
+                              onClick={() => {
+                                window.open(
+                                  "/preoperational/" + preOperationalForm._id,
+                                  "_blank",
+                                );
+                              }}
+                            >
+                              <CardContent sx={{ paddingTop: 1 }}>
+                                <Stack spacing={0}>
+                                  <Typography
+                                    variant="h6"
+                                    fontWeight="bold"
+                                    color={colors.primary[400]}
+                                    sx={{ textAlign: "center" }}
+                                  >
+                                    Pre-Operational Inspection
+                                  </Typography>
+                                  <Typography
+                                    variant="h6"
+                                    fontWeight="bold"
+                                    color={colors.primary[400]}
+                                    sx={{ textAlign: "center" }}
+                                  >
+                                    {toStringDate(
+                                      preOperationalForm.createdAt,
+                                      {
+                                        month: "short",
+                                        year: "numeric",
+                                        day: "numeric",
+                                        hour: "numeric",
+                                        minute: "numeric",
+                                      },
+                                    )}
+                                  </Typography>
+                                </Stack>
+                              </CardContent>
+                            </CardActionArea>
+                          </Card>
+                        );
+                      })}
                     {qualityControlForms
                       .filter(
                         (qualityControlForm) =>
                           qualityControlForm.station === location.name &&
-                          productFilter(qualityControlForm)
+                          productFilter(qualityControlForm),
                       )
                       .map((qualityControlForm, i) => {
                         return (
@@ -406,7 +471,7 @@ const SignOffPanelPage = (props) => {
                               onClick={() => {
                                 window.open(
                                   "/qualitycontrol/" + qualityControlForm._id,
-                                  "_blank"
+                                  "_blank",
                                 );
                               }}
                             >
@@ -434,8 +499,63 @@ const SignOffPanelPage = (props) => {
                                         day: "numeric",
                                         hour: "numeric",
                                         minute: "numeric",
-                                      }
+                                      },
                                     )}
+                                  </Typography>
+                                </Stack>
+                              </CardContent>
+                            </CardActionArea>
+                          </Card>
+                        );
+                      })}
+                    {mixingQualityForms
+                      .filter(
+                        (mixingQualityForm) =>
+                          mixingQualityForm.station === location.name &&
+                          productFilter(mixingQualityForm),
+                      )
+                      .map((mixingQualityForm, i) => {
+                        return (
+                          <Card
+                            key={i}
+                            sx={{
+                              background: getStatusColor(mixingQualityForm),
+                              width: 200,
+                              height: 80,
+                            }}
+                          >
+                            <CardActionArea
+                              sx={{ height: "100%" }}
+                              onClick={() => {
+                                window.open(
+                                  "/mixingquality/" + mixingQualityForm._id,
+                                  "_blank",
+                                );
+                              }}
+                            >
+                              <CardContent sx={{ paddingTop: 1 }}>
+                                <Stack spacing={0}>
+                                  <Typography
+                                    variant="h6"
+                                    fontWeight="bold"
+                                    color={colors.primary[400]}
+                                    sx={{ textAlign: "center" }}
+                                  >
+                                    Mixing Quality Control
+                                  </Typography>
+                                  <Typography
+                                    variant="h6"
+                                    fontWeight="bold"
+                                    color={colors.primary[400]}
+                                    sx={{ textAlign: "center" }}
+                                  >
+                                    {toStringDate(mixingQualityForm.createdAt, {
+                                      month: "short",
+                                      year: "numeric",
+                                      day: "numeric",
+                                      hour: "numeric",
+                                      minute: "numeric",
+                                    })}
                                   </Typography>
                                 </Stack>
                               </CardContent>
@@ -447,7 +567,7 @@ const SignOffPanelPage = (props) => {
                       .filter(
                         (pgqualityControlForm) =>
                           pgqualityControlForm.station === location.name &&
-                          productFilter(pgqualityControlForm)
+                          productFilter(pgqualityControlForm),
                       )
                       .map((pgqualityControlForm, i) => {
                         return (
@@ -465,7 +585,7 @@ const SignOffPanelPage = (props) => {
                                 window.open(
                                   "/pgqualitycontrol/" +
                                     pgqualityControlForm._id,
-                                  "_blank"
+                                  "_blank",
                                 );
                               }}
                             >
@@ -493,8 +613,60 @@ const SignOffPanelPage = (props) => {
                                         day: "numeric",
                                         hour: "numeric",
                                         minute: "numeric",
-                                      }
+                                      },
                                     )}
+                                  </Typography>
+                                </Stack>
+                              </CardContent>
+                            </CardActionArea>
+                          </Card>
+                        );
+                      })}
+                    {xRayForms
+                      .filter(
+                        (xRayForm) =>
+                          xRayForm.station === location.name &&
+                          productFilter(xRayForm),
+                      )
+                      .map((xRayForm, i) => {
+                        return (
+                          <Card
+                            key={i}
+                            sx={{
+                              background: getStatusColor(xRayForm),
+                              width: 200,
+                              height: 80,
+                            }}
+                          >
+                            <CardActionArea
+                              sx={{ height: "100%" }}
+                              onClick={() => {
+                                window.open("/xray/" + xRayForm._id, "_blank");
+                              }}
+                            >
+                              <CardContent sx={{ paddingTop: 1 }}>
+                                <Stack spacing={0}>
+                                  <Typography
+                                    variant="h6"
+                                    fontWeight="bold"
+                                    color={colors.primary[400]}
+                                    sx={{ textAlign: "center" }}
+                                  >
+                                    Direct Observation X-Ray
+                                  </Typography>
+                                  <Typography
+                                    variant="h6"
+                                    fontWeight="bold"
+                                    color={colors.primary[400]}
+                                    sx={{ textAlign: "center" }}
+                                  >
+                                    {toStringDate(xRayForm.createdAt, {
+                                      month: "short",
+                                      year: "numeric",
+                                      day: "numeric",
+                                      hour: "numeric",
+                                      minute: "numeric",
+                                    })}
                                   </Typography>
                                 </Stack>
                               </CardContent>
@@ -506,7 +678,7 @@ const SignOffPanelPage = (props) => {
                       .filter(
                         (metalDetectorForm) =>
                           metalDetectorForm.station === location.name &&
-                          productFilter(metalDetectorForm)
+                          productFilter(metalDetectorForm),
                       )
                       .map((metalDetectorForm, i) => {
                         return (
@@ -523,7 +695,7 @@ const SignOffPanelPage = (props) => {
                               onClick={() => {
                                 window.open(
                                   "/metaldetector/" + metalDetectorForm._id,
-                                  "_blank"
+                                  "_blank",
                                 );
                               }}
                             >
@@ -561,7 +733,7 @@ const SignOffPanelPage = (props) => {
                       .filter(
                         (labelInspectionForm) =>
                           labelInspectionForm.station === location.name &&
-                          productFilter(labelInspectionForm)
+                          productFilter(labelInspectionForm),
                       )
                       .map((labelInspectionForm, i) => {
                         return (
@@ -578,7 +750,7 @@ const SignOffPanelPage = (props) => {
                               onClick={() => {
                                 window.open(
                                   "/labelinspection/" + labelInspectionForm._id,
-                                  "_blank"
+                                  "_blank",
                                 );
                               }}
                             >
@@ -606,7 +778,7 @@ const SignOffPanelPage = (props) => {
                                         day: "numeric",
                                         hour: "numeric",
                                         minute: "numeric",
-                                      }
+                                      },
                                     )}
                                   </Typography>
                                 </Stack>
