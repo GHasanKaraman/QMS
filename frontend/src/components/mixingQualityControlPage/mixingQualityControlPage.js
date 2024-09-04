@@ -53,7 +53,9 @@ const MixingQualityControlPage = (props) => {
     const res = await axios.post("/qualitycontrol");
     if (userAuth.control(res)) {
       setStations(
-        res.data.stations.filter((item) => item.name.includes("MIX")),
+        res.data.stations.filter(
+          (item) => item.name.includes("MIX") && !item.name.includes("MIX-0"),
+        ),
       );
     } else {
       navigate("/login");
