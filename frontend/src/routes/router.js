@@ -1,4 +1,4 @@
-import { Routes, Route, Outlet } from "react-router-dom";
+import { Routes, Route, Outlet, Navigate } from "react-router-dom";
 
 import Topbar from "../scenes/Topbar.jsx";
 import Sidebar from "../scenes/Sidebar.jsx";
@@ -25,6 +25,8 @@ import DirectObservationXRayPage from "../components/directObservationXRayPage/d
 import ViewDirectObservationXRayPage from "../components/directObservationXRayPage/viewDirectObservationXRayPage.js";
 import MixingQualityControlPage from "../components/mixingQualityControlPage/mixingQualityControlPage.js";
 import ViewMixingQualityControlPage from "../components/mixingQualityControlPage/viewMixingQualityControlPage.js";
+import RoastingQualityControlPage from "../components/roastingQualityControlPage/roastingQualityControlPage.js";
+import ViewRoastingQualityControlPage from "../components/roastingQualityControlPage/viewRoastingQualityControlPage.js";
 
 const BarLayout = () => {
   const [theme, colorMode] = useMode();
@@ -132,6 +134,21 @@ const Router = () => {
 
         <Route
           exact
+          path="/roastingquality"
+          element={
+            <RoastingQualityControlPage title="CiboQA | Roasting Quality Control Inspection" />
+          }
+        />
+        <Route
+          exact
+          path="/roastingquality/:id"
+          element={
+            <ViewRoastingQualityControlPage title="CiboQA | Data Sheet Results" />
+          }
+        />
+
+        <Route
+          exact
           path="/lotinspection"
           element={<LotInspectionPage title="CiboQA | LOT Inspection" />}
         />
@@ -210,6 +227,7 @@ const Router = () => {
             <RatioFormPage title="CiboQA | Finished Product Ratio Form" />
           }
         />
+        <Route path="*" element={<Navigate to="/" />} />
       </Route>
     </Routes>
   );

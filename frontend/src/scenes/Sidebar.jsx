@@ -35,6 +35,7 @@ import axios from "../api/axios";
 import { PrecisionManufacturing } from "@mui/icons-material";
 import { ReactComponent as NuclearIcon } from "../images/nuclearIcon.svg";
 import { ReactComponent as MixingIcon } from "../images/mixingIcon.svg";
+import { ReactComponent as RoastingIcon } from "../images/roastingIcon.svg";
 
 const Item = ({
   title,
@@ -217,7 +218,7 @@ const Sidebar = () => {
             </Box>
           )}
 
-          <Box paddingLeft={isCollapsed ? undefined : "10%"}>
+          <Box paddingLeft={isCollapsed ? undefined : "5%"}>
             <Item
               title="Dashboard"
               to="/dashboard"
@@ -268,7 +269,13 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
             />
-
+            <Item
+              title="Roasting Quality Check"
+              to="/roastingquality"
+              icon={<SvgIcon inheritViewBox component={RoastingIcon} />}
+              selected={selected}
+              setSelected={setSelected}
+            />
             <Item
               title="Quality Check"
               to="/pgqualitycontrol"
