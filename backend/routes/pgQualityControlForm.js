@@ -106,7 +106,7 @@ router.post("/pgqualitycontrol/getproduct", async (req, res) => {
           station +
           " and " +
           product +
-          " from OC DB!"
+          " from OC DB!",
       );
     } else {
       res.sendStatus(404);
@@ -150,7 +150,7 @@ router.post("/pgqualitycontrol/get", async (req, res) => {
           product: product,
         });
         console.log(
-          "Fetched " + id + " quality control inspection data sheet result!"
+          "Fetched " + id + " quality control inspection data sheet result!",
         );
       } else {
         res.sendStatus(404);
@@ -170,7 +170,7 @@ router.post("/pgqualitycontrol/signoff", async (req, res) => {
     if (req.access.includes("S")) {
       const qualityControlForm = await pgQualityControlModel.updateOne(
         { _id: id },
-        { signedOff: req.username, signOffDate: essentials.getEST() }
+        { signedOff: req.username, signOffDate: essentials.getEST() },
       );
       if (qualityControlForm.modifiedCount == 1) {
         res.sendStatus(200);
@@ -199,7 +199,7 @@ router.post("/pgqualitycontrol/add", upload.any(), async (req, res) => {
           .toFormat("jpeg")
           .jpeg({ quality: 90 })
           .toFile(`${file.destination}/${newFilename}`);
-      })
+      }),
     );
 
     const imageDetails = req.files.map((file) => {
@@ -212,7 +212,6 @@ router.post("/pgqualitycontrol/add", upload.any(), async (req, res) => {
 
     const result = await imageModel.insertMany(imageDetails);
     if (result) {
-      console.log(result);
       const formInformations = req.body;
       var status = undefined;
       if (
@@ -236,12 +235,12 @@ router.post("/pgqualitycontrol/add", upload.any(), async (req, res) => {
       });
       if (form) {
         console.log(
-          req.username + " successfully created a P&G quality control form!"
+          req.username + " successfully created a P&G quality control form!",
         );
         res.status(200).json({ form });
       } else {
         console.log(
-          "Something went wrong while creating a P&G quality control form!"
+          "Something went wrong while creating a P&G quality control form!",
         );
         res.sendStatus(500);
       }

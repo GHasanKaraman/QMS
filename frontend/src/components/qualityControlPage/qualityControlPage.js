@@ -58,7 +58,7 @@ const QualityControlPage = (props) => {
   const [metalCardState, setMetalCardState] = useState(null);
   const [metalBallStateSingle, setMetalBallStateSingle] = useState(null);
   const [metalBallStateMultiple, setMetalBallStateMultiple] = useState(null);
-
+  const [deviationState, setDeviationState] = useState(null);
   const [caseLabelState, setCaseLabelState] = useState(null);
 
   useEffect(() => {
@@ -226,6 +226,7 @@ const QualityControlPage = (props) => {
       pictureOfBoxLabel: null,
 
       anyDeviations: null,
+      deviationID: "",
     },
     onSubmit: handleSubmit,
     validationSchema: yup.object().shape({
@@ -407,6 +408,10 @@ const QualityControlPage = (props) => {
           : undefined,
 
       anyDeviations: yup.string().required(),
+      deviationID:
+        deviationState === "Yes"
+          ? yup.string().required("You must enter deviation ID!")
+          : undefined,
     }),
   });
   return (
@@ -2503,6 +2508,7 @@ const QualityControlPage = (props) => {
                   alignment={formik.values.anyDeviations}
                   onChange={(value) => {
                     formik.setFieldValue("anyDeviations", value);
+                    setDeviationState(value);
                   }}
                   error={
                     !!formik.touched.anyDeviations &&
@@ -2517,6 +2523,25 @@ const QualityControlPage = (props) => {
                     },
                   ]}
                 />
+                {deviationState === "Yes" ? (
+                  <TextField
+                    variant="filled"
+                    type="text"
+                    label="Deviation ID"
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                    value={formik.values.deviationID}
+                    name="deviationID"
+                    error={
+                      !!formik.touched.deviationID &&
+                      !!formik.errors.deviationID
+                    }
+                    helperText={
+                      formik.touched.deviationID && formik.errors.deviationID
+                    }
+                    sx={{ gridColumn: "span 4" }}
+                  />
+                ) : undefined}
               </Box>
             </AccordionDetails>
           </Accordion>

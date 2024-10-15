@@ -15,6 +15,8 @@ const lotInspectionFormSchema = new mongoose.Schema(
     itemCode4: { type: String, default: "" },
     lotCode4: { type: String, default: "" },
     imageIDs: [{ type: mongoose.Types.ObjectId }],
+    anyDeviations: { type: String, required: true },
+    deviationID: { type: String, default: "" },
     status: { type: String, default: "failed" },
     signedOff: { type: String, default: "" },
     signOffDate: { type: Date },

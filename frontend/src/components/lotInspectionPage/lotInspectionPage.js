@@ -29,6 +29,7 @@ import axios from "../../api/axios";
 import userAuth from "../../utils/userAuth";
 import { Accordion, AccordionDetails, AccordionSummary } from "../Accordion";
 import UploadImage from "../UploadImage";
+import ToggleButtonCheck from "../ToggleButtonCheck";
 
 const LotInspectionPage = (props) => {
   const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png"];
@@ -44,6 +45,8 @@ const LotInspectionPage = (props) => {
   const [productDetails, setProductDetails] = useState(null);
 
   const [open, setOpen] = useState(false);
+
+  const [deviationState, setDeviationState] = useState(null);
 
   useEffect(() => {
     document.title = props.title || "";
@@ -187,6 +190,9 @@ const LotInspectionPage = (props) => {
       picture4: null,
       isAllergenStatementCorrect: null,
       personBeingObserved: "",
+
+      anyDeviations: null,
+      deviationID: "",
     },
     onSubmit: handleSubmit,
     validationSchema: yup.object().shape({
@@ -227,6 +233,8 @@ const LotInspectionPage = (props) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
           },
         ),
+
+      anyDeviations: yup.string().required(),
     }),
   });
 
@@ -771,6 +779,92 @@ const LotInspectionPage = (props) => {
               </Box>
             </AccordionDetails>
           </Accordion>
+          <Accordion>
+            <AccordionSummary
+              aria-controls="panel8d-content"
+              id="panel8d-header"
+              expandIcon={<ExpandMoreIcon />}
+            >
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                width="100%"
+              >
+                <Typography fontWeight={600} fontSize={18}>
+                  ANY DEVIATIONS?
+                </Typography>
+                <Typography fontWeight={600}>1 Items</Typography>
+              </Stack>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Box
+                display="grid"
+                gap="30px"
+                gridTemplateColumns="repeat(4, minmax(0, 1fr))"
+                sx={{
+                  "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
+                  "& .MuiInputBase-root::after": {
+                    borderBottomColor: colors.ciboInnerGreen[500],
+                  },
+                  "& .MuiInputBase-root::before": {
+                    borderBottomColor: colors.ciboInnerGreen[600],
+                  },
+                  "& .MuiFormLabel-root.Mui-focused": {
+                    color: colors.ciboInnerGreen[300],
+                  },
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  color={colors.grey[100]}
+                  fontWeight="600"
+                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                >
+                  Any Deviations?
+                </Typography>
+                <ToggleButtonCheck
+                  style={{ gridColumn: "span 4" }}
+                  alignment={formik.values.anyDeviations}
+                  onChange={(value) => {
+                    formik.setFieldValue("anyDeviations", value);
+                    setDeviationState(value);
+                  }}
+                  error={
+                    !!formik.touched.anyDeviations &&
+                    !!formik.errors.anyDeviations
+                  }
+                  options={[
+                    {
+                      label: "Yes",
+                    },
+                    {
+                      label: "No",
+                    },
+                  ]}
+                />
+                {deviationState === "Yes" ? (
+                  <TextField
+                    variant="filled"
+                    type="text"
+                    label="Deviation ID"
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                    value={formik.values.deviationID}
+                    name="deviationID"
+                    error={
+                      !!formik.touched.deviationID &&
+                      !!formik.errors.deviationID
+                    }
+                    helperText={
+                      formik.touched.deviationID && formik.errors.deviationID
+                    }
+                    sx={{ gridColumn: "span 4" }}
+                  />
+                ) : undefined}
+              </Box>
+            </AccordionDetails>
+          </Accordion>
+
           <Box display="flex" justifyContent="center" mt="20px">
             <Button
               type="submit"

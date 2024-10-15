@@ -52,6 +52,9 @@ const roastingQualityFormSchema = new mongoose.Schema(
     coolingFan5: { type: Number, required: true },
     coolingFan6: { type: Number, required: true },
 
+    anyDeviations: { type: String, required: true },
+    deviationID: { type: String, default: "" },
+
     status: { type: String, default: "failed" },
     signedOff: { type: String, default: "" },
     signOffDate: { type: Date },

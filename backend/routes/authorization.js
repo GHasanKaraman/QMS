@@ -48,7 +48,7 @@ router.use(async (req, res, next) => {
         if (Math.abs(essentials.fromNow(tokenData[0].createdAt)) >= 60 * 24) {
           console.log(
             "\x1b[31m%s\x1b[0m",
-            token + " has expired! User should sign in again!"
+            token + " has expired! User should sign in again!",
           );
           res.status(404).json({ error: "token" });
         } else {
@@ -56,14 +56,14 @@ router.use(async (req, res, next) => {
           req.access = tokenData[0].access;
           console.log(
             "\x1b[32m%s\x1b[0m",
-            tokenData[0].userName + " has been succesfully authenticated!"
+            tokenData[0].userName + " has been succesfully authenticated!",
           );
           next();
         }
       } else {
         console.log(
           "\x1b[31m%s\x1b[0m",
-          "Token is not valid. User should sign in again!"
+          "Token=" + token + " is not valid. User should sign in again!",
         );
         res.status(401).json({ error: "token" });
       }
@@ -71,7 +71,7 @@ router.use(async (req, res, next) => {
       console.log(
         "\x1b[31m%s",
         "User is not authorized! User should sign in!",
-        "\x1b[0m"
+        "\x1b[0m",
       );
       res.status(500).json({ error: "token" });
     }

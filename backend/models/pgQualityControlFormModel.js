@@ -20,18 +20,20 @@ const pgQualityControlFormSchema = new mongoose.Schema(
     expirationDateCase: { type: String, required: true },
     lotCodeCase: { type: String, required: true },
     imageIDs: [{ type: mongoose.Types.ObjectId }],
+    anyDeviations: { type: String, required: true },
+    deviationID: { type: String, default: "" },
     status: { type: String, default: "failed" },
     signedOff: { type: String, default: "" },
     signOffDate: { type: Date },
     started: { type: Number, default: 0 },
     startDateTime: { type: Date },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const pgQualityControlFormModel = mongoose.model(
   "pgQualityControlForms",
-  pgQualityControlFormSchema
+  pgQualityControlFormSchema,
 );
 
 module.exports = pgQualityControlFormModel;
