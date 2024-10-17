@@ -60,7 +60,7 @@ const CommentAccordion = ({ formID, form }) => {
               "Something went wrong while fetching the comments!",
               {
                 variant: "error",
-              }
+              },
             );
             break;
           case 503:
@@ -153,7 +153,7 @@ const CommentAccordion = ({ formID, form }) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          }
+          },
         ),
     }),
   });
@@ -297,6 +297,7 @@ const CommentAccordion = ({ formID, form }) => {
             {comments.map((comment) => {
               return (
                 <ListItem
+                  key={comment._id}
                   alignItems="flex-start"
                   sx={{ display: "flex", alignItems: "center" }}
                 >
@@ -347,6 +348,7 @@ const CommentAccordion = ({ formID, form }) => {
                           comment.image.fileName
                         }
                         target="_blank"
+                        rel="noreferrer"
                       >
                         <img
                           width={50}
@@ -358,7 +360,7 @@ const CommentAccordion = ({ formID, form }) => {
                             "/thumbnail-" +
                             comment.image.fileName?.substr(
                               0,
-                              comment.image.fileName?.lastIndexOf(".")
+                              comment.image.fileName?.lastIndexOf("."),
                             ) +
                             ".jpeg"
                           }
