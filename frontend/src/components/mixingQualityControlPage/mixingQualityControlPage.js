@@ -31,8 +31,11 @@ import axios from "../../api/axios";
 import userAuth from "../../utils/userAuth";
 import { Accordion, AccordionDetails, AccordionSummary } from "../Accordion";
 import ToggleButtonCheck from "../ToggleButtonCheck";
+import UploadMultipleImage from "../UploadMultipleImage";
+import UploadImage from "../UploadImage";
 
 const MixingQualityControlPage = (props) => {
+  const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png"];
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const isNonMobile = useMediaQuery("(min-width:600px)");
@@ -44,6 +47,7 @@ const MixingQualityControlPage = (props) => {
   const [productDetails, setProductDetails] = useState(null);
 
   const [open, setOpen] = useState(false);
+  const [deviationState, setDeviationState] = useState(null);
 
   useEffect(() => {
     document.title = props.title || "";
@@ -124,12 +128,26 @@ const MixingQualityControlPage = (props) => {
 
   const handleSubmit = async (values, { resetForm }) => {
     setOpen(true);
-
     values.product = values.product.partNum;
     values.started = Number(productDetails?.started);
     values.startDateTime = moment(productDetails?.startDateTime);
 
-    const res = await axios.post("/mixingquality/add", values);
+    const formData = new FormData();
+    for (const name in values) {
+      if (values[name]?.constructor?.name === "Blob") {
+        formData.append(name, values[name], name + ".jpeg");
+      } else if (Array.isArray(values[name])) {
+        values[name].forEach((blob, index) => {
+          if (blob.constructor.name === "Blob") {
+            formData.append(`${name}`, blob, `${name}-${index}.jpeg`); // Use index to differentiate files
+          }
+        });
+      } else {
+        formData.append(name, values[name]);
+      }
+    }
+
+    const res = await axios.post("/mixingquality/add", formData);
     if (userAuth.control(res)) {
       if (res?.data) {
         enqueueSnackbar("You have successfully created the form!", {
@@ -163,6 +181,23 @@ const MixingQualityControlPage = (props) => {
     setOpen(false);
   };
 
+  const uploadRequired = (message) => {
+    return yup
+      .mixed()
+      .nullable()
+      .required(message)
+      .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
+        return !value || (value && value.size < 1024 * 1024 * 10);
+      })
+      .test(
+        "FILE_FORMAT",
+        "You can only upload JPG/JPEG/PNG files!",
+        (value) => {
+          return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
+        },
+      );
+  };
+
   const formik = useFormik({
     initialValues: {
       station: null,
@@ -175,6 +210,12 @@ const MixingQualityControlPage = (props) => {
       sensory: null,
       cleanFloor: null,
       garbageOrganized: null,
+
+      rawMaterialPictures: [],
+      finishedProductPicture: null,
+
+      anyDeviations: null,
+      deviationID: "",
     },
     onSubmit: handleSubmit,
     validationSchema: yup.object().shape({
@@ -201,6 +242,20 @@ const MixingQualityControlPage = (props) => {
       sensory: yup.string().required(),
       cleanFloor: yup.string().required(),
       garbageOrganized: yup.string().required(),
+      rawMaterialPictures: yup
+        .array()
+        .of(uploadRequired("Please upload pictures of raw materials!"))
+        .required("You must upload at leat one image!")
+        .min(1, "You must upload at least one image!"),
+      finishedProductPicture: uploadRequired(
+        "Please upload the finished product!",
+      ),
+
+      anyDeviations: yup.string().required(),
+      deviationID:
+        deviationState === "Yes"
+          ? yup.string().required("You must enter deviation ID!")
+          : undefined,
     }),
   });
 
@@ -689,6 +744,177 @@ const MixingQualityControlPage = (props) => {
               </Box>
             </AccordionDetails>
           </Accordion>
+          <Accordion>
+            <AccordionSummary
+              aria-controls="panel8d-content"
+              id="panel8d-header"
+              expandIcon={<ExpandMoreIcon />}
+            >
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                width="100%"
+              >
+                <Typography fontWeight={600} fontSize={18}>
+                  PICTURES
+                </Typography>
+                <Typography fontWeight={600}>2 Items</Typography>
+              </Stack>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Box
+                display="grid"
+                gap="30px"
+                gridTemplateColumns="repeat(4, minmax(0, 1fr))"
+                sx={{
+                  "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
+                  "& .MuiInputBase-root::after": {
+                    borderBottomColor: colors.ciboInnerGreen[500],
+                  },
+                  "& .MuiInputBase-root::before": {
+                    borderBottomColor: colors.ciboInnerGreen[600],
+                  },
+                  "& .MuiFormLabel-root.Mui-focused": {
+                    color: colors.ciboInnerGreen[300],
+                  },
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  color={colors.grey[100]}
+                  fontWeight="600"
+                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                >
+                  Raw Material Pictures
+                </Typography>
+                <UploadMultipleImage
+                  sx={{ gridColumn: "span 4", justifySelf: "start" }}
+                  value={formik.values.rawMaterialPictures}
+                  error={
+                    !!formik.touched.rawMaterialPictures &&
+                    !!formik.errors.rawMaterialPictures
+                  }
+                  helperText={
+                    formik.touched.rawMaterialPictures &&
+                    formik.errors.rawMaterialPictures
+                  }
+                  onChange={(blobs) => {
+                    formik.setFieldValue("rawMaterialPictures", blobs);
+                  }}
+                />
+
+                <Typography
+                  variant="h6"
+                  color={colors.grey[100]}
+                  fontWeight="600"
+                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                >
+                  Finished Product Pictures
+                </Typography>
+                <UploadImage
+                  sx={{ gridColumn: "span 4", justifySelf: "start" }}
+                  value={formik.values.finishedProductPicture}
+                  error={
+                    !!formik.touched.finishedProductPicture &&
+                    !!formik.errors.finishedProductPicture
+                  }
+                  helperText={
+                    formik.touched.finishedProductPicture &&
+                    formik.errors.finishedProductPicture
+                  }
+                  onChange={(blob) => {
+                    formik.setFieldValue("finishedProductPicture", blob);
+                  }}
+                />
+              </Box>
+            </AccordionDetails>
+          </Accordion>
+          <Accordion>
+            <AccordionSummary
+              aria-controls="panel8d-content"
+              id="panel8d-header"
+              expandIcon={<ExpandMoreIcon />}
+            >
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                width="100%"
+              >
+                <Typography fontWeight={600} fontSize={18}>
+                  ANY DEVIATIONS?
+                </Typography>
+                <Typography fontWeight={600}>1 Items</Typography>
+              </Stack>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Box
+                display="grid"
+                gap="30px"
+                gridTemplateColumns="repeat(4, minmax(0, 1fr))"
+                sx={{
+                  "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
+                  "& .MuiInputBase-root::after": {
+                    borderBottomColor: colors.ciboInnerGreen[500],
+                  },
+                  "& .MuiInputBase-root::before": {
+                    borderBottomColor: colors.ciboInnerGreen[600],
+                  },
+                  "& .MuiFormLabel-root.Mui-focused": {
+                    color: colors.ciboInnerGreen[300],
+                  },
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  color={colors.grey[100]}
+                  fontWeight="600"
+                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                >
+                  Any Deviations?
+                </Typography>
+                <ToggleButtonCheck
+                  style={{ gridColumn: "span 4" }}
+                  alignment={formik.values.anyDeviations}
+                  onChange={(value) => {
+                    formik.setFieldValue("anyDeviations", value);
+                    setDeviationState(value);
+                  }}
+                  error={
+                    !!formik.touched.anyDeviations &&
+                    !!formik.errors.anyDeviations
+                  }
+                  options={[
+                    {
+                      label: "Yes",
+                    },
+                    {
+                      label: "No",
+                    },
+                  ]}
+                />
+                {deviationState === "Yes" ? (
+                  <TextField
+                    variant="filled"
+                    type="text"
+                    label="Deviation ID"
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                    value={formik.values.deviationID}
+                    name="deviationID"
+                    error={
+                      !!formik.touched.deviationID &&
+                      !!formik.errors.deviationID
+                    }
+                    helperText={
+                      formik.touched.deviationID && formik.errors.deviationID
+                    }
+                    sx={{ gridColumn: "span 4" }}
+                  />
+                ) : undefined}
+              </Box>
+            </AccordionDetails>
+          </Accordion>
+
           <Box display="flex" justifyContent="center" mt="20px">
             <Button
               type="submit"
