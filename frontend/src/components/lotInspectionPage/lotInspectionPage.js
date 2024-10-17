@@ -122,53 +122,59 @@ const LotInspectionPage = (props) => {
   }, []);
 
   const handleSubmit = async (values, { resetForm }) => {
-    setOpen(true);
+    if (deviationState) {
+      setOpen(true);
 
-    values.product = values.product.partNum;
-    values.started = Number(productDetails?.started);
-    values.startDateTime = moment(productDetails?.startDateTime);
+      values.product = values.product.partNum;
+      values.started = Number(productDetails?.started);
+      values.startDateTime = moment(productDetails?.startDateTime);
 
-    const formData = new FormData();
-    for (const name in values) {
-      if (values[name]?.constructor?.name === "Blob") {
-        formData.append(name, values[name], name + ".jpeg");
-      } else {
-        formData.append(name, values[name]);
-      }
-    }
-
-    const res = await axios.post("/lotinspection/add", formData);
-    if (userAuth.control(res)) {
-      if (res?.data) {
-        enqueueSnackbar("You have successfully created the form!", {
-          variant: "success",
-        });
-        resetForm();
-      } else {
-        switch (res.response?.status) {
-          case 404:
-            enqueueSnackbar("Station or product is wrong!", {
-              variant: "error",
-            });
-            break;
-          case 503:
-            enqueueSnackbar("Something went wrong with the server!", {
-              variant: "error",
-            });
-            break;
-          default:
-            break;
+      const formData = new FormData();
+      for (const name in values) {
+        if (values[name]?.constructor?.name === "Blob") {
+          formData.append(name, values[name], name + ".jpeg");
+        } else {
+          formData.append(name, values[name]);
         }
       }
+
+      const res = await axios.post("/lotinspection/add", formData);
+      if (userAuth.control(res)) {
+        if (res?.data) {
+          enqueueSnackbar("You have successfully created the form!", {
+            variant: "success",
+          });
+          resetForm();
+        } else {
+          switch (res.response?.status) {
+            case 404:
+              enqueueSnackbar("Station or product is wrong!", {
+                variant: "error",
+              });
+              break;
+            case 503:
+              enqueueSnackbar("Something went wrong with the server!", {
+                variant: "error",
+              });
+              break;
+            default:
+              break;
+          }
+        }
+      } else {
+        navigate("/login");
+        localStorage.removeItem("token");
+        localStorage.removeItem("username");
+        enqueueSnackbar("Please sign in again!", {
+          variant: "error",
+        });
+      }
+      setOpen(false);
     } else {
-      navigate("/login");
-      localStorage.removeItem("token");
-      localStorage.removeItem("username");
-      enqueueSnackbar("Please sign in again!", {
+      enqueueSnackbar("Please fill out all the missing fields!", {
         variant: "error",
       });
     }
-    setOpen(false);
   };
 
   const formik = useFormik({
@@ -233,8 +239,6 @@ const LotInspectionPage = (props) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
           },
         ),
-
-      anyDeviations: yup.string().required(),
     }),
   });
 
