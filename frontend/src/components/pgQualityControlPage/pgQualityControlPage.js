@@ -116,7 +116,11 @@ const PGQualityControlPage = (props) => {
 
     const formData = new FormData();
     for (const name in values) {
-      formData.append(name, values[name]);
+      if (values[name]?.constructor?.name === "Blob") {
+        formData.append(name, values[name], name + ".jpeg");
+      } else {
+        formData.append(name, values[name]);
+      }
     }
     const res = await axios.post("/pgqualitycontrol/add", formData);
     if (userAuth.control(res)) {
