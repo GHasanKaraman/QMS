@@ -14,6 +14,7 @@ const mixingQualityFormSchema = new mongoose.Schema(
     garbageOrganized: { type: String, required: true },
     anyDeviations: { type: String, required: true },
     deviationID: { type: String, default: "" },
+    imageIDs: [{ type: mongoose.Types.ObjectId }],
     status: { type: String, default: "failed" },
     signedOff: { type: String, default: "" },
     signOffDate: { type: Date },
