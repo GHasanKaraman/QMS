@@ -35,6 +35,7 @@ import StatusIndicator from "../StatusIndicator";
 import CommentAccordion from "../CommentAccordion";
 import RunLabel from "../RunLabel";
 import LabelResult from "../LabelResult";
+import ImageLabel from "../ImageLabel";
 
 const ViewMixingQualityControlPage = (props) => {
   const params = useParams();
@@ -48,6 +49,7 @@ const ViewMixingQualityControlPage = (props) => {
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
   const [data, setData] = useState();
+  const [images, setImages] = useState([]);
   const [product, setProduct] = useState();
   const [open, setOpen] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
@@ -59,6 +61,7 @@ const ViewMixingQualityControlPage = (props) => {
     const res = await axios.post("/mixingquality/get", { id });
     if (userAuth.control(res)) {
       setData(res.data.mixingQualityForm);
+      setImages(res.data.images);
       setProduct(res.data.product);
     } else {
       navigate("/login");
@@ -413,6 +416,84 @@ const ViewMixingQualityControlPage = (props) => {
             />
             <StatusIndicator status={data?.garbageOrganized === "Yes"} />
           </Stack>
+        </AccordionDetails>
+      </Accordion>
+      <Accordion defaultExpanded>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Stack direction="row" justifyContent="space-between" width="100%">
+            <Typography fontWeight={600} fontSize={18}>
+              PICTURES
+            </Typography>
+            <Typography fontWeight={600}>2 Items</Typography>
+          </Stack>
+        </AccordionSummary>
+        <AccordionDetails>
+          {images.map((image, index) => {
+            if (index !== images.length - 1) {
+              return (
+                <Stack
+                  direction="row"
+                  justifyContent="space-between"
+                  key={index}
+                >
+                  <ImageLabel
+                    title={`Ingredient ${index + 1}`}
+                    folderIndex={image?.folderIndex}
+                    fileName={image?.fileName}
+                  />
+                  <StatusIndicator status={Boolean(image)} />
+                </Stack>
+              );
+            }
+          })}
+          <Divider />
+          <Stack direction="row" justifyContent="space-between">
+            <ImageLabel
+              title="Picture of Finished Product"
+              folderIndex={images[images.length - 1]?.folderIndex}
+              fileName={images[images.length - 1]?.fileName}
+            />
+            <StatusIndicator status={Boolean(images[images.length - 1])} />
+          </Stack>
+        </AccordionDetails>
+      </Accordion>
+
+      <Accordion defaultExpanded>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Stack direction="row" justifyContent="space-between" width="100%">
+            <Typography fontWeight={600} fontSize={18}>
+              ANY DEVIATIONS?
+            </Typography>
+            <Typography fontWeight={600}>9 Items</Typography>
+          </Stack>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Stack direction="row" justifyContent="space-between">
+            <Label title="Any deviations?" subtitle={data?.anyDeviations} />
+            <StatusIndicator status={Boolean(data?.anyDeviations)} />
+          </Stack>
+          {data?.anyDeviations === "Yes"
+            ? [
+                <Divider key="first" />,
+                <Stack
+                  direction="row"
+                  key="second"
+                  justifyContent="space-between"
+                >
+                  <Label
+                    title="Deviation Form"
+                    subtitle={
+                      <a
+                        href={`http://10.12.11.192:3000/deviation/${data?.deviationID}`}
+                      >
+                        {data?.deviationID}
+                      </a>
+                    }
+                  />
+                  <StatusIndicator status={Boolean(data?.anyDeviations)} />
+                </Stack>,
+              ]
+            : undefined}
         </AccordionDetails>
       </Accordion>
 
