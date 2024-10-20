@@ -18,8 +18,6 @@ const lotInspectionFormSchema = new mongoose.Schema(
     anyDeviations: { type: String, required: true },
     deviationID: { type: String, default: "" },
     status: { type: String, default: "failed" },
-    signedOff: { type: String, default: "" },
-    signOffDate: { type: Date },
     started: { type: Number, default: 0 },
     startDateTime: { type: Date },
   },

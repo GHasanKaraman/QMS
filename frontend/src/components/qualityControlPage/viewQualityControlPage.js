@@ -77,10 +77,10 @@ const ViewQualityControlPage = (props) => {
 
   const handleSignOff = async () => {
     if (!clicked) {
-      const res = await axios.post("/qualitycontrol/signoff", { id });
+      const res = await axios.post("/signoff", { id });
       if (userAuth.control(res)) {
         switch (res.response?.status) {
-          case 200:
+          case 201:
             enqueueSnackbar("You have successfully signed off the form!", {
               variant: "success",
             });
@@ -286,7 +286,7 @@ const ViewQualityControlPage = (props) => {
         title="Data Sheet Signed Off"
         subtitle={
           data ? (
-            data?.signedOff === "" ? (
+            !data.signOff ? (
               localStorage.getItem("access").includes("S") ? (
                 <Button
                   variant="contained"
@@ -302,9 +302,9 @@ const ViewQualityControlPage = (props) => {
                 "Not Signed Off"
               )
             ) : (
-              data?.signedOff +
+              data?.signOff.signedOff +
               " • " +
-              toStringDate(data?.signOffDate, {
+              toStringDate(data?.signOff.signOffDate, {
                 month: "short",
                 year: "numeric",
                 day: "numeric",

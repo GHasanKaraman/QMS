@@ -2,8 +2,8 @@ const express = require("express");
 const fetch = require("node-fetch");
 const router = express.Router();
 
-const essentials = require("../utils/essentials");
 const labelInspectionFormModel = require("../models/labelInspectionFormModel");
+const mongoose = require("mongoose");
 
 router.post("/operators", async (req, res) => {
   try {
@@ -29,10 +29,19 @@ router.post("/operators", async (req, res) => {
 router.post("/labelinspection/get", async (req, res) => {
   try {
     const { id } = req.body;
-    const labelInspectionForm = await labelInspectionFormModel.find({
-      _id: id,
-    });
-    if (labelInspectionForm) {
+    const labelInspectionForm = await labelInspectionFormModel.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(id) } },
+      {
+        $lookup: {
+          from: "signoffs",
+          localField: "_id",
+          foreignField: "formID",
+          as: "signOff",
+        },
+      },
+      { $unwind: { preserveNullAndEmptyArrays: true, path: "$signOff" } },
+    ]);
+    if (labelInspectionForm.length === 1) {
       var details = {
         part: labelInspectionForm[0].product,
       };
@@ -70,28 +79,6 @@ router.post("/labelinspection/get", async (req, res) => {
   }
 });
 
-router.post("/labelinspection/signoff", async (req, res) => {
-  try {
-    const { id } = req.body;
-    if (req.access.includes("S")) {
-      const labelInspectionForm = await labelInspectionFormModel.updateOne(
-        { _id: id },
-        { signedOff: req.username, signOffDate: essentials.getEST() }
-      );
-      if (labelInspectionForm.modifiedCount == 1) {
-        res.sendStatus(200);
-      } else {
-        res.sendStatus(400);
-      }
-    } else {
-      res.sendStatus(406);
-    }
-  } catch (err) {
-    console.log(err);
-    res.sendStatus(503);
-  }
-});
-
 router.use("/labelinspection/add", async (req, res) => {
   try {
     const data = req.body;
@@ -111,7 +98,7 @@ router.use("/labelinspection/add", async (req, res) => {
 
     if (form) {
       console.log(
-        req.username + " successfully created a label inspection form!"
+        req.username + " successfully created a label inspection form!",
       );
       res.status(200).json({ form });
     } else {

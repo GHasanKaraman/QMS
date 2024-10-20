@@ -4,12 +4,24 @@ const router = express.Router();
 
 const essentials = require("../utils/essentials");
 const xRayFormModel = require("../models/xRayFormModel.js");
+const mongoose = require("mongoose");
 
 router.post("/xray/get", async (req, res) => {
   try {
     const { id } = req.body;
-    const xRayForm = await xRayFormModel.find({ _id: id });
-    if (xRayForm) {
+    const xRayForm = await xRayFormModel.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(id) } },
+      {
+        $lookup: {
+          from: "signoffs",
+          localField: "_id",
+          foreignField: "formID",
+          as: "signOff",
+        },
+      },
+      { $unwind: { preserveNullAndEmptyArrays: true, path: "$signOff" } },
+    ]);
+    if (xRayForm.length === 1) {
       var details = {
         part: xRayForm[0].product,
       };
@@ -40,28 +52,6 @@ router.post("/xray/get", async (req, res) => {
       }
     } else {
       res.sendStatus(404);
-    }
-  } catch (err) {
-    console.log(err);
-    res.sendStatus(503);
-  }
-});
-
-router.post("/xray/signoff", async (req, res) => {
-  try {
-    const { id } = req.body;
-    if (req.access.includes("S")) {
-      const xRayForm = await xRayFormModel.updateOne(
-        { _id: id },
-        { signedOff: req.username, signOffDate: essentials.getEST() },
-      );
-      if (xRayForm.modifiedCount == 1) {
-        res.sendStatus(200);
-      } else {
-        res.sendStatus(400);
-      }
-    } else {
-      res.sendStatus(406);
     }
   } catch (err) {
     console.log(err);

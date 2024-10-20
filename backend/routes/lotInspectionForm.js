@@ -5,15 +5,26 @@ const sharp = require("sharp");
 const router = express.Router();
 const upload = require("../file");
 
-const essentials = require("../utils/essentials");
 const imageModel = require("../models/imageModel");
 const lotInspectionFormModel = require("../models/lotInspectionFormModel");
+const mongoose = require("mongoose");
 
 router.post("/lotinspection/get", async (req, res) => {
   try {
     const { id } = req.body;
-    const lotInspectionForm = await lotInspectionFormModel.find({ _id: id });
-    if (lotInspectionForm) {
+    const lotInspectionForm = await lotInspectionFormModel.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(id) } },
+      {
+        $lookup: {
+          from: "signoffs",
+          localField: "_id",
+          foreignField: "formID",
+          as: "signOff",
+        },
+      },
+      { $unwind: { preserveNullAndEmptyArrays: true, path: "$signOff" } },
+    ]);
+    if (lotInspectionForm.length === 1) {
       var details = {
         part: lotInspectionForm[0].product,
       };
@@ -50,28 +61,6 @@ router.post("/lotinspection/get", async (req, res) => {
       }
     } else {
       res.sendStatus(404);
-    }
-  } catch (err) {
-    console.log(err);
-    res.sendStatus(503);
-  }
-});
-
-router.post("/lotinspection/signoff", async (req, res) => {
-  try {
-    const { id } = req.body;
-    if (req.access.includes("S")) {
-      const lotInspectionForm = await lotInspectionFormModel.updateOne(
-        { _id: id },
-        { signedOff: req.username, signOffDate: essentials.getEST() },
-      );
-      if (lotInspectionForm.modifiedCount == 1) {
-        res.sendStatus(200);
-      } else {
-        res.sendStatus(400);
-      }
-    } else {
-      res.sendStatus(406);
     }
   } catch (err) {
     console.log(err);

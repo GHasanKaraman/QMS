@@ -25,8 +25,6 @@ const preOperationalFormSchema = new mongoose.Schema(
     noSick: { type: String, required: true },
     okStart: { type: String, required: true },
     status: { type: String, default: "failed" },
-    signedOff: { type: String, default: "" },
-    signOffDate: { type: Date },
     started: { type: Number, default: 0 },
     startDateTime: { type: Date },
   },

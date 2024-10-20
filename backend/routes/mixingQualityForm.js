@@ -1,6 +1,7 @@
 const express = require("express");
 const fetch = require("node-fetch");
 const sharp = require("sharp");
+const mongoose = require("mongoose");
 const router = express.Router();
 
 const essentials = require("../utils/essentials");
@@ -11,8 +12,19 @@ const imageModel = require("../models/imageModel");
 router.post("/mixingquality/get", async (req, res) => {
   try {
     const { id } = req.body;
-    const mixingQualityForm = await mixingQualityFormModel.find({ _id: id });
-    if (mixingQualityForm) {
+    const mixingQualityForm = await mixingQualityFormModel.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(id) } },
+      {
+        $lookup: {
+          from: "signoffs",
+          localField: "_id",
+          foreignField: "formID",
+          as: "signOff",
+        },
+      },
+      { $unwind: { preserveNullAndEmptyArrays: true, path: "$signOff" } },
+    ]);
+    if (mixingQualityForm.length === 1) {
       var details = {
         part: mixingQualityForm[0].product,
       };
@@ -50,28 +62,6 @@ router.post("/mixingquality/get", async (req, res) => {
       }
     } else {
       res.sendStatus(404);
-    }
-  } catch (err) {
-    console.log(err);
-    res.sendStatus(503);
-  }
-});
-
-router.post("/mixingquality/signoff", async (req, res) => {
-  try {
-    const { id } = req.body;
-    if (req.access.includes("S")) {
-      const mixingQualityForm = await mixingQualityFormModel.updateOne(
-        { _id: id },
-        { signedOff: req.username, signOffDate: essentials.getEST() },
-      );
-      if (mixingQualityForm.modifiedCount == 1) {
-        res.sendStatus(200);
-      } else {
-        res.sendStatus(400);
-      }
-    } else {
-      res.sendStatus(406);
     }
   } catch (err) {
     console.log(err);

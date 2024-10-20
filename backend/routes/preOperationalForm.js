@@ -1,6 +1,7 @@
 const express = require("express");
 const fetch = require("node-fetch");
 const router = express.Router();
+const mongoose = require("mongoose");
 
 const essentials = require("../utils/essentials");
 const preOperationalFormModel = require("../models/preOperationalFormModel.js");
@@ -8,8 +9,19 @@ const preOperationalFormModel = require("../models/preOperationalFormModel.js");
 router.post("/preoperational/get", async (req, res) => {
   try {
     const { id } = req.body;
-    const preOperationalForm = await preOperationalFormModel.find({ _id: id });
-    if (preOperationalForm) {
+    const preOperationalForm = await preOperationalFormModel.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(id) } },
+      {
+        $lookup: {
+          from: "signoffs",
+          localField: "_id",
+          foreignField: "formID",
+          as: "signOff",
+        },
+      },
+      { $unwind: { preserveNullAndEmptyArrays: true, path: "$signOff" } },
+    ]);
+    if (preOperationalForm.length === 1) {
       var details = {
         part: preOperationalForm[0].product,
       };
@@ -42,28 +54,6 @@ router.post("/preoperational/get", async (req, res) => {
       }
     } else {
       res.sendStatus(404);
-    }
-  } catch (err) {
-    console.log(err);
-    res.sendStatus(503);
-  }
-});
-
-router.post("/preoperational/signoff", async (req, res) => {
-  try {
-    const { id } = req.body;
-    if (req.access.includes("S")) {
-      const preOperationalForm = await preOperationalFormModel.updateOne(
-        { _id: id },
-        { signedOff: req.username, signOffDate: essentials.getEST() },
-      );
-      if (preOperationalForm.modifiedCount == 1) {
-        res.sendStatus(200);
-      } else {
-        res.sendStatus(400);
-      }
-    } else {
-      res.sendStatus(406);
     }
   } catch (err) {
     console.log(err);

@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const essentials = require("../utils/essentials");
 
 const metalDetectorFormSchema = new mongoose.Schema(
   {
@@ -10,17 +9,15 @@ const metalDetectorFormSchema = new mongoose.Schema(
     personBeingObserved: { type: String, required: true },
     ballOrCard: { type: String, required: true },
     status: { type: String, default: "failed" },
-    signedOff: { type: String, default: "" },
-    signOffDate: { type: Date },
     started: { type: Number, default: 0 },
     startDateTime: { type: Date },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const metalDetectorFormModel = mongoose.model(
   "metalDetectorForms",
-  metalDetectorFormSchema
+  metalDetectorFormSchema,
 );
 
 module.exports = metalDetectorFormModel;

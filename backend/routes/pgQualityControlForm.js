@@ -1,6 +1,7 @@
 const express = require("express");
 const fetch = require("node-fetch");
 const sharp = require("sharp");
+const mongoose = require("mongoose");
 
 const router = express.Router();
 const upload = require("../file");
@@ -119,8 +120,19 @@ router.post("/pgqualitycontrol/getproduct", async (req, res) => {
 router.post("/pgqualitycontrol/get", async (req, res) => {
   try {
     const { id } = req.body;
-    const qualityControlForm = await pgQualityControlModel.find({ _id: id });
-    if (qualityControlForm) {
+    const qualityControlForm = await pgQualityControlModel.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(id) } },
+      {
+        $lookup: {
+          from: "signoffs",
+          localField: "_id",
+          foreignField: "formID",
+          as: "signOff",
+        },
+      },
+      { $unwind: { preserveNullAndEmptyArrays: true, path: "$signOff" } },
+    ]);
+    if (qualityControlForm.length === 1) {
       var details = {
         part: qualityControlForm[0].product,
       };
@@ -157,28 +169,6 @@ router.post("/pgqualitycontrol/get", async (req, res) => {
       }
     } else {
       res.sendStatus(404);
-    }
-  } catch (err) {
-    console.log(err);
-    res.sendStatus(503);
-  }
-});
-
-router.post("/pgqualitycontrol/signoff", async (req, res) => {
-  try {
-    const { id } = req.body;
-    if (req.access.includes("S")) {
-      const qualityControlForm = await pgQualityControlModel.updateOne(
-        { _id: id },
-        { signedOff: req.username, signOffDate: essentials.getEST() },
-      );
-      if (qualityControlForm.modifiedCount == 1) {
-        res.sendStatus(200);
-      } else {
-        res.sendStatus(400);
-      }
-    } else {
-      res.sendStatus(406);
     }
   } catch (err) {
     console.log(err);

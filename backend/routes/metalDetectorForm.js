@@ -1,15 +1,26 @@
 const express = require("express");
 const fetch = require("node-fetch");
 const router = express.Router();
+const mongoose = require("mongoose");
 
-const essentials = require("../utils/essentials");
 const metalDetectorFormModel = require("../models/metalDetectorFormModel");
 
 router.post("/metaldetector/get", async (req, res) => {
   try {
     const { id } = req.body;
-    const metalDetectorForm = await metalDetectorFormModel.find({ _id: id });
-    if (metalDetectorForm) {
+    const metalDetectorForm = await metalDetectorFormModel.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(id) } },
+      {
+        $lookup: {
+          from: "signoffs",
+          localField: "_id",
+          foreignField: "formID",
+          as: "signOff",
+        },
+      },
+      { $unwind: { preserveNullAndEmptyArrays: true, path: "$signOff" } },
+    ]);
+    if (metalDetectorForm.length === 1) {
       var details = {
         part: metalDetectorForm[0].product,
       };
@@ -35,35 +46,13 @@ router.post("/metaldetector/get", async (req, res) => {
           product: product,
         });
         console.log(
-          "Fetched " + id + " metal detector inspection data sheet result!"
+          "Fetched " + id + " metal detector inspection data sheet result!",
         );
       } else {
         res.sendStatus(404);
       }
     } else {
       res.sendStatus(404);
-    }
-  } catch (err) {
-    console.log(err);
-    res.sendStatus(503);
-  }
-});
-
-router.post("/metaldetector/signoff", async (req, res) => {
-  try {
-    const { id } = req.body;
-    if (req.access.includes("S")) {
-      const metalDetectorForm = await metalDetectorFormModel.updateOne(
-        { _id: id },
-        { signedOff: req.username, signOffDate: essentials.getEST() }
-      );
-      if (metalDetectorForm.modifiedCount == 1) {
-        res.sendStatus(200);
-      } else {
-        res.sendStatus(400);
-      }
-    } else {
-      res.sendStatus(406);
     }
   } catch (err) {
     console.log(err);
@@ -87,7 +76,7 @@ router.use("/metaldetector/add", async (req, res) => {
 
     if (form) {
       console.log(
-        req.username + " successfully created a metal detector form!"
+        req.username + " successfully created a metal detector form!",
       );
       res.status(200).json({ form });
     } else {

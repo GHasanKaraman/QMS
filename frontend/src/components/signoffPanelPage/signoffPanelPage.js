@@ -140,7 +140,7 @@ const SignOffPanelPage = (props) => {
   };
 
   const getStatusColor = (form) => {
-    if (form.signOffDate) {
+    if (form.signOff) {
       if (form.status === "passed") {
         return colors.ciboInnerGreen[500];
       }
