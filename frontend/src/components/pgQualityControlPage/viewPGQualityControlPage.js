@@ -303,7 +303,7 @@ const ViewPGQualityControlPage = (props) => {
             ) : (
               data?.signOff.signedOff +
               " • " +
-              toStringDate(data?.signOff.signOffDate, {
+              toStringDate(data?.signOff.createdAt, {
                 month: "short",
                 year: "numeric",
                 day: "numeric",
@@ -641,6 +641,41 @@ const ViewPGQualityControlPage = (props) => {
           </Stack>
         </AccordionDetails>
       </Accordion>
+      <Accordion defaultExpanded>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Stack direction="row" justifyContent="space-between" width="100%">
+            <Typography fontWeight={600} fontSize={18}>
+              ANY DEVIATIONS?
+            </Typography>
+            <Typography fontWeight={600}>9 Items</Typography>
+          </Stack>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Stack direction="row" justifyContent="space-between">
+            <Label title="Any deviations?" subtitle={data?.anyDeviations} />
+            <StatusIndicator status={Boolean(data?.anyDeviations)} />
+          </Stack>
+          {data?.anyDeviations === "Yes"
+            ? [
+                <Divider />,
+                <Stack direction="row" justifyContent="space-between">
+                  <Label
+                    title="Deviation Form"
+                    subtitle={
+                      <a
+                        href={`http://10.12.11.192:3000/deviation/${data?.deviationID}`}
+                      >
+                        {data?.deviationID}
+                      </a>
+                    }
+                  />
+                  <StatusIndicator status={Boolean(data?.anyDeviations)} />
+                </Stack>,
+              ]
+            : undefined}
+        </AccordionDetails>
+      </Accordion>
+
       <CommentAccordion formID={id} form="pgQualityControl" />
     </Box>
   );

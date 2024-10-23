@@ -302,7 +302,7 @@ const ViewMixingQualityControlPage = (props) => {
             ) : (
               data?.signOff.signedOff +
               " • " +
-              toStringDate(data?.signOff.signOffDate, {
+              toStringDate(data?.signOff.createdAt, {
                 month: "short",
                 year: "numeric",
                 day: "numeric",

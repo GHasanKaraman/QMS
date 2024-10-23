@@ -56,7 +56,7 @@ const Item = ({
       disabled={disabled}
       active={selected === title}
       style={{
-        color: colors.grey[100],
+        color: disabled ? colors.grey[500] : colors.grey[100],
       }}
       onClick={() => {
         if (sub) {
@@ -70,25 +70,6 @@ const Item = ({
     >
       <Typography>{title}</Typography>
     </MenuItem>
-  );
-};
-
-const ItemGroup = ({ label, icon, items, selected }) => {
-  const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
-  return (
-    <SubMenu
-      active={selected === label}
-      label={label}
-      icon={icon}
-      style={{
-        color: colors.grey[100],
-      }}
-    >
-      {items.map((item, index) => {
-        return <div key={index}>{item}</div>;
-      })}
-    </SubMenu>
   );
 };
 
@@ -299,6 +280,22 @@ const Sidebar = () => {
               setSelected={setSelected}
             />
             <Item
+              disabled
+              title="Ratio Form"
+              to="/ratioform"
+              icon={<BlenderIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+
+            <Typography
+              variant="h6"
+              color={colors.grey[300]}
+              sx={{ m: "15px 0 5px 0px", ml: isCollapsed ? "5px" : "20px" }}
+            >
+              Observation Verifications
+            </Typography>
+            <Item
               title="Metal Detector"
               to="/metalDetector"
               icon={<RadarIcon />}
@@ -316,14 +313,6 @@ const Sidebar = () => {
               title="X-Ray Inspection"
               to="/xray"
               icon={<SvgIcon inheritViewBox component={NuclearIcon} />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-
-            <Item
-              title="Ratio Form"
-              to="/ratioform"
-              icon={<BlenderIcon />}
               selected={selected}
               setSelected={setSelected}
             />

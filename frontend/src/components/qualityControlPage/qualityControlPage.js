@@ -152,7 +152,7 @@ const QualityControlPage = (props) => {
         enqueueSnackbar("You have successfully created the form!", {
           variant: "success",
         });
-        resetForm();
+        navigate("/qualitycontrol/" + res.data.form._id);
       } else {
         switch (res.response?.status) {
           case 404:
@@ -446,8 +446,8 @@ const QualityControlPage = (props) => {
 
       <form
         onSubmit={(e) => {
-          if (productDetails?.soList?.length == 0) {
-            formik.values.salesOrderNumber = "No";
+          if (productDetails?.soList?.length === 0) {
+            formik.setFieldValue("salesOrderNumber", "No");
           }
           if (!formik.isValid && !formik.isValidating) {
             enqueueSnackbar("Please fill out all the missing fields!", {

@@ -144,7 +144,7 @@ const DirectObservationMetalDetectorPage = (props) => {
         enqueueSnackbar("You have successfully created the form!", {
           variant: "success",
         });
-        resetForm();
+        navigate("/metaldetector/" + res.data.form._id);
       } else {
         switch (res.response?.status) {
           case 404:
@@ -194,7 +194,7 @@ const DirectObservationMetalDetectorPage = (props) => {
               }
             }
             return false;
-          }
+          },
         ),
       lotCode: yup
         .string()

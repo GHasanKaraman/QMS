@@ -128,7 +128,7 @@ const PGQualityControlPage = (props) => {
         enqueueSnackbar("You have successfully created the form!", {
           variant: "success",
         });
-        resetForm();
+        navigate("/pgqualitycontrol/" + res.data.form._id);
       } else {
         switch (res.response?.status) {
           case 404:

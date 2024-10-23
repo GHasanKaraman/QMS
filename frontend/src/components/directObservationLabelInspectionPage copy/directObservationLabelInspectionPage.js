@@ -146,7 +146,7 @@ const DirectObservationLabelInspectionPage = (props) => {
         enqueueSnackbar("You have successfully created the form!", {
           variant: "success",
         });
-        resetForm();
+        navigate("/labelinspection/" + res.data.form._id);
       } else {
         switch (res.response?.status) {
           case 404:
@@ -196,7 +196,7 @@ const DirectObservationLabelInspectionPage = (props) => {
               }
             }
             return false;
-          }
+          },
         ),
       lotCode: yup
         .string()

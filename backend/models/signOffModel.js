@@ -4,7 +4,6 @@ const signOffSchema = new mongoose.Schema(
   {
     formID: { type: mongoose.Types.ObjectId },
     signedOff: { type: String, required: true },
-    signOffDate: { type: Date },
   },
   { timestamps: true },
 );

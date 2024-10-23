@@ -131,7 +131,7 @@ const PreOperationalPage = (props) => {
         enqueueSnackbar("You have successfully created the form!", {
           variant: "success",
         });
-        resetForm();
+        navigate("/preoperational/" + res.data.form._id);
       } else {
         switch (res.response?.status) {
           case 404:

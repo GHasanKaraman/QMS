@@ -62,8 +62,7 @@ const ViewDirectObservationLabelInspectionPage = (props) => {
     if (userAuth.control(res)) {
       setData(res.data.labelInspectionForm);
       setProduct(res.data.product);
-      console.log(res.data.labelInspectionForm);
-      console.log(res.data.product);
+      console.log(res.data);
     } else {
       navigate("/login");
       localStorage.removeItem("token");
@@ -180,7 +179,6 @@ const ViewDirectObservationLabelInspectionPage = (props) => {
           </Button>
         </DialogActions>
       </Dialog>
-
       <Backdrop
         sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={open}

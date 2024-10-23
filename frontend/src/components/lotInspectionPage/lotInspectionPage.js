@@ -144,7 +144,8 @@ const LotInspectionPage = (props) => {
           enqueueSnackbar("You have successfully created the form!", {
             variant: "success",
           });
-          resetForm();
+
+          navigate("/lotinspection/" + res.data.form._id);
         } else {
           switch (res.response?.status) {
             case 404:

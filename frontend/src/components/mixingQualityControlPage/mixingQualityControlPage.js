@@ -153,7 +153,7 @@ const MixingQualityControlPage = (props) => {
         enqueueSnackbar("You have successfully created the form!", {
           variant: "success",
         });
-        resetForm();
+        navigate("/mixingquality/" + res.data.form._id);
       } else {
         switch (res.response?.status) {
           case 404:
