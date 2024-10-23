@@ -65,15 +65,17 @@ router.use("/dashboard", async (req, res) => {
     ) {
       res.status(200).json({
         locations: data,
-        ratioForms: ratioForms,
-        xRayForms: xRayForms,
-        mixingQualityForms: mixingQualityForms,
-        preOperationalForms: preOperationalForms,
-        qualityControlForms: qualityControlForms,
-        metalDetectorForms: metalDetectorForms,
-        labelInspectionForms: labelInspectionForms,
-        lotInspectionForms: lotInspectionForms,
-        pgQualityControlForms: pgQualityControlForms,
+        forms: [
+          ...ratioForms,
+          ...xRayForms,
+          ...mixingQualityForms,
+          ...preOperationalForms,
+          ...qualityControlForms,
+          ...metalDetectorForms,
+          ...labelInspectionForms,
+          ...lotInspectionForms,
+          ...pgQualityControlForms,
+        ],
       });
       console.log("Fetched all locations from OC DB!");
     } else {

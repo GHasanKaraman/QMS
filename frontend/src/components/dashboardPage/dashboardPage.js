@@ -1,16 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Box,
-  Divider,
-  IconButton,
-  List,
-  ListItem,
-  Stack,
-  Card,
-  CardContent,
-  CardActionArea,
-  Typography,
-} from "@mui/material";
+import { Box, Divider, IconButton, List, ListItem, Stack } from "@mui/material";
 import { useTheme } from "@emotion/react";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
@@ -22,6 +11,7 @@ import axios from "../../api/axios";
 import userAuth from "../../utils/userAuth";
 import { toStringDate } from "../../utils/helpers";
 import ToggleButtonCheck from "../ToggleButtonCheck";
+import FormCard from "../FormCard";
 
 const DashboardPage = (props) => {
   const theme = useTheme();
@@ -29,15 +19,7 @@ const DashboardPage = (props) => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
-  const [ratioForms, setRatioForms] = useState([]);
-  const [qualityControlForms, setQualityControlForms] = useState([]);
-  const [metalDetectorForms, setMetalDetectorForms] = useState([]);
-  const [xRayForms, setXRayForms] = useState([]);
-  const [labelInspectionForms, setLabelInspectionForms] = useState([]);
-  const [lotInspectionForms, setLotInspectionForms] = useState([]);
-  const [pgQualityControlForms, setPGQualityControlForms] = useState([]);
-  const [preOperationalForms, setPreOperationalForms] = useState([]);
-  const [mixingQualityForms, setMixingQualityForms] = useState([]);
+  const [forms, setForms] = useState([]);
 
   const [locations, setLocations] = useState([]);
   const [dataSource, setDataSource] = useState([]);
@@ -53,15 +35,11 @@ const DashboardPage = (props) => {
     if (userAuth.control(res)) {
       setLocations(res.data.locations);
       setDataSource(res.data.locations);
-      setRatioForms(res.data.ratioForms);
-      setQualityControlForms(res.data.qualityControlForms);
-      setMixingQualityForms(res.data.mixingQualityForms);
-      setPGQualityControlForms(res.data.pgQualityControlForms);
-      setMetalDetectorForms(res.data.metalDetectorForms);
-      setXRayForms(res.data.xRayForms);
-      setPreOperationalForms(res.data.preOperationalForms);
-      setLabelInspectionForms(res.data.labelInspectionForms);
-      setLotInspectionForms(res.data.lotInspectionForms);
+      setForms(
+        res.data.forms.sort(
+          (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
+        ),
+      );
     } else {
       navigate("/login");
       localStorage.removeItem("token");
@@ -82,20 +60,6 @@ const DashboardPage = (props) => {
       return 1;
     }
     return 2;
-  };
-
-  const getStatusColor = (form) => {
-    if (form.signOff) {
-      if (form.status === "passed") {
-        return colors.ciboInnerGreen[500];
-      }
-      return colors.yoggieRed[500];
-    } else {
-      if (form.status === "passed") {
-        return colors.ciboInnerGreen[300];
-      }
-      return colors.yoggieRed[300];
-    }
   };
 
   return (
@@ -190,7 +154,7 @@ const DashboardPage = (props) => {
                   <div style={{ fontSize: "12px", color: colors.grey[200] }}>
                     {(function () {
                       if (location.shift) {
-                        if (location.shift == 1) {
+                        if (location.shift === 1) {
                           return "1st Shift • ";
                         } else {
                           return "2nd Shift • ";
@@ -207,10 +171,10 @@ const DashboardPage = (props) => {
                       }
                     })()}
                     {(function () {
-                      const length = ratioForms.filter(
-                        (ratioForm) => ratioForm.location === location.name,
+                      const length = forms.filter(
+                        (form) => form.station === location.name,
                       ).length;
-                      if (length == 0) {
+                      if (length === 0) {
                         return "No";
                       }
                       return length;
@@ -229,461 +193,10 @@ const DashboardPage = (props) => {
                       padding: "10px 0",
                     }}
                   >
-                    {ratioForms
-                      .filter(
-                        (ratioForm) => ratioForm.location === location.name,
-                      )
-                      .map((ratioForm, i) => {
-                        return (
-                          <Card
-                            key={i}
-                            sx={{
-                              background: getStatusColor(ratioForm),
-                              width: 200,
-                              height: 75,
-                            }}
-                          >
-                            <CardActionArea
-                              sx={{ height: "100%" }}
-                              onClick={() => {
-                                navigate("/ratioform/" + ratioForm._id);
-                              }}
-                            >
-                              <CardContent sx={{ paddingTop: 1 }}>
-                                <Stack spacing={0}>
-                                  <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    color={colors.primary[400]}
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    Finished Product Ratio Form
-                                  </Typography>
-                                  <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    color={colors.primary[400]}
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    {toStringDate(ratioForm.createdAt, {
-                                      hour: "numeric",
-                                      minute: "numeric",
-                                    })}
-                                  </Typography>
-                                </Stack>
-                              </CardContent>
-                            </CardActionArea>
-                          </Card>
-                        );
-                      })}
-                    {qualityControlForms
-                      .filter(
-                        (qualityControlForm) =>
-                          qualityControlForm.station === location.name,
-                      )
-                      .map((qualityControlForm, i) => {
-                        return (
-                          <Card
-                            key={i}
-                            sx={{
-                              background: getStatusColor(qualityControlForm),
-                              width: 200,
-                              height: 75,
-                            }}
-                          >
-                            <CardActionArea
-                              sx={{ height: "100%" }}
-                              onClick={() => {
-                                navigate(
-                                  "/qualitycontrol/" + qualityControlForm._id,
-                                );
-                              }}
-                            >
-                              <CardContent sx={{ paddingTop: 1 }}>
-                                <Stack spacing={0}>
-                                  <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    color={colors.primary[400]}
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    Quality Control Inspection
-                                  </Typography>
-                                  <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    color={colors.primary[400]}
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    {toStringDate(
-                                      qualityControlForm.createdAt,
-                                      {
-                                        hour: "numeric",
-                                        minute: "numeric",
-                                      },
-                                    )}
-                                  </Typography>
-                                </Stack>
-                              </CardContent>
-                            </CardActionArea>
-                          </Card>
-                        );
-                      })}
-                    {pgQualityControlForms
-                      .filter(
-                        (pgqualityControlForm) =>
-                          pgqualityControlForm.station === location.name,
-                      )
-                      .map((pgqualityControlForm, i) => {
-                        return (
-                          <Card
-                            key={i}
-                            sx={{
-                              background: getStatusColor(pgqualityControlForm),
-                              width: 200,
-                              height: 75,
-                            }}
-                          >
-                            <CardActionArea
-                              sx={{ height: "100%" }}
-                              onClick={() => {
-                                navigate(
-                                  "/pgqualitycontrol/" +
-                                    pgqualityControlForm._id,
-                                );
-                              }}
-                            >
-                              <CardContent sx={{ paddingTop: 1 }}>
-                                <Stack spacing={0}>
-                                  <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    color={colors.primary[400]}
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    P&G Quality Check
-                                  </Typography>
-                                  <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    color={colors.primary[400]}
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    {toStringDate(
-                                      pgqualityControlForm.createdAt,
-                                      {
-                                        hour: "numeric",
-                                        minute: "numeric",
-                                      },
-                                    )}
-                                  </Typography>
-                                </Stack>
-                              </CardContent>
-                            </CardActionArea>
-                          </Card>
-                        );
-                      })}
-                    {preOperationalForms
-                      .filter(
-                        (preOperationalForm) =>
-                          preOperationalForm.station === location.name,
-                      )
-                      .map((preOperationalForm, i) => {
-                        return (
-                          <Card
-                            key={i}
-                            sx={{
-                              background: getStatusColor(preOperationalForm),
-                              width: 200,
-                              height: 75,
-                            }}
-                          >
-                            <CardActionArea
-                              sx={{ height: "100%" }}
-                              onClick={() => {
-                                navigate(
-                                  "/preoperational/" + preOperationalForm._id,
-                                );
-                              }}
-                            >
-                              <CardContent sx={{ paddingTop: 1 }}>
-                                <Stack spacing={0}>
-                                  <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    color={colors.primary[400]}
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    Pre-Operational Inspection
-                                  </Typography>
-                                  <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    color={colors.primary[400]}
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    {toStringDate(
-                                      preOperationalForm.createdAt,
-                                      {
-                                        hour: "numeric",
-                                        minute: "numeric",
-                                      },
-                                    )}
-                                  </Typography>
-                                </Stack>
-                              </CardContent>
-                            </CardActionArea>
-                          </Card>
-                        );
-                      })}
-                    {mixingQualityForms
-                      .filter(
-                        (mixingQualityForm) =>
-                          mixingQualityForm.station === location.name,
-                      )
-                      .map((mixingQualityForm, i) => {
-                        return (
-                          <Card
-                            key={i}
-                            sx={{
-                              background: getStatusColor(mixingQualityForm),
-                              width: 200,
-                              height: 75,
-                            }}
-                          >
-                            <CardActionArea
-                              sx={{ height: "100%" }}
-                              onClick={() => {
-                                navigate(
-                                  "/mixingquality/" + mixingQualityForm._id,
-                                );
-                              }}
-                            >
-                              <CardContent sx={{ paddingTop: 1 }}>
-                                <Stack spacing={0}>
-                                  <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    color={colors.primary[400]}
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    Mixing Quality Check
-                                  </Typography>
-                                  <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    color={colors.primary[400]}
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    {toStringDate(mixingQualityForm.createdAt, {
-                                      hour: "numeric",
-                                      minute: "numeric",
-                                    })}
-                                  </Typography>
-                                </Stack>
-                              </CardContent>
-                            </CardActionArea>
-                          </Card>
-                        );
-                      })}
-
-                    {metalDetectorForms
-                      .filter(
-                        (metalDetectorForm) =>
-                          metalDetectorForm.station === location.name,
-                      )
-                      .map((metalDetectorForm, i) => {
-                        return (
-                          <Card
-                            key={i}
-                            sx={{
-                              background: getStatusColor(metalDetectorForm),
-                              width: 200,
-                              height: 75,
-                            }}
-                          >
-                            <CardActionArea
-                              sx={{ height: "100%" }}
-                              onClick={() => {
-                                navigate(
-                                  "/metaldetector/" + metalDetectorForm._id,
-                                );
-                              }}
-                            >
-                              <CardContent sx={{ paddingTop: 1 }}>
-                                <Stack spacing={0}>
-                                  <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    color={colors.primary[400]}
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    Direct Observation Metal Detector
-                                  </Typography>
-                                  <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    color={colors.primary[400]}
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    {toStringDate(metalDetectorForm.createdAt, {
-                                      hour: "numeric",
-                                      minute: "numeric",
-                                    })}
-                                  </Typography>
-                                </Stack>
-                              </CardContent>
-                            </CardActionArea>
-                          </Card>
-                        );
-                      })}
-                    {xRayForms
-                      .filter((xRayForm) => xRayForm.station === location.name)
-                      .map((xRayForm, i) => {
-                        return (
-                          <Card
-                            key={i}
-                            sx={{
-                              background: getStatusColor(xRayForm),
-                              width: 200,
-                              height: 75,
-                            }}
-                          >
-                            <CardActionArea
-                              sx={{ height: "100%" }}
-                              onClick={() => {
-                                navigate("/xray/" + xRayForm._id);
-                              }}
-                            >
-                              <CardContent sx={{ paddingTop: 1 }}>
-                                <Stack spacing={0}>
-                                  <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    color={colors.primary[400]}
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    Direct Observation X-Ray
-                                  </Typography>
-                                  <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    color={colors.primary[400]}
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    {toStringDate(xRayForm.createdAt, {
-                                      hour: "numeric",
-                                      minute: "numeric",
-                                    })}
-                                  </Typography>
-                                </Stack>
-                              </CardContent>
-                            </CardActionArea>
-                          </Card>
-                        );
-                      })}
-                    {labelInspectionForms
-                      .filter(
-                        (labelInspectionForm) =>
-                          labelInspectionForm.station === location.name,
-                      )
-                      .map((labelInspectionForm, i) => {
-                        return (
-                          <Card
-                            key={i}
-                            sx={{
-                              background: getStatusColor(labelInspectionForm),
-                              width: 200,
-                              height: 75,
-                            }}
-                          >
-                            <CardActionArea
-                              sx={{ height: "100%" }}
-                              onClick={() => {
-                                navigate(
-                                  "/labelinspection/" + labelInspectionForm._id,
-                                );
-                              }}
-                            >
-                              <CardContent sx={{ paddingTop: 1 }}>
-                                <Stack spacing={0}>
-                                  <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    color={colors.primary[400]}
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    Direct Observation Label Inspection
-                                  </Typography>
-                                  <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    color={colors.primary[400]}
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    {toStringDate(
-                                      labelInspectionForm.createdAt,
-                                      {
-                                        hour: "numeric",
-                                        minute: "numeric",
-                                      },
-                                    )}
-                                  </Typography>
-                                </Stack>
-                              </CardContent>
-                            </CardActionArea>
-                          </Card>
-                        );
-                      })}
-                    {lotInspectionForms
-                      .filter(
-                        (lotInspectionForm) =>
-                          lotInspectionForm.station === location.name,
-                      )
-                      .map((lotInspectionForm, i) => {
-                        return (
-                          <Card
-                            key={i}
-                            sx={{
-                              background: getStatusColor(lotInspectionForm),
-                              width: 200,
-                              height: 75,
-                            }}
-                          >
-                            <CardActionArea
-                              sx={{ height: "100%" }}
-                              onClick={() => {
-                                navigate(
-                                  "/lotinspection/" + lotInspectionForm._id,
-                                );
-                              }}
-                            >
-                              <CardContent sx={{ paddingTop: 1 }}>
-                                <Stack spacing={0}>
-                                  <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    color={colors.primary[400]}
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    LOT Inspection
-                                  </Typography>
-                                  <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    color={colors.primary[400]}
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    {toStringDate(lotInspectionForm.createdAt, {
-                                      hour: "numeric",
-                                      minute: "numeric",
-                                    })}
-                                  </Typography>
-                                </Stack>
-                              </CardContent>
-                            </CardActionArea>
-                          </Card>
-                        );
+                    {forms
+                      .filter((form) => form.station === location.name)
+                      .map((form) => {
+                        return <FormCard key={form._id} form={form} />;
                       })}
                   </Stack>
                 </Stack>
