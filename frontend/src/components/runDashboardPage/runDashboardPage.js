@@ -45,6 +45,9 @@ const RunDashboardPage = (props) => {
 
   const [open, setOpen] = useState(false);
 
+  const [currentRun, setCurrentRun] = useState();
+  const [currentForms, setCurrentForms] = useState([]);
+
   const getDates = () => {
     const _days = [];
     const current = moment().add(1, "days");
@@ -63,6 +66,10 @@ const RunDashboardPage = (props) => {
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
       );
       setForms(_forms);
+      setCurrentRun(_forms[0]?.product);
+      setCurrentForms(
+        _forms.filter((form) => form.product === _forms[0].product),
+      );
       setProducts(extractUniqueProducts(_forms));
       getDates();
     } else {
@@ -141,7 +148,76 @@ const RunDashboardPage = (props) => {
         >
           Current Runs
         </AccordionSummary>
-        <AccordionDetails>FL-611441</AccordionDetails>
+        <AccordionDetails>
+          {currentForms.length > 0 ? (
+            <List>
+              <Stack>
+                <Typography fontSize={21} fontWeight={600}>
+                  {currentRun + " • " + "ROASTED HAZELNUTS 26 oz"}
+                </Typography>
+                <Typography>
+                  {toStringDate(
+                    currentForms[currentForms.length - 1]?.createdAt,
+                    {
+                      month: "short",
+                      year: "numeric",
+                      day: "numeric",
+                      hour: "numeric",
+                      minute: "numeric",
+                    },
+                  ) +
+                    " - " +
+                    toStringDate(currentForms[0]?.createdAt, {
+                      month: "short",
+                      year: "numeric",
+                      day: "numeric",
+                      hour: "numeric",
+                      minute: "numeric",
+                    }) +
+                    " • " +
+                    currentForms.length +
+                    " Completed Data Sheets"}
+                </Typography>
+                <ListItem
+                  secondaryAction={
+                    <IconButton
+                      sx={{ padding: "0 0px" }}
+                      onClick={() => {
+                        setOpen(true);
+                      }}
+                    >
+                      <MenuIcon />
+                    </IconButton>
+                  }
+                >
+                  <Stack
+                    direction="row"
+                    spacing={1}
+                    sx={{
+                      overflowX: "auto",
+                      overflowY: "hidden",
+                      "& .MuiPaper-root.MuiCard-root": {
+                        overflow: "visible !important",
+                      },
+                      display: "webkit-flex !important",
+                      padding: "10px 0",
+                    }}
+                  >
+                    {currentForms
+                      .sort(
+                        (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
+                      )
+                      .map((form) => {
+                        return <FormCard key={form._id} form={form} />;
+                      })}
+                  </Stack>
+                </ListItem>
+              </Stack>
+            </List>
+          ) : (
+            <div style={{ color: colors.yoggieRed[500] }}>No Current Runs</div>
+          )}
+        </AccordionDetails>
       </Accordion>
       <Accordion expanded={true}>
         <AccordionSummary
@@ -210,9 +286,14 @@ const RunDashboardPage = (props) => {
                               padding: "10px 0",
                             }}
                           >
-                            {_forms.map((form) => {
-                              return <FormCard key={form._id} form={form} />;
-                            })}
+                            {_forms
+                              .sort(
+                                (a, b) =>
+                                  new Date(a.createdAt) - new Date(b.createdAt),
+                              )
+                              .map((form) => {
+                                return <FormCard key={form._id} form={form} />;
+                              })}
                           </Stack>
                         </ListItem>
                         <Divider />
