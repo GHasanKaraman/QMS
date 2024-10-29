@@ -27,6 +27,7 @@ import MixingQualityControlPage from "../components/mixingQualityControlPage/mix
 import ViewMixingQualityControlPage from "../components/mixingQualityControlPage/viewMixingQualityControlPage.js";
 import RoastingQualityControlPage from "../components/roastingQualityControlPage/roastingQualityControlPage.js";
 import ViewRoastingQualityControlPage from "../components/roastingQualityControlPage/viewRoastingQualityControlPage.js";
+import RunDashboardPage from "../components/runDashboardPage/runDashboardPage.js";
 
 const BarLayout = () => {
   const [theme, colorMode] = useMode();
@@ -81,6 +82,12 @@ const Router = () => {
           path="/dashboard"
           element={<DashboardPage title="CiboQA | Dashboard" />}
         />
+        <Route
+          exact
+          path="/runqualitydashboard/:id"
+          element={<RunDashboardPage title="CiboQA | Run Quality Dashboard" />}
+        />
+
         <Route
           exact
           path="/signoff"

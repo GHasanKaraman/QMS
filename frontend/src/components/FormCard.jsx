@@ -10,7 +10,7 @@ import { extractInformations, toStringDate } from "../utils/helpers";
 import { tokens } from "../theme";
 import { useNavigate } from "react-router-dom";
 
-const FormCard = ({ form }) => {
+const FormCard = ({ form, date = false }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
@@ -37,7 +37,7 @@ const FormCard = ({ form }) => {
         sx={{
           background: getStatusColor(form),
           width: 200,
-          height: 75,
+          height: date ? 100 : 75,
         }}
       >
         <CardActionArea
@@ -62,10 +62,18 @@ const FormCard = ({ form }) => {
                 color={colors.primary[400]}
                 sx={{ textAlign: "center" }}
               >
-                {toStringDate(form.createdAt, {
-                  hour: "numeric",
-                  minute: "numeric",
-                })}
+                {date
+                  ? toStringDate(form.createdAt, {
+                      month: "short",
+                      year: "numeric",
+                      day: "numeric",
+                      hour: "numeric",
+                      minute: "numeric",
+                    })
+                  : toStringDate(form.createdAt, {
+                      hour: "numeric",
+                      minute: "numeric",
+                    })}
               </Typography>
             </Stack>
           </CardContent>

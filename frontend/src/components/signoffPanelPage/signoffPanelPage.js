@@ -7,13 +7,10 @@ import {
   List,
   ListItem,
   Stack,
-  Card,
-  CardContent,
-  CardActionArea,
-  Typography,
   Button,
   Autocomplete,
   TextField,
+  CircularProgress,
 } from "@mui/material";
 import { useTheme } from "@emotion/react";
 import { useSnackbar } from "notistack";
@@ -32,7 +29,10 @@ import Header from "../Header";
 import { tokens } from "../../theme";
 import axios from "../../api/axios";
 import userAuth from "../../utils/userAuth";
-import { toStringDate } from "../../utils/helpers";
+import { extractUniqueProducts, toStringDate } from "../../utils/helpers";
+import FormCard from "../FormCard";
+
+import noDataImage from "../../images/noData.jpg";
 
 const SignOffPanelPage = (props) => {
   const theme = useTheme();
@@ -40,18 +40,11 @@ const SignOffPanelPage = (props) => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
-  const [ratioForms, setRatioForms] = useState([]);
-  const [qualityControlForms, setQualityControlForms] = useState([]);
-  const [metalDetectorForms, setMetalDetectorForms] = useState([]);
-  const [labelInspectionForms, setLabelInspectionForms] = useState([]);
-  const [pgQualityControlForms, setPGQualityControlForms] = useState([]);
-  const [mixingQualityForms, setMixingQualityForms] = useState([]);
-  const [xRayForms, setXRayForms] = useState([]);
-  const [preOperationalForms, setPreOperationalForms] = useState([]);
+  const [forms, setForms] = useState([]);
 
   const [locations, setLocations] = useState([]);
-  const [dataSource, setDataSource] = useState([]);
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const dateTimeProps = {
     popper: {
@@ -99,36 +92,20 @@ const SignOffPanelPage = (props) => {
     document.title = props.title || "";
   }, [props.title]);
 
-  const extractUniqueProducts = (...forms) => {
-    return Array.from(
-      new Set(forms.flatMap((item) => item.map((form) => form.product))),
-    );
-  };
-
   const loadAllStations = async (range) => {
     const res = await axios.post("/signoff/dashboard", range);
     if (userAuth.control(res)) {
-      setLocations(res.data.locations);
-      setDataSource(res.data.locations);
-      setRatioForms(res.data.ratioForms);
-      setQualityControlForms(res.data.qualityControlForms);
-      setPGQualityControlForms(res.data.pgQualityControlForms);
-      setMetalDetectorForms(res.data.metalDetectorForms);
-      setLabelInspectionForms(res.data.labelInspectionForms);
-      setPreOperationalForms(res.data.preOperationalForms);
-      setXRayForms(res.data.xRayForms);
-      setMixingQualityForms(res.data.mixingQualityForms);
-      setProducts(
-        extractUniqueProducts(
-          res.data.labelInspectionForms,
-          res.data.metalDetectorForms,
-          res.data.pgQualityControlForms,
-          res.data.qualityControlForms,
-          res.data.xRayForms,
-          res.data.preOperationalForms,
-          res.data.mixingQualityForms,
+      setLocations(
+        res.data.locations.filter((location) =>
+          res.data.forms.some((form) => form.station === location.name),
         ),
       );
+      setForms(
+        res.data.forms.sort(
+          (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
+        ),
+      );
+      setProducts(extractUniqueProducts(res.data.forms));
     } else {
       navigate("/login");
       localStorage.removeItem("token");
@@ -138,23 +115,12 @@ const SignOffPanelPage = (props) => {
       });
     }
   };
-
-  const getStatusColor = (form) => {
-    if (form.signOff) {
-      if (form.status === "passed") {
-        return colors.ciboInnerGreen[500];
-      }
-      return colors.yoggieRed[500];
-    } else {
-      if (form.status === "passed") {
-        return colors.ciboInnerGreen[300];
-      }
-      return colors.yoggieRed[300];
-    }
-  };
-
   const handleSubmit = async (values) => {
-    await loadAllStations(values);
+    setLocations([]);
+    setLoading(true);
+    loadAllStations(values).then((_) => {
+      setLoading(false);
+    });
   };
 
   const formik = useFormik({
@@ -206,7 +172,7 @@ const SignOffPanelPage = (props) => {
               value={moment(formik.values.start)}
               onChange={(value) => {
                 formik.setFieldValue("start", value.format());
-                setDataSource([]);
+                setLocations([]);
               }}
               maxDate={
                 formik.values.end === ""
@@ -224,7 +190,7 @@ const SignOffPanelPage = (props) => {
               value={moment(formik.values.end)}
               onChange={(value) => {
                 formik.setFieldValue("end", value.format());
-                setDataSource([]);
+                setLocations([]);
               }}
               minDate={
                 formik.values.start === ""
@@ -234,7 +200,7 @@ const SignOffPanelPage = (props) => {
               formatDensity="spacious"
             />
             <Autocomplete
-              disabled={dataSource.length == 0}
+              disabled={locations.length === 0}
               onChange={(_, value) => {
                 formik.setFieldValue("product", value);
               }}
@@ -263,537 +229,105 @@ const SignOffPanelPage = (props) => {
           </Stack>
         </LocalizationProvider>
       </form>
-
-      <List>
-        {dataSource
-          .filter((loc) => loc.type)
-          .map((location, i) => {
-            return [
-              <ListItem
-                key={location}
-                secondaryAction={
-                  <IconButton
-                    sx={{ padding: "0 0px" }}
-                    onClick={() => {
-                      console.log(location);
-                    }}
-                  >
-                    <MenuIcon />
-                  </IconButton>
-                }
-              >
-                <Stack spacing={1} sx={{ width: "100%" }}>
-                  <div
-                    style={{
-                      fontSize: "18px",
-                      fontWeight: "bold",
-                      color:
-                        location?.running == true
-                          ? colors.contrast[100]
-                          : colors.grey[500],
-                    }}
-                  >
-                    {location.name + " " + location.type?.toUpperCase()}
-                  </div>
-                  <div style={{ fontSize: "12px", color: colors.grey[200] }}>
-                    {(function () {
-                      if (location.shift) {
-                        if (location.shift == 1) {
-                          return "1st Shift • ";
-                        } else {
-                          return "2nd Shift • ";
+      {locations.length > 0 ? (
+        <List>
+          {locations
+            .filter((loc) => loc.type)
+            .map((location, i) => {
+              return [
+                <ListItem
+                  key={location}
+                  secondaryAction={
+                    <IconButton
+                      sx={{ padding: "0 0px" }}
+                      onClick={() => {
+                        console.log(location);
+                      }}
+                    >
+                      <MenuIcon />
+                    </IconButton>
+                  }
+                >
+                  <Stack spacing={1} sx={{ width: "100%" }}>
+                    <div
+                      style={{
+                        fontSize: "18px",
+                        fontWeight: "bold",
+                        color:
+                          location?.running == true
+                            ? colors.contrast[100]
+                            : colors.grey[500],
+                      }}
+                    >
+                      {location.name + " " + location.type?.toUpperCase()}
+                    </div>
+                    <div style={{ fontSize: "12px", color: colors.grey[200] }}>
+                      {(function () {
+                        if (location.shift) {
+                          if (location.shift == 1) {
+                            return "1st Shift • ";
+                          } else {
+                            return "2nd Shift • ";
+                          }
                         }
-                      }
-                    })()}
-                    {(function () {
-                      if (location.startTime) {
-                        const time = toStringDate(location.startTime, {
-                          hour: "numeric",
-                          minute: "numeric",
-                        });
-                        return "Started at " + time + "  •  ";
-                      }
-                    })()}
-                    {(function () {
-                      const length = ratioForms.filter(
-                        (ratioForm) => ratioForm.location === location.name,
-                      ).length;
-                      if (length == 0) {
-                        return "No";
-                      }
-                      return length;
-                    })() + " Completed Data Sheets"}
-                  </div>
-                  <Stack
-                    direction="row"
-                    spacing={1}
-                    sx={{
-                      overflowX: "auto",
-                      overflowY: "hidden",
-                      "& .MuiPaper-root.MuiCard-root": {
-                        overflow: "visible !important",
-                      },
-                      display: "webkit-flex !important",
-                      padding: "10px 0",
-                    }}
-                  >
-                    {ratioForms
-                      .filter(
-                        (ratioForm) =>
-                          ratioForm.location === location.name &&
-                          productFilter(ratioForm),
-                      )
-                      .map((ratioForm, i) => {
-                        return (
-                          <Card
-                            key={i}
-                            sx={{
-                              background: getStatusColor(ratioForm),
-                              width: 200,
-                              height: 80,
-                            }}
-                          >
-                            <CardActionArea
-                              sx={{ height: "100%" }}
-                              onClick={() => {
-                                window.open(
-                                  "/ratioform/" + ratioForm._id,
-                                  "_blank",
-                                );
-                              }}
-                            >
-                              <CardContent sx={{ paddingTop: 1 }}>
-                                <Stack spacing={0}>
-                                  <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    color={colors.primary[400]}
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    Finished Product Ratio Form
-                                  </Typography>
-                                  <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    color={colors.primary[400]}
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    {toStringDate(ratioForm.createdAt, {
-                                      month: "short",
-                                      year: "numeric",
-                                      day: "numeric",
-                                      hour: "numeric",
-                                      minute: "numeric",
-                                    })}
-                                  </Typography>
-                                </Stack>
-                              </CardContent>
-                            </CardActionArea>
-                          </Card>
-                        );
-                      })}
-                    {preOperationalForms
-                      .filter(
-                        (preOperationalForm) =>
-                          preOperationalForm.station === location.name &&
-                          productFilter(preOperationalForm),
-                      )
-                      .map((preOperationalForm, i) => {
-                        return (
-                          <Card
-                            key={i}
-                            sx={{
-                              background: getStatusColor(preOperationalForm),
-                              width: 200,
-                              height: 80,
-                            }}
-                          >
-                            <CardActionArea
-                              sx={{ height: "100%" }}
-                              onClick={() => {
-                                window.open(
-                                  "/preoperational/" + preOperationalForm._id,
-                                  "_blank",
-                                );
-                              }}
-                            >
-                              <CardContent sx={{ paddingTop: 1 }}>
-                                <Stack spacing={0}>
-                                  <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    color={colors.primary[400]}
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    Pre-Operational Inspection
-                                  </Typography>
-                                  <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    color={colors.primary[400]}
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    {toStringDate(
-                                      preOperationalForm.createdAt,
-                                      {
-                                        month: "short",
-                                        year: "numeric",
-                                        day: "numeric",
-                                        hour: "numeric",
-                                        minute: "numeric",
-                                      },
-                                    )}
-                                  </Typography>
-                                </Stack>
-                              </CardContent>
-                            </CardActionArea>
-                          </Card>
-                        );
-                      })}
-                    {qualityControlForms
-                      .filter(
-                        (qualityControlForm) =>
-                          qualityControlForm.station === location.name &&
-                          productFilter(qualityControlForm),
-                      )
-                      .map((qualityControlForm, i) => {
-                        return (
-                          <Card
-                            key={i}
-                            sx={{
-                              background: getStatusColor(qualityControlForm),
-                              width: 200,
-                              height: 80,
-                            }}
-                          >
-                            <CardActionArea
-                              sx={{ height: "100%" }}
-                              onClick={() => {
-                                window.open(
-                                  "/qualitycontrol/" + qualityControlForm._id,
-                                  "_blank",
-                                );
-                              }}
-                            >
-                              <CardContent sx={{ paddingTop: 1 }}>
-                                <Stack spacing={0}>
-                                  <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    color={colors.primary[400]}
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    Quality Control Inspection
-                                  </Typography>
-                                  <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    color={colors.primary[400]}
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    {toStringDate(
-                                      qualityControlForm.createdAt,
-                                      {
-                                        month: "short",
-                                        year: "numeric",
-                                        day: "numeric",
-                                        hour: "numeric",
-                                        minute: "numeric",
-                                      },
-                                    )}
-                                  </Typography>
-                                </Stack>
-                              </CardContent>
-                            </CardActionArea>
-                          </Card>
-                        );
-                      })}
-                    {mixingQualityForms
-                      .filter(
-                        (mixingQualityForm) =>
-                          mixingQualityForm.station === location.name &&
-                          productFilter(mixingQualityForm),
-                      )
-                      .map((mixingQualityForm, i) => {
-                        return (
-                          <Card
-                            key={i}
-                            sx={{
-                              background: getStatusColor(mixingQualityForm),
-                              width: 200,
-                              height: 80,
-                            }}
-                          >
-                            <CardActionArea
-                              sx={{ height: "100%" }}
-                              onClick={() => {
-                                window.open(
-                                  "/mixingquality/" + mixingQualityForm._id,
-                                  "_blank",
-                                );
-                              }}
-                            >
-                              <CardContent sx={{ paddingTop: 1 }}>
-                                <Stack spacing={0}>
-                                  <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    color={colors.primary[400]}
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    Mixing Quality Control
-                                  </Typography>
-                                  <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    color={colors.primary[400]}
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    {toStringDate(mixingQualityForm.createdAt, {
-                                      month: "short",
-                                      year: "numeric",
-                                      day: "numeric",
-                                      hour: "numeric",
-                                      minute: "numeric",
-                                    })}
-                                  </Typography>
-                                </Stack>
-                              </CardContent>
-                            </CardActionArea>
-                          </Card>
-                        );
-                      })}
-                    {pgQualityControlForms
-                      .filter(
-                        (pgqualityControlForm) =>
-                          pgqualityControlForm.station === location.name &&
-                          productFilter(pgqualityControlForm),
-                      )
-                      .map((pgqualityControlForm, i) => {
-                        return (
-                          <Card
-                            key={i}
-                            sx={{
-                              background: getStatusColor(pgqualityControlForm),
-                              width: 200,
-                              height: 80,
-                            }}
-                          >
-                            <CardActionArea
-                              sx={{ height: "100%" }}
-                              onClick={() => {
-                                window.open(
-                                  "/pgqualitycontrol/" +
-                                    pgqualityControlForm._id,
-                                  "_blank",
-                                );
-                              }}
-                            >
-                              <CardContent sx={{ paddingTop: 1 }}>
-                                <Stack spacing={0}>
-                                  <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    color={colors.primary[400]}
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    P&G Quality Check
-                                  </Typography>
-                                  <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    color={colors.primary[400]}
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    {toStringDate(
-                                      pgqualityControlForm.createdAt,
-                                      {
-                                        month: "short",
-                                        year: "numeric",
-                                        day: "numeric",
-                                        hour: "numeric",
-                                        minute: "numeric",
-                                      },
-                                    )}
-                                  </Typography>
-                                </Stack>
-                              </CardContent>
-                            </CardActionArea>
-                          </Card>
-                        );
-                      })}
-                    {xRayForms
-                      .filter(
-                        (xRayForm) =>
-                          xRayForm.station === location.name &&
-                          productFilter(xRayForm),
-                      )
-                      .map((xRayForm, i) => {
-                        return (
-                          <Card
-                            key={i}
-                            sx={{
-                              background: getStatusColor(xRayForm),
-                              width: 200,
-                              height: 80,
-                            }}
-                          >
-                            <CardActionArea
-                              sx={{ height: "100%" }}
-                              onClick={() => {
-                                window.open("/xray/" + xRayForm._id, "_blank");
-                              }}
-                            >
-                              <CardContent sx={{ paddingTop: 1 }}>
-                                <Stack spacing={0}>
-                                  <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    color={colors.primary[400]}
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    Direct Observation X-Ray
-                                  </Typography>
-                                  <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    color={colors.primary[400]}
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    {toStringDate(xRayForm.createdAt, {
-                                      month: "short",
-                                      year: "numeric",
-                                      day: "numeric",
-                                      hour: "numeric",
-                                      minute: "numeric",
-                                    })}
-                                  </Typography>
-                                </Stack>
-                              </CardContent>
-                            </CardActionArea>
-                          </Card>
-                        );
-                      })}
-                    {metalDetectorForms
-                      .filter(
-                        (metalDetectorForm) =>
-                          metalDetectorForm.station === location.name &&
-                          productFilter(metalDetectorForm),
-                      )
-                      .map((metalDetectorForm, i) => {
-                        return (
-                          <Card
-                            key={i}
-                            sx={{
-                              background: getStatusColor(metalDetectorForm),
-                              width: 200,
-                              height: 80,
-                            }}
-                          >
-                            <CardActionArea
-                              sx={{ height: "100%" }}
-                              onClick={() => {
-                                window.open(
-                                  "/metaldetector/" + metalDetectorForm._id,
-                                  "_blank",
-                                );
-                              }}
-                            >
-                              <CardContent sx={{ paddingTop: 1 }}>
-                                <Stack spacing={0}>
-                                  <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    color={colors.primary[400]}
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    Direct Observation Metal Detector
-                                  </Typography>
-                                  <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    color={colors.primary[400]}
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    {toStringDate(metalDetectorForm.createdAt, {
-                                      month: "short",
-                                      year: "numeric",
-                                      day: "numeric",
-                                      hour: "numeric",
-                                      minute: "numeric",
-                                    })}
-                                  </Typography>
-                                </Stack>
-                              </CardContent>
-                            </CardActionArea>
-                          </Card>
-                        );
-                      })}
-                    {labelInspectionForms
-                      .filter(
-                        (labelInspectionForm) =>
-                          labelInspectionForm.station === location.name &&
-                          productFilter(labelInspectionForm),
-                      )
-                      .map((labelInspectionForm, i) => {
-                        return (
-                          <Card
-                            key={i}
-                            sx={{
-                              background: getStatusColor(labelInspectionForm),
-                              width: 200,
-                              height: 80,
-                            }}
-                          >
-                            <CardActionArea
-                              sx={{ height: "50%" }}
-                              onClick={() => {
-                                window.open(
-                                  "/labelinspection/" + labelInspectionForm._id,
-                                  "_blank",
-                                );
-                              }}
-                            >
-                              <CardContent sx={{ paddingTop: 1 }}>
-                                <Stack spacing={0}>
-                                  <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    color={colors.primary[400]}
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    Direct Observation Label Inspection
-                                  </Typography>
-                                  <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    color={colors.primary[400]}
-                                    sx={{ textAlign: "center" }}
-                                  >
-                                    {toStringDate(
-                                      labelInspectionForm.createdAt,
-                                      {
-                                        month: "short",
-                                        year: "numeric",
-                                        day: "numeric",
-                                        hour: "numeric",
-                                        minute: "numeric",
-                                      },
-                                    )}
-                                  </Typography>
-                                </Stack>
-                              </CardContent>
-                            </CardActionArea>
-                          </Card>
-                        );
-                      })}
+                      })()}
+                      {(function () {
+                        if (location.startTime) {
+                          const time = toStringDate(location.startTime, {
+                            hour: "numeric",
+                            minute: "numeric",
+                          });
+                          return "Started at " + time + "  •  ";
+                        }
+                      })()}
+                      {(function () {
+                        const length = forms.filter(
+                          (form) => form.station === location.name,
+                        ).length;
+                        if (length === 0) {
+                          return "No";
+                        }
+                        return length;
+                      })() + " Completed Data Sheets"}
+                    </div>
+                    <Stack
+                      direction="row"
+                      spacing={1}
+                      sx={{
+                        overflowX: "auto",
+                        overflowY: "hidden",
+                        "& .MuiPaper-root.MuiCard-root": {
+                          overflow: "visible !important",
+                        },
+                        display: "webkit-flex !important",
+                        padding: "10px 0",
+                      }}
+                    >
+                      {forms
+                        .filter(
+                          (form) =>
+                            form.station === location.name &&
+                            productFilter(form),
+                        )
+                        .map((form) => {
+                          return <FormCard date key={form._id} form={form} />;
+                        })}
+                    </Stack>
                   </Stack>
-                </Stack>
-              </ListItem>,
-              <Divider key={location + i} />,
-            ];
-          })}
-      </List>
+                </ListItem>,
+                <Divider key={location + i} />,
+              ];
+            })}
+        </List>
+      ) : loading ? (
+        <Stack p={4} alignItems="center">
+          <CircularProgress size={30} />
+        </Stack>
+      ) : (
+        <Stack alignItems="center" p={2}>
+          <img src={noDataImage} alt="No Data" width={500} />
+        </Stack>
+      )}
     </Box>
   );
 };

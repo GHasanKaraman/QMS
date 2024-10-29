@@ -2,7 +2,6 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const moment = require("moment-timezone");
 
 var morgan = require("morgan");
 const chalk = require("chalk");
@@ -11,6 +10,7 @@ const authentication = require("./routes/authentication.js");
 const authorization = require("./routes/authorization.js");
 const user = require("./routes/user.js");
 const dashboard = require("./routes/dashboard.js");
+const rundashboard = require("./routes/runDashboard.js");
 const signoff = require("./routes/signoff.js");
 const qualityControlForm = require("./routes/qualityControlForm.js");
 const pgqualitycontrol = require("./routes/pgQualityControlForm.js");
@@ -49,6 +49,7 @@ db.once("open", function () {
   });
 
   app.use("/imgs", express.static(__dirname + "/imgs"));
+  app.use("/utils", express.static(__dirname + "/utils"));
 
   app.get("/", async (req, res) => {
     //res.send("<h2 style = color:green>Listening port...</h2>");
@@ -63,6 +64,7 @@ db.once("open", function () {
 
   app.use("/", user);
   app.use("/", dashboard);
+  app.use("/", rundashboard);
   app.use("/", signoff);
 
   app.use("/", preOperationalForm);

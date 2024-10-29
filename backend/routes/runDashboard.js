@@ -2,7 +2,6 @@ const express = require("express");
 const fetch = require("node-fetch");
 const router = express.Router();
 
-const essentials = require("../utils/essentials");
 const ratioFormModel = require("../models/ratioFormModel");
 const qualityControlFormModel = require("../models/qualityControlFormModel");
 const metalDetectorFormModel = require("../models/metalDetectorFormModel");
@@ -11,72 +10,52 @@ const pgQualityControlFormModel = require("../models/pgQualityControlFormModel")
 const xRayFormModel = require("../models/xRayFormModel.js");
 const mixingQualityFormModel = require("../models/mixingQualityFormModel");
 const preOperationalFormModel = require("../models/preOperationalFormModel.js");
-const signOffModel = require("../models/signOffModel.js");
 const lotInspectionFormModel = require("../models/lotInspectionFormModel");
 
-router.post("/signoff", async (req, res) => {
+router.post("/rundashboard", async (req, res) => {
   try {
-    const { id } = req.body;
-    if (req.access.includes("S")) {
-      const form = await signOffModel.create({
-        formID: id,
-        signedOff: req.username,
-        signOffDate: essentials.getEST(),
-      });
-      if (form._id) {
-        res.sendStatus(201);
-        console.log(req.username + " signed off " + id + "!");
-      } else {
-        res.sendStatus(400);
-      }
-    } else {
-      res.sendStatus(406);
-    }
-  } catch (err) {
-    console.log(err);
-    res.sendStatus(503);
-  }
-});
+    const { station } = req.body;
+    const today = new Date();
 
-router.post("/signoff/dashboard", async (req, res) => {
-  try {
-    const { start, end } = req.body;
-    const resp = await fetch("http://10.12.0.15:81/qac.php?stations", {
-      method: "GET",
-    });
+    const s = new Date(today);
+    const e = new Date(today);
+    s.setDate(today.getDate() - 14);
 
-    var s = new Date(start);
-    var e = new Date(end);
-
-    const data = await resp.json();
-    const ratioForms = await ratioFormModel.find({});
+    const ratioForms = await ratioFormModel.find({ station });
     const qualityControlForms = await qualityControlFormModel.find({
       createdAt: { $gte: new Date(s), $lte: new Date(e) },
+      station,
     });
     const pgQualityControlForms = await pgQualityControlFormModel.find({
       createdAt: { $gte: new Date(s), $lte: new Date(e) },
+      station,
     });
     const metalDetectorForms = await metalDetectorFormModel.find({
       createdAt: { $gte: new Date(s), $lte: new Date(e) },
+      station,
     });
     const labelInspectionForms = await labelInspectionFormModel.find({
       createdAt: { $gte: new Date(s), $lte: new Date(e) },
+      station,
     });
     const xRayForms = await xRayFormModel.find({
       createdAt: { $gte: new Date(s), $lte: new Date(e) },
+      station,
     });
     const preOperationalForms = await preOperationalFormModel.find({
       createdAt: { $gte: new Date(s), $lte: new Date(e) },
+      station,
     });
     const mixingQualityForms = await mixingQualityFormModel.find({
       createdAt: { $gte: new Date(s), $lte: new Date(e) },
+      station,
     });
     const lotInspectionForms = await lotInspectionFormModel.find({
       createdAt: { $gte: new Date(s), $lte: new Date(e) },
+      station,
     });
 
     if (
-      data &&
       ratioForms &&
       qualityControlForms &&
       metalDetectorForms &&
@@ -87,7 +66,6 @@ router.post("/signoff/dashboard", async (req, res) => {
       mixingQualityForms
     ) {
       res.status(200).json({
-        locations: data,
         forms: [
           ...ratioForms,
           ...xRayForms,

@@ -2,6 +2,12 @@ export const toStringDate = (date, format) => {
   return new Date(date).toLocaleString("en-us", format);
 };
 
+export const extractUniqueProducts = (...forms) => {
+  return Array.from(
+    new Set(forms.flatMap((item) => item.map((form) => form.product))),
+  );
+};
+
 export const extractInformations = (form) => {
   let info = undefined;
   if (form.isTasteAcceptable) {

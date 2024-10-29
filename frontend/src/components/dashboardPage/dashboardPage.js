@@ -1,5 +1,19 @@
 import { useEffect, useState } from "react";
-import { Box, Divider, IconButton, List, ListItem, Stack } from "@mui/material";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Divider,
+  IconButton,
+  List,
+  ListItem,
+  Stack,
+  useMediaQuery,
+} from "@mui/material";
 import { useTheme } from "@emotion/react";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
@@ -16,6 +30,7 @@ import FormCard from "../FormCard";
 const DashboardPage = (props) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -25,6 +40,8 @@ const DashboardPage = (props) => {
   const [dataSource, setDataSource] = useState([]);
 
   const [toggleOption, setToggleOption] = useState("All");
+  const [open, setOpen] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState({});
 
   useEffect(() => {
     document.title = props.title || "";
@@ -64,6 +81,48 @@ const DashboardPage = (props) => {
 
   return (
     <Box m="0 20px">
+      <Dialog
+        open={open}
+        onClose={() => {
+          setOpen(false);
+        }}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle
+          id="alert-dialog-title"
+          fontWeight={600}
+          textAlign="center"
+          fontSize={25}
+        >
+          {selectedLocation.name + " " + selectedLocation?.type}
+        </DialogTitle>
+        <DialogContent>
+          <Stack>
+            <Divider />
+            <Button
+              color="secondary"
+              sx={{ fontWeight: 600, fontSize: 18 }}
+              onClick={() => {
+                navigate("/runqualitydashboard/" + selectedLocation.name);
+              }}
+            >
+              Run Quality Dashboard
+            </Button>
+            <Divider />
+            <Button
+              color="secondary"
+              sx={{ fontWeight: 700, fontSize: 18 }}
+              autoFocus
+              onClick={() => {
+                setOpen(false);
+              }}
+            >
+              Cancel
+            </Button>
+          </Stack>
+        </DialogContent>
+      </Dialog>
       <Header title="My Quality Dashboard" subtitle="Locations" />
       <ToggleButtonCheck
         style={{
@@ -131,7 +190,8 @@ const DashboardPage = (props) => {
                   <IconButton
                     sx={{ padding: "0 0px" }}
                     onClick={() => {
-                      console.log(location);
+                      setSelectedLocation(location);
+                      setOpen(true);
                     }}
                   >
                     <MenuIcon />
