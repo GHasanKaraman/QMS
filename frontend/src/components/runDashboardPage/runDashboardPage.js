@@ -68,7 +68,12 @@ const RunDashboardPage = (props) => {
       setForms(_forms);
       setCurrentRun(_forms[0]?.product);
       setCurrentForms(
-        _forms.filter((form) => form.product === _forms[0].product),
+        _forms.filter(
+          (form) =>
+            form.product === _forms[0].product &&
+            moment(form.createdAt).format("YYYY-MM-DD") ===
+              moment().format("YYYY-MM-DD"),
+        ),
       );
       setProducts(extractUniqueProducts(_forms));
       getDates();
