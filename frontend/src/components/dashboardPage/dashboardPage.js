@@ -104,7 +104,12 @@ const DashboardPage = (props) => {
               color="secondary"
               sx={{ fontWeight: 600, fontSize: 18 }}
               onClick={() => {
-                navigate("/runqualitydashboard/" + selectedLocation.name);
+                navigate(
+                  "/runqualitydashboard/" +
+                    selectedLocation.name +
+                    "?type=" +
+                    selectedLocation?.type,
+                );
               }}
             >
               Run Quality Dashboard

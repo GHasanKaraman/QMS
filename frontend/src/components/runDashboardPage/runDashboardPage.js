@@ -15,7 +15,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Header from "../Header";
 import { useEffect, useState } from "react";
 import axios from "../../api/axios";
@@ -32,6 +32,9 @@ const RunDashboardPage = (props) => {
   const params = useParams();
   const { id } = params;
 
+  const loc = useLocation();
+  const type = new URLSearchParams(loc.search).get("type");
+
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
@@ -47,6 +50,9 @@ const RunDashboardPage = (props) => {
 
   const [currentRun, setCurrentRun] = useState();
   const [currentForms, setCurrentForms] = useState([]);
+
+  const [selectedProduct, setSelectedProduct] = useState();
+  const [selectedDay, setSelectedDay] = useState();
 
   const getDates = () => {
     const _days = [];
@@ -111,7 +117,7 @@ const RunDashboardPage = (props) => {
           fontWeight={600}
           textAlign="center"
         >
-          Test
+          {selectedProduct}
         </DialogTitle>
         <DialogContent>
           <Stack>
@@ -127,7 +133,18 @@ const RunDashboardPage = (props) => {
             <Button
               color="secondary"
               sx={{ fontWeight: 600, fontSize: 18 }}
-              onClick={() => {}}
+              onClick={() => {
+                navigate(
+                  "/runsignoff/" +
+                    selectedProduct +
+                    "?date=" +
+                    selectedDay +
+                    "&type=" +
+                    type +
+                    "&station=" +
+                    id,
+                );
+              }}
             >
               Run Sign Off
             </Button>
@@ -149,7 +166,12 @@ const RunDashboardPage = (props) => {
       <Header title={id} subtitle="Run Quality Dashboard" />
       <Accordion expanded={true}>
         <AccordionSummary
-          sx={{ background: colors.grey[800], fontWeight: 600, fontSize: 15 }}
+          sx={{
+            background:
+              theme.palette.mode === "dark" ? colors.grey[700] : "#f2f0f0",
+            fontWeight: 600,
+            fontSize: 15,
+          }}
         >
           Current Runs
         </AccordionSummary>
@@ -189,6 +211,8 @@ const RunDashboardPage = (props) => {
                       sx={{ padding: "0 0px" }}
                       onClick={() => {
                         setOpen(true);
+                        setSelectedProduct(currentRun);
+                        setSelectedDay(moment().format("YYYY-MM-DD"));
                       }}
                     >
                       <MenuIcon />
@@ -226,7 +250,12 @@ const RunDashboardPage = (props) => {
       </Accordion>
       <Accordion expanded={true}>
         <AccordionSummary
-          sx={{ background: colors.grey[800], fontWeight: 600, fontSize: 15 }}
+          sx={{
+            background:
+              theme.palette.mode === "dark" ? colors.grey[700] : "#f2f0f0",
+            fontWeight: 600,
+            fontSize: 15,
+          }}
         >
           Completed Runs in Last 2 Weeks
         </AccordionSummary>
@@ -272,6 +301,8 @@ const RunDashboardPage = (props) => {
                               sx={{ padding: "0 0px" }}
                               onClick={() => {
                                 setOpen(true);
+                                setSelectedProduct(product);
+                                setSelectedDay(day);
                               }}
                             >
                               <MenuIcon />
