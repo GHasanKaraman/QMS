@@ -15,7 +15,7 @@ import LabelResult from "../LabelResult";
 import StatusIndicator from "../StatusIndicator";
 import ImageLabel from "../ImageLabel";
 
-const QualityControlAccordion = ({ id, expanded, isForm, onChange }) => {
+const QualityControlAccordion = ({ id, expanded, isForm, onChange, value }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
@@ -92,6 +92,7 @@ const QualityControlAccordion = ({ id, expanded, isForm, onChange }) => {
               <Checkbox
                 size="large"
                 color="secondary"
+                checked={Boolean(value)}
                 onChange={(_, checked) => {
                   onChange(data._id, checked);
                 }}

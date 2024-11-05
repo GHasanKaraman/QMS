@@ -15,7 +15,13 @@ import StatusIndicator from "../StatusIndicator";
 
 import "../formStatus.css";
 
-const LabelInspectionAccordion = ({ id, expanded, isForm, onChange }) => {
+const LabelInspectionAccordion = ({
+  id,
+  expanded,
+  isForm,
+  onChange,
+  value,
+}) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
@@ -87,6 +93,7 @@ const LabelInspectionAccordion = ({ id, expanded, isForm, onChange }) => {
               <Checkbox
                 size="large"
                 color="secondary"
+                checked={Boolean(value)}
                 onChange={(_, checked) => {
                   onChange(data._id, checked);
                 }}

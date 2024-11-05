@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { Stack } from "@mui/material";
+import { useEffect, useState } from "react";
 import { extractInformations } from "../utils/helpers";
+import { Accordion, AccordionSummary } from "./Accordion";
 import LabelInspectionAccordion from "./accordionViews/labelInspectionAccordion";
 import LOTInspectionAccordion from "./accordionViews/lotInspectionAccordion";
 import MetalDetectorAccordion from "./accordionViews/metalDetectorAccordion";
@@ -8,8 +10,45 @@ import PGQualityControlAccordion from "./accordionViews/pgQualityControlAccordio
 import QualityControlAccordion from "./accordionViews/qualityControlAccordion";
 import XRAYInspectionAccordion from "./accordionViews/xRayInspectionAccordion";
 
-const RunSummaryAccordions = ({ forms, expanded, style, isForm, onChange }) => {
+const RunSummaryAccordions = ({
+  forms,
+  style,
+  isForm,
+  onChange,
+  approveAll,
+}) => {
   const [values, setValues] = useState({});
+
+  const [expanded, setExpanded] = useState(false);
+
+  useEffect(() => {
+    let temp = {};
+    forms.forEach((form) => {
+      temp[form._id] = true;
+    });
+    setValues(temp);
+  }, [forms]);
+
+  useEffect(() => {
+    if (approveAll === true) {
+      let temp = {};
+      forms.forEach((form) => {
+        temp[form._id] = true;
+      });
+      setValues(temp);
+    } else {
+      if (
+        Object.values(values).every((value) => value === false) ||
+        Object.values(values).every((value) => value === true)
+      ) {
+        let temp = {};
+        forms.forEach((form) => {
+          temp[form._id] = false;
+        });
+        setValues(temp);
+      }
+    }
+  }, [approveAll]);
 
   function handleChange(id, value) {
     let temp = { ...values };
@@ -20,84 +59,112 @@ const RunSummaryAccordions = ({ forms, expanded, style, isForm, onChange }) => {
 
   return (
     <div style={style}>
-      {forms.map((form) => {
-        const { type } = extractInformations(form);
-        switch (type) {
-          case "pgqualitycontrol":
-            return (
-              <PGQualityControlAccordion
-                isForm={isForm}
-                onChange={handleChange}
-                key={form._id}
-                id={form._id}
-                expanded={expanded}
-              />
-            );
-          case "qualitycontrol":
-            return (
-              <QualityControlAccordion
-                isForm={isForm}
-                onChange={handleChange}
-                key={form._id}
-                id={form._id}
-                expanded={expanded}
-              />
-            );
-          case "labelinspection":
-            return (
-              <LabelInspectionAccordion
-                isForm={isForm}
-                onChange={handleChange}
-                key={form._id}
-                id={form._id}
-                expanded={expanded}
-              />
-            );
-          case "lotinspection":
-            return (
-              <LOTInspectionAccordion
-                isForm={isForm}
-                onChange={handleChange}
-                key={form._id}
-                id={form._id}
-                expanded={expanded}
-              />
-            );
-          case "mixingquality":
-            return (
-              <MixingQualityAccordion
-                isForm={isForm}
-                onChange={handleChange}
-                key={form._id}
-                id={form._id}
-                expanded={expanded}
-              />
-            );
+      <Accordion
+        onChange={(_, isExpanded) => {
+          setExpanded(isExpanded);
+        }}
+      >
+        <AccordionSummary sx={{ fontWeight: 600 }}>
+          <Stack direction="row" width="100%" justifyContent="space-between">
+            <div>All Results</div>
+            <div>
+              {Object.values(values).filter((value) => value === true).length +
+                " of " +
+                Object.values(values).length +
+                " Selected"}
+            </div>
+          </Stack>
+        </AccordionSummary>
+      </Accordion>
 
-          case "xray":
-            return (
-              <XRAYInspectionAccordion
-                isForm={isForm}
-                onChange={handleChange}
-                key={form._id}
-                id={form._id}
-                expanded={expanded}
-              />
-            );
-          case "metaldetector":
-            return (
-              <MetalDetectorAccordion
-                isForm={isForm}
-                onChange={handleChange}
-                key={form._id}
-                id={form._id}
-                expanded={expanded}
-              />
-            );
-          default:
-            return undefined;
-        }
-      })}
+      <div style={{ display: expanded ? "block" : "none" }}>
+        {" "}
+        {forms.map((form) => {
+          const { type } = extractInformations(form);
+          switch (type) {
+            case "pgqualitycontrol":
+              return (
+                <PGQualityControlAccordion
+                  isForm={isForm}
+                  onChange={handleChange}
+                  key={form._id}
+                  id={form._id}
+                  expanded={expanded}
+                  value={values[form._id]}
+                />
+              );
+            case "qualitycontrol":
+              return (
+                <QualityControlAccordion
+                  isForm={isForm}
+                  onChange={handleChange}
+                  key={form._id}
+                  id={form._id}
+                  expanded={expanded}
+                  value={values[form._id]}
+                />
+              );
+            case "labelinspection":
+              return (
+                <LabelInspectionAccordion
+                  isForm={isForm}
+                  onChange={handleChange}
+                  key={form._id}
+                  id={form._id}
+                  expanded={expanded}
+                  value={values[form._id]}
+                />
+              );
+            case "lotinspection":
+              return (
+                <LOTInspectionAccordion
+                  isForm={isForm}
+                  onChange={handleChange}
+                  key={form._id}
+                  id={form._id}
+                  expanded={expanded}
+                  value={values[form._id]}
+                />
+              );
+            case "mixingquality":
+              return (
+                <MixingQualityAccordion
+                  isForm={isForm}
+                  onChange={handleChange}
+                  key={form._id}
+                  id={form._id}
+                  expanded={expanded}
+                  value={values[form._id]}
+                />
+              );
+
+            case "xray":
+              return (
+                <XRAYInspectionAccordion
+                  isForm={isForm}
+                  onChange={handleChange}
+                  key={form._id}
+                  id={form._id}
+                  expanded={expanded}
+                  value={values[form._id]}
+                />
+              );
+            case "metaldetector":
+              return (
+                <MetalDetectorAccordion
+                  isForm={isForm}
+                  onChange={handleChange}
+                  key={form._id}
+                  id={form._id}
+                  expanded={expanded}
+                  value={values[form._id]}
+                />
+              );
+            default:
+              return undefined;
+          }
+        })}
+      </div>
     </div>
   );
 };

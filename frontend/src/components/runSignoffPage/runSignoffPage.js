@@ -42,7 +42,7 @@ const RunSignoffPage = (props) => {
 
   const [forms, setForms] = useState([]);
 
-  const [checkedForms, setCheckedForms] = useState({});
+  const [approveAll, setApproveAll] = useState(true);
 
   const loadSignoffPage = async () => {
     const res = await axios.post("/runsignoff", { station, product, date });
@@ -63,7 +63,12 @@ const RunSignoffPage = (props) => {
   }, []);
 
   const handleChange = (values) => {
-    console.log(values);
+    const cond = Object.values(values).every((value) => value === true);
+    if (cond) {
+      setApproveAll(true);
+    } else {
+      setApproveAll(false);
+    }
   };
 
   return (
@@ -103,25 +108,25 @@ const RunSignoffPage = (props) => {
               </Stack>
               <Stack direction="row" alignItems="center">
                 <div>Approve All</div>
-                <Checkbox color="secondary" size="large" />
+                <Checkbox
+                  color="secondary"
+                  size="large"
+                  checked={approveAll}
+                  onChange={(_, checked) => {
+                    setApproveAll(checked);
+                  }}
+                />
               </Stack>
             </Stack>
           </Stack>
         </AccordionSummary>
-      </CustomAccordion>
-      <CustomAccordion
-        onChange={(_, isExpanded) => {
-          setExpanded(isExpanded);
-        }}
-      >
-        <CustomAccordionSummary>All Results</CustomAccordionSummary>
       </CustomAccordion>
       <RunSummaryAccordions
         isForm={true}
         onChange={handleChange}
         forms={forms}
         expanded={expanded}
-        style={{ display: expanded ? "block" : "none" }}
+        approveAll={approveAll}
       />
     </Box>
   );

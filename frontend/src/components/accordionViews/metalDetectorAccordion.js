@@ -14,7 +14,7 @@ import StatusIndicator from "../StatusIndicator";
 
 import "../formStatus.css";
 
-const MetalDetectorAccordion = ({ id, expanded, isForm, onChange }) => {
+const MetalDetectorAccordion = ({ id, expanded, isForm, onChange, value }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
@@ -88,6 +88,7 @@ const MetalDetectorAccordion = ({ id, expanded, isForm, onChange }) => {
               <Checkbox
                 size="large"
                 color="secondary"
+                checked={Boolean(value)}
                 onChange={(_, checked) => {
                   onChange(data._id, checked);
                 }}

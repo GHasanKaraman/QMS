@@ -16,7 +16,13 @@ import StatusIndicator from "../StatusIndicator";
 import ImageLabel from "../ImageLabel";
 import MultipleImageLabel from "../MultipleImageLabel";
 
-const PGQualityControlAccordion = ({ id, expanded, isForm, onChange }) => {
+const PGQualityControlAccordion = ({
+  id,
+  expanded,
+  isForm,
+  onChange,
+  value,
+}) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
@@ -92,6 +98,7 @@ const PGQualityControlAccordion = ({ id, expanded, isForm, onChange }) => {
               <Checkbox
                 size="large"
                 color="secondary"
+                checked={Boolean(value)}
                 onChange={(_, checked) => {
                   onChange(data._id, checked);
                 }}
