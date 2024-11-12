@@ -27,30 +27,158 @@ router.use("/dashboard", async (req, res) => {
     const data = await resp.json();
 
     const ratioForms = await ratioFormModel.find({});
-    const qualityControlForms = await qualityControlFormModel.find({
-      createdAt: { $gte: startOfToday },
-    });
-    const pgQualityControlForms = await pgQualityControlFormModel.find({
-      createdAt: { $gte: startOfToday },
-    }); //
-    const xRayForms = await xRayFormModel.find({
-      createdAt: { $gte: startOfToday },
-    });
-    const metalDetectorForms = await metalDetectorFormModel.find({
-      createdAt: { $gte: startOfToday },
-    });
-    const labelInspectionForms = await labelInspectionFormModel.find({
-      createdAt: { $gte: startOfToday },
-    });
-    const preOperationalForms = await preOperationalFormModel.find({
-      createdAt: { $gte: startOfToday },
-    });
-    const mixingQualityForms = await mixingQualityFormModel.find({
-      createdAt: { $gte: startOfToday },
-    });
-    const lotInspectionForms = await lotInspectionFormModel.find({
-      createdAt: { $gte: startOfToday },
-    });
+    const qualityControlForms = await qualityControlFormModel.aggregate([
+      {
+        $lookup: {
+          from: "comments",
+          localField: "_id",
+          foreignField: "formID",
+          as: "comments",
+        },
+      },
+      {
+        $lookup: {
+          from: "signoffs",
+          localField: "_id",
+          foreignField: "formID",
+          as: "signoffs",
+        },
+      },
+      { $match: { createdAt: { $gte: startOfToday } } },
+    ]);
+    const pgQualityControlForms = await pgQualityControlFormModel.aggregate([
+      {
+        $lookup: {
+          from: "comments",
+          localField: "_id",
+          foreignField: "formID",
+          as: "comments",
+        },
+      },
+      {
+        $lookup: {
+          from: "signoffs",
+          localField: "_id",
+          foreignField: "formID",
+          as: "signoffs",
+        },
+      },
+      { $match: { createdAt: { $gte: startOfToday } } },
+    ]); //
+    const xRayForms = await xRayFormModel.aggregate([
+      {
+        $lookup: {
+          from: "comments",
+          localField: "_id",
+          foreignField: "formID",
+          as: "comments",
+        },
+      },
+      {
+        $lookup: {
+          from: "signoffs",
+          localField: "_id",
+          foreignField: "formID",
+          as: "signoffs",
+        },
+      },
+      { $match: { createdAt: { $gte: startOfToday } } },
+    ]);
+    const metalDetectorForms = await metalDetectorFormModel.aggregate([
+      {
+        $lookup: {
+          from: "comments",
+          localField: "_id",
+          foreignField: "formID",
+          as: "comments",
+        },
+      },
+      {
+        $lookup: {
+          from: "signoffs",
+          localField: "_id",
+          foreignField: "formID",
+          as: "signoffs",
+        },
+      },
+      { $match: { createdAt: { $gte: startOfToday } } },
+    ]);
+    const labelInspectionForms = await labelInspectionFormModel.aggregate([
+      {
+        $lookup: {
+          from: "comments",
+          localField: "_id",
+          foreignField: "formID",
+          as: "comments",
+        },
+      },
+      {
+        $lookup: {
+          from: "signoffs",
+          localField: "_id",
+          foreignField: "formID",
+          as: "signoffs",
+        },
+      },
+      { $match: { createdAt: { $gte: startOfToday } } },
+    ]);
+    const preOperationalForms = await preOperationalFormModel.aggregate([
+      {
+        $lookup: {
+          from: "comments",
+          localField: "_id",
+          foreignField: "formID",
+          as: "comments",
+        },
+      },
+      {
+        $lookup: {
+          from: "signoffs",
+          localField: "_id",
+          foreignField: "formID",
+          as: "signoffs",
+        },
+      },
+      { $match: { createdAt: { $gte: startOfToday } } },
+    ]);
+    const mixingQualityForms = await mixingQualityFormModel.aggregate([
+      {
+        $lookup: {
+          from: "comments",
+          localField: "_id",
+          foreignField: "formID",
+          as: "comments",
+        },
+      },
+      {
+        $lookup: {
+          from: "signoffs",
+          localField: "_id",
+          foreignField: "formID",
+          as: "signoffs",
+        },
+      },
+      { $match: { createdAt: { $gte: startOfToday } } },
+    ]);
+    const lotInspectionForms = await lotInspectionFormModel.aggregate([
+      {
+        $lookup: {
+          from: "comments",
+          localField: "_id",
+          foreignField: "formID",
+          as: "comments",
+        },
+      },
+      {
+        $lookup: {
+          from: "signoffs",
+          localField: "_id",
+          foreignField: "formID",
+          as: "signoffs",
+        },
+      },
+      { $match: { createdAt: { $gte: startOfToday } } },
+    ]);
     if (
       data &&
       ratioForms &&

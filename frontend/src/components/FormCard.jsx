@@ -6,9 +6,13 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+
 import { extractInformations, toStringDate } from "../utils/helpers";
 import { tokens } from "../theme";
-import { useNavigate } from "react-router-dom";
+
+import { ReactComponent as Signature } from "../images/signature.svg";
+import { ModeCommentOutlined } from "@mui/icons-material";
 
 const FormCard = ({ form, date = false }) => {
   const theme = useTheme();
@@ -16,17 +20,10 @@ const FormCard = ({ form, date = false }) => {
   const navigate = useNavigate();
 
   const getStatusColor = (form) => {
-    if (form.signOff) {
-      if (form.status === "passed") {
-        return colors.ciboInnerGreen[500];
-      }
-      return colors.yoggieRed[500];
-    } else {
-      if (form.status === "passed") {
-        return colors.ciboInnerGreen[300];
-      }
-      return colors.yoggieRed[300];
+    if (form.status === "passed") {
+      return colors.ciboInnerGreen[300];
     }
+    return colors.yoggieRed[300];
   };
 
   const info = extractInformations(form);
@@ -56,25 +53,48 @@ const FormCard = ({ form, date = false }) => {
               >
                 {info.title}
               </Typography>
-              <Typography
-                variant="h6"
-                fontWeight="bold"
-                color={colors.primary[400]}
-                sx={{ textAlign: "center" }}
+              <Stack
+                direction="row"
+                width="100%"
+                alignItems="center"
+                justifyContent="center"
+                spacing={4}
+                px={2}
               >
-                {date
-                  ? toStringDate(form.createdAt, {
-                      month: "short",
-                      year: "numeric",
-                      day: "numeric",
-                      hour: "numeric",
-                      minute: "numeric",
-                    })
-                  : toStringDate(form.createdAt, {
-                      hour: "numeric",
-                      minute: "numeric",
-                    })}
-              </Typography>
+                <Typography
+                  variant="h6"
+                  fontWeight="bold"
+                  color={colors.primary[400]}
+                  sx={{ textAlign: "center" }}
+                >
+                  {date
+                    ? toStringDate(form.createdAt, {
+                        month: "short",
+                        year: "numeric",
+                        day: "numeric",
+                        hour: "numeric",
+                        minute: "numeric",
+                      })
+                    : toStringDate(form.createdAt, {
+                        hour: "numeric",
+                        minute: "numeric",
+                      })}
+                </Typography>
+                {form?.comments?.length + form?.signoffs?.length ===
+                0 ? undefined : (
+                  <Stack direction="row" spacing={1}>
+                    {form?.comments?.length > 0 ? (
+                      <ModeCommentOutlined
+                        fontSize="small"
+                        sx={{ color: colors.primary[400] }}
+                      />
+                    ) : undefined}
+                    {form?.signoffs?.length > 0 ? (
+                      <Signature width={17} fill={colors.primary[400]} />
+                    ) : undefined}
+                  </Stack>
+                )}
+              </Stack>
             </Stack>
           </CardContent>
         </CardActionArea>

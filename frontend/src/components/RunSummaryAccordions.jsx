@@ -15,51 +15,20 @@ const RunSummaryAccordions = ({
   style,
   isForm,
   onChange,
-  approveAll,
+  values = {},
+  expand = false,
+  showExpand = true,
 }) => {
-  const [values, setValues] = useState({});
-
   const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
-    let temp = {};
-    forms.forEach((form) => {
-      temp[form._id] = true;
-    });
-    setValues(temp);
-  }, [forms]);
-
-  useEffect(() => {
-    if (approveAll === true) {
-      let temp = {};
-      forms.forEach((form) => {
-        temp[form._id] = true;
-      });
-      setValues(temp);
-    } else {
-      if (
-        Object.values(values).every((value) => value === false) ||
-        Object.values(values).every((value) => value === true)
-      ) {
-        let temp = {};
-        forms.forEach((form) => {
-          temp[form._id] = false;
-        });
-        setValues(temp);
-      }
-    }
-  }, [approveAll]);
-
-  function handleChange(id, value) {
-    let temp = { ...values };
-    temp[id] = value;
-    setValues(temp);
-    onChange(temp);
-  }
+    setExpanded(expand);
+  }, []);
 
   return (
     <div style={style}>
       <Accordion
+        sx={{ display: showExpand ? "block" : "none" }}
         onChange={(_, isExpanded) => {
           setExpanded(isExpanded);
         }}
@@ -67,18 +36,22 @@ const RunSummaryAccordions = ({
         <AccordionSummary sx={{ fontWeight: 600 }}>
           <Stack direction="row" width="100%" justifyContent="space-between">
             <div>All Results</div>
-            <div>
-              {Object.values(values).filter((value) => value === true).length +
-                " of " +
-                Object.values(values).length +
-                " Selected"}
-            </div>
+            {isForm ? (
+              <div>
+                {Object.values(values).filter((value) => value === true)
+                  .length +
+                  " of " +
+                  Object.values(values).length +
+                  " Selected"}
+              </div>
+            ) : (
+              forms.length + " Results"
+            )}
           </Stack>
         </AccordionSummary>
       </Accordion>
 
       <div style={{ display: expanded ? "block" : "none" }}>
-        {" "}
         {forms.map((form) => {
           const { type } = extractInformations(form);
           switch (type) {
@@ -86,7 +59,7 @@ const RunSummaryAccordions = ({
               return (
                 <PGQualityControlAccordion
                   isForm={isForm}
-                  onChange={handleChange}
+                  onChange={onChange}
                   key={form._id}
                   id={form._id}
                   expanded={expanded}
@@ -97,7 +70,7 @@ const RunSummaryAccordions = ({
               return (
                 <QualityControlAccordion
                   isForm={isForm}
-                  onChange={handleChange}
+                  onChange={onChange}
                   key={form._id}
                   id={form._id}
                   expanded={expanded}
@@ -108,7 +81,7 @@ const RunSummaryAccordions = ({
               return (
                 <LabelInspectionAccordion
                   isForm={isForm}
-                  onChange={handleChange}
+                  onChange={onChange}
                   key={form._id}
                   id={form._id}
                   expanded={expanded}
@@ -119,7 +92,7 @@ const RunSummaryAccordions = ({
               return (
                 <LOTInspectionAccordion
                   isForm={isForm}
-                  onChange={handleChange}
+                  onChange={onChange}
                   key={form._id}
                   id={form._id}
                   expanded={expanded}
@@ -130,7 +103,7 @@ const RunSummaryAccordions = ({
               return (
                 <MixingQualityAccordion
                   isForm={isForm}
-                  onChange={handleChange}
+                  onChange={onChange}
                   key={form._id}
                   id={form._id}
                   expanded={expanded}
@@ -142,7 +115,7 @@ const RunSummaryAccordions = ({
               return (
                 <XRAYInspectionAccordion
                   isForm={isForm}
-                  onChange={handleChange}
+                  onChange={onChange}
                   key={form._id}
                   id={form._id}
                   expanded={expanded}
@@ -153,7 +126,7 @@ const RunSummaryAccordions = ({
               return (
                 <MetalDetectorAccordion
                   isForm={isForm}
-                  onChange={handleChange}
+                  onChange={onChange}
                   key={form._id}
                   id={form._id}
                   expanded={expanded}

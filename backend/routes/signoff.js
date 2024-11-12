@@ -2,7 +2,6 @@ const express = require("express");
 const fetch = require("node-fetch");
 const router = express.Router();
 
-const essentials = require("../utils/essentials");
 const ratioFormModel = require("../models/ratioFormModel");
 const qualityControlFormModel = require("../models/qualityControlFormModel");
 const metalDetectorFormModel = require("../models/metalDetectorFormModel");
@@ -16,16 +15,15 @@ const lotInspectionFormModel = require("../models/lotInspectionFormModel");
 
 router.post("/signoff", async (req, res) => {
   try {
-    const { id } = req.body;
+    const { forms } = req.body;
     if (req.access.includes("S")) {
-      const form = await signOffModel.create({
-        formID: id,
-        signedOff: req.username,
-        signOffDate: essentials.getEST(),
+      const list = forms.map((form) => {
+        return { formID: form, signedOff: req.username };
       });
-      if (form._id) {
-        res.sendStatus(201);
-        console.log(req.username + " signed off " + id + "!");
+      const form = await signOffModel.insertMany(list);
+      if (form.length > 0) {
+        res.status(201).json({ forms: form });
+        console.log(req.username + " signed off the forms!");
       } else {
         res.sendStatus(400);
       }

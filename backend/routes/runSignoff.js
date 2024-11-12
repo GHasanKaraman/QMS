@@ -21,46 +21,160 @@ router.post("/runsignoff", async (req, res) => {
     e.setDate(s.getDate() + 1);
 
     const ratioForms = await ratioFormModel.find({ station });
-    const qualityControlForms = await qualityControlFormModel.find({
-      createdAt: { $gte: new Date(s), $lte: new Date(e) },
-      station,
-      product,
+    const qualityControlForms = await qualityControlFormModel.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: new Date(s), $lte: new Date(e) },
+          station,
+          product,
+        },
+      },
+      {
+        $lookup: {
+          from: "signoffs",
+          localField: "_id",
+          foreignField: "formID",
+          as: "signoffs",
+        },
+      },
+    ]);
+    const pgQualityControlForms = await pgQualityControlFormModel.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: new Date(s), $lte: new Date(e) },
+          station,
+          product,
+        },
+      },
+      {
+        $lookup: {
+          from: "signoffs",
+          localField: "_id",
+          foreignField: "formID",
+          as: "signoffs",
+        },
+      },
+    ]);
+    const metalDetectorForms = await metalDetectorFormModel.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: new Date(s), $lte: new Date(e) },
+          station,
+          product,
+        },
+      },
+      {
+        $lookup: {
+          from: "signoffs",
+          localField: "_id",
+          foreignField: "formID",
+          as: "signoffs",
+        },
+      },
+    ]);
+    const labelInspectionForms = await labelInspectionFormModel.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: new Date(s), $lte: new Date(e) },
+          station,
+          product,
+        },
+      },
+      {
+        $lookup: {
+          from: "signoffs",
+          localField: "_id",
+          foreignField: "formID",
+          as: "signoffs",
+        },
+      },
+    ]);
+    const xRayForms = await xRayFormModel.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: new Date(s), $lte: new Date(e) },
+          station,
+          product,
+        },
+      },
+      {
+        $lookup: {
+          from: "signoffs",
+          localField: "_id",
+          foreignField: "formID",
+          as: "signoffs",
+        },
+      },
+    ]);
+    const preOperationalForms = await preOperationalFormModel.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: new Date(s), $lte: new Date(e) },
+          station,
+          product,
+        },
+      },
+      {
+        $lookup: {
+          from: "signoffs",
+          localField: "_id",
+          foreignField: "formID",
+          as: "signoffs",
+        },
+      },
+    ]);
+    const mixingQualityForms = await mixingQualityFormModel.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: new Date(s), $lte: new Date(e) },
+          station,
+          product,
+        },
+      },
+      {
+        $lookup: {
+          from: "signoffs",
+          localField: "_id",
+          foreignField: "formID",
+          as: "signoffs",
+        },
+      },
+    ]);
+    const lotInspectionForms = await lotInspectionFormModel.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: new Date(s), $lte: new Date(e) },
+          station,
+          product,
+        },
+      },
+      {
+        $lookup: {
+          from: "signoffs",
+          localField: "_id",
+          foreignField: "formID",
+          as: "signoffs",
+        },
+      },
+    ]);
+    var details = { part: [product] };
+    var formBody = [];
+    for (var property in details) {
+      var encodedKey = encodeURIComponent(property);
+      var encodedValue = encodeURIComponent(details[property]);
+      formBody.push(encodedKey + "=" + encodedValue);
+    }
+    formBody = formBody.join("&");
+
+    const resp = await fetch("http://10.12.0.15:81/qac.php?desc", {
+      method: "POST",
+      body: formBody,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+      },
     });
-    const pgQualityControlForms = await pgQualityControlFormModel.find({
-      createdAt: { $gte: new Date(s), $lte: new Date(e) },
-      station,
-      product,
-    });
-    const metalDetectorForms = await metalDetectorFormModel.find({
-      createdAt: { $gte: new Date(s), $lte: new Date(e) },
-      station,
-      product,
-    });
-    const labelInspectionForms = await labelInspectionFormModel.find({
-      createdAt: { $gte: new Date(s), $lte: new Date(e) },
-      station,
-      product,
-    });
-    const xRayForms = await xRayFormModel.find({
-      createdAt: { $gte: new Date(s), $lte: new Date(e) },
-      station,
-      product,
-    });
-    const preOperationalForms = await preOperationalFormModel.find({
-      createdAt: { $gte: new Date(s), $lte: new Date(e) },
-      station,
-      product,
-    });
-    const mixingQualityForms = await mixingQualityFormModel.find({
-      createdAt: { $gte: new Date(s), $lte: new Date(e) },
-      station,
-      product,
-    });
-    const lotInspectionForms = await lotInspectionFormModel.find({
-      createdAt: { $gte: new Date(s), $lte: new Date(e) },
-      station,
-      product,
-    });
+
+    const desc = await resp.json();
 
     if (
       ratioForms &&
@@ -73,6 +187,7 @@ router.post("/runsignoff", async (req, res) => {
       mixingQualityForms
     ) {
       res.status(200).json({
+        desc,
         forms: [
           ...ratioForms,
           ...xRayForms,
