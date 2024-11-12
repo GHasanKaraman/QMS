@@ -30,6 +30,7 @@ import { useSnackbar } from "notistack";
 import userAuth from "../../utils/userAuth";
 import RunSummaryAccordions from "../RunSummaryAccordions";
 import { LibraryAddCheck } from "@mui/icons-material";
+import Header from "../Header";
 
 const RunSignoffPage = (props) => {
   const params = useParams();
@@ -172,6 +173,7 @@ const RunSignoffPage = (props) => {
     </Box>
   ) : !loading ? (
     <Box m="0 20px">
+      <Header title="Run Sign Off" mb={-5} />
       <Dialog
         fullWidth={true}
         open={open}

@@ -28,6 +28,7 @@ import {
 import RunSummaryAccordions from "../RunSummaryAccordions";
 import SummaryPDF from "./SummaryPDF";
 import ReactToPrint from "react-to-print";
+import Header from "../Header";
 
 const RunSummaryPage = (props) => {
   const params = useParams();
@@ -95,7 +96,7 @@ const RunSummaryPage = (props) => {
         description={description}
         ref={ref}
       />
-
+      <Header title="Quality Run Summary" />
       <Accordion expanded={true}>
         <AccordionSummary
           disableIcon
@@ -116,25 +117,45 @@ const RunSummaryPage = (props) => {
               <Typography variant="h3" fontWeight={600}>
                 {product + " • " + description[product]}
               </Typography>
-              <ReactToPrint
-                trigger={() => (
-                  <Button
-                    sx={{
-                      marginY: "3px",
-                      borderWidth: "2px",
-                      fontWeight: "700",
-                    }}
-                    variant="outlined"
-                    id="button"
-                    color="secondary"
-                    startIcon={<PrintIcon />}
-                  >
-                    Print
-                  </Button>
-                )}
-                content={() => ref.current}
-                pageStyle="print"
-              />
+              <Stack spacing={2} direction="row">
+                <Button
+                  color="error"
+                  sx={{ fontWeight: 600, fontSize: 13 }}
+                  onClick={() => {
+                    navigate(
+                      "/runsignoff/" +
+                        product +
+                        "?date=" +
+                        date +
+                        "&type=" +
+                        type +
+                        "&station=" +
+                        station,
+                    );
+                  }}
+                >
+                  Sign Off
+                </Button>
+                <ReactToPrint
+                  trigger={() => (
+                    <Button
+                      sx={{
+                        marginY: "3px",
+                        borderWidth: "2px",
+                        fontWeight: "700",
+                      }}
+                      variant="outlined"
+                      id="button"
+                      color="secondary"
+                      startIcon={<PrintIcon />}
+                    >
+                      Print
+                    </Button>
+                  )}
+                  content={() => ref.current}
+                  pageStyle="print"
+                />
+              </Stack>
             </Stack>
             <Typography mt={1}>
               {station +
