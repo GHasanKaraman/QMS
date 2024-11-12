@@ -22,7 +22,6 @@ import { useTheme } from "@emotion/react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
-import PrintIcon from "@mui/icons-material/Print";
 
 import { toStringDate } from "../../utils/helpers";
 import Header from "../Header";
@@ -268,52 +267,23 @@ const ViewPGQualityControlPage = (props) => {
           })
         }
       />
-      <Button
-        sx={{ marginY: "3px", borderWidth: "2px", fontWeight: "700" }}
-        variant="outlined"
-        id="button"
-        color="secondary"
-        startIcon={<PrintIcon />}
-        onClick={() => {
-          window.print();
-        }}
-      >
-        Print
-      </Button>
       <Divider />
       <Label
         title="Data Sheet Signed Off"
         subtitle={
-          data ? (
-            !data.signOff ? (
-              localStorage.getItem("access").includes("S") ? (
-                <Button
-                  variant="contained"
-                  color="success"
-                  sx={{ fontWeight: "600" }}
-                  onClick={() => {
-                    setOpenDialog(true);
-                  }}
-                >
-                  Sign Off
-                </Button>
-              ) : (
-                "Not Signed Off"
-              )
-            ) : (
-              data?.signOff.signedOff +
-              " • " +
-              toStringDate(data?.signOff.createdAt, {
-                month: "short",
-                year: "numeric",
-                day: "numeric",
-                hour: "numeric",
-                minute: "numeric",
-              })
-            )
-          ) : (
-            ""
-          )
+          data
+            ? !data.signOff
+              ? "Not Signed Off"
+              : data?.signOff.signedOff +
+                " • " +
+                toStringDate(data?.signOff.createdAt, {
+                  month: "short",
+                  year: "numeric",
+                  day: "numeric",
+                  hour: "numeric",
+                  minute: "numeric",
+                })
+            : ""
         }
       />
       <RunLabel started={data?.started} startDateTime={data?.startDateTime} />
