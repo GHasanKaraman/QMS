@@ -81,6 +81,7 @@ const Topbar = () => {
             <NotificationsOutlinedIcon color="action" />
           </Badge>
         </IconButton>
+
         <IconButton
           id="menu-button"
           aria-controls={openUser ? "account-menu" : undefined}

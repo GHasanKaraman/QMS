@@ -29,6 +29,7 @@ import RoastingQualityControlPage from "../components/roastingQualityControlPage
 import ViewRoastingQualityControlPage from "../components/roastingQualityControlPage/viewRoastingQualityControlPage.js";
 import RunDashboardPage from "../components/runDashboardPage/runDashboardPage.js";
 import RunSignoffPage from "../components/runSignoffPage/runSignoffPage.js";
+import RunSummaryPage from "../components/runSummaryPage/runSummaryPage.js";
 
 const BarLayout = () => {
   const [theme, colorMode] = useMode();
@@ -92,6 +93,11 @@ const Router = () => {
           exact
           path="/runsignoff/:id"
           element={<RunSignoffPage title="CiboQA | Run Sign Off" />}
+        />
+        <Route
+          exact
+          path="/runsummary/:id"
+          element={<RunSummaryPage title="CiboQA | Run Summary" />}
         />
 
         <Route

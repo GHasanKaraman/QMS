@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   Accordion,
   AccordionDetails,
@@ -15,18 +17,20 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import MenuIcon from "@mui/icons-material/Menu";
+
+import { useSnackbar } from "notistack";
+import moment from "moment-timezone";
+
 import Header from "../Header";
-import { useEffect, useState } from "react";
 import axios from "../../api/axios";
 import { tokens } from "../../theme";
-import { useSnackbar } from "notistack";
 import userAuth from "../../utils/userAuth";
 import { extractUniqueProducts, toStringDate } from "../../utils/helpers";
-import moment from "moment-timezone";
 import FormCard from "../FormCard";
 
-import MenuIcon from "@mui/icons-material/Menu";
+import { ReactComponent as Signature } from "../../images/signature.svg";
+import { InfoRounded } from "@mui/icons-material";
 
 const RunDashboardPage = (props) => {
   const params = useParams();
@@ -43,10 +47,12 @@ const RunDashboardPage = (props) => {
 
   const [forms, setForms] = useState([]);
   const [products, setProducts] = useState([]);
+  const [descriptions, setDescriptions] = useState({});
 
   const [days, setDays] = useState([]);
 
   const [open, setOpen] = useState(false);
+  const [openInfo, setOpenInfo] = useState(false);
 
   const [currentRun, setCurrentRun] = useState();
   const [currentForms, setCurrentForms] = useState([]);
@@ -73,6 +79,7 @@ const RunDashboardPage = (props) => {
       );
       setForms(_forms);
       setCurrentRun(_forms[0]?.product);
+      setDescriptions(res.data.desc[0]);
       setCurrentForms(
         _forms.filter(
           (form) =>
@@ -101,6 +108,17 @@ const RunDashboardPage = (props) => {
     document.title = props.title || "";
   }, [props.title]);
 
+  const getSignatureState = (forms) => {
+    if (
+      forms.filter((form) => form.signoffs.length > 0).length === forms.length
+    ) {
+      return colors.ciboInnerGreen[400];
+    } else if (forms.filter((form) => form.signoffs.length > 0).length === 0) {
+      return colors.grey[400];
+    }
+    return colors.orangeAccent[500];
+  };
+
   return (
     <Box m="0 20px">
       <Dialog
@@ -125,7 +143,18 @@ const RunDashboardPage = (props) => {
             <Button
               color="secondary"
               sx={{ fontWeight: 600, fontSize: 18 }}
-              onClick={() => {}}
+              onClick={() => {
+                navigate(
+                  "/runsummary/" +
+                    selectedProduct +
+                    "?date=" +
+                    selectedDay +
+                    "&type=" +
+                    type +
+                    "&station=" +
+                    id,
+                );
+              }}
             >
               Quality Run Summary
             </Button>
@@ -163,7 +192,124 @@ const RunDashboardPage = (props) => {
           </Stack>
         </DialogContent>
       </Dialog>
-      <Header title={id} subtitle="Run Quality Dashboard" />
+      <Dialog
+        open={openInfo}
+        onClose={() => {
+          setOpenInfo(false);
+        }}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle
+          id="alert-dialog-title"
+          fontSize={25}
+          fontWeight={600}
+          textAlign="center"
+        >
+          Sign Off Status
+        </DialogTitle>
+        <DialogContent>
+          <Stack
+            direction="column"
+            width="100%"
+            spacing={-1}
+            sx={{
+              background: colors.primary[400] + "50",
+              borderRadius: "10px",
+            }}
+          >
+            <Stack direction="row" spacing={2} p={2}>
+              <Signature
+                width={25}
+                style={{ marginRight: 10 }}
+                stroke={colors.grey[400]}
+                fill={colors.grey[400]}
+                strokeWidth="10px"
+              />
+              <Typography
+                color={colors.grey[400]}
+                fontSize={15}
+                fontWeight={600}
+              >
+                Not Signed Off
+              </Typography>
+            </Stack>
+
+            <Stack direction="row" spacing={2} p={2}>
+              <Signature
+                width={25}
+                style={{ marginRight: 10 }}
+                stroke={colors.orangeAccent[500]}
+                fill={colors.orangeAccent[500]}
+                strokeWidth="10px"
+              />
+              <Typography
+                color={colors.orangeAccent[500]}
+                fontSize={15}
+                fontWeight={600}
+              >
+                Partial Sign Off
+              </Typography>
+            </Stack>
+            <Stack direction="row" spacing={2} p={2}>
+              <Signature
+                width={25}
+                style={{ marginRight: 10 }}
+                stroke={colors.ciboInnerGreen[400]}
+                fill={colors.ciboInnerGreen[400]}
+                strokeWidth="10px"
+              />
+              <Typography
+                color={colors.ciboInnerGreen[400]}
+                fontSize={15}
+                fontWeight={600}
+              >
+                Production Sign Off
+              </Typography>
+            </Stack>
+          </Stack>
+          <Stack>
+            <Button
+              color="secondary"
+              sx={{
+                mt: 1,
+                fontWeight: 600,
+                fontSize: 16,
+                width: "50%",
+                alignSelf: "center",
+              }}
+              autoFocus
+              onClick={() => {
+                setOpenInfo(false);
+              }}
+            >
+              Close
+            </Button>
+          </Stack>
+        </DialogContent>
+      </Dialog>
+
+      <Header title={id} subtitle="Run Quality Dashboard" mb="0px" />
+      <Stack direction="row" width="100%" justifyContent="right">
+        <IconButton
+          onClick={() => {
+            setOpenInfo(true);
+          }}
+        >
+          <InfoRounded
+            fontSize="large"
+            sx={{ color: colors.ciboInnerGreen[400] }}
+          />
+        </IconButton>
+        <IconButton>
+          <Signature
+            width={30}
+            fill={colors.ciboInnerGreen[400]}
+            stroke={colors.ciboInnerGreen[400]}
+            strokeWidth={20}
+          />
+        </IconButton>
+      </Stack>
       <Accordion expanded={true}>
         <AccordionSummary
           sx={{
@@ -179,9 +325,22 @@ const RunDashboardPage = (props) => {
           {currentForms.length > 0 ? (
             <List>
               <Stack>
-                <Typography fontSize={21} fontWeight={600}>
-                  {currentRun + " • " + "ROASTED HAZELNUTS 26 oz"}
-                </Typography>
+                <Stack
+                  direction="row"
+                  width="100%"
+                  justifyContent="space-between"
+                >
+                  <Typography fontSize={21} fontWeight={600}>
+                    {currentRun + " • " + descriptions[currentRun]}
+                  </Typography>
+                  <Signature
+                    width={25}
+                    style={{ marginRight: 10 }}
+                    stroke={getSignatureState(currentForms)}
+                    fill={getSignatureState(currentForms)}
+                    strokeWidth="10px"
+                  />
+                </Stack>
                 <Typography>
                   {toStringDate(
                     currentForms[currentForms.length - 1]?.createdAt,
@@ -272,9 +431,23 @@ const RunDashboardPage = (props) => {
                   if (_forms.length > 0) {
                     return (
                       <Stack key={day + product}>
-                        <Typography fontSize={21} fontWeight={600}>
-                          {product + " • " + "ROASTED HAZELNUTS 26 oz"}
-                        </Typography>
+                        <Stack
+                          direction="row"
+                          width="100%"
+                          justifyContent="space-between"
+                        >
+                          <Typography fontSize={21} fontWeight={600}>
+                            {product + " • " + descriptions[product]}
+                          </Typography>
+                          <Signature
+                            width={25}
+                            style={{ marginRight: 10 }}
+                            stroke={getSignatureState(_forms)}
+                            fill={getSignatureState(_forms)}
+                            strokeWidth="10px"
+                          />
+                        </Stack>
+
                         <Typography>
                           {toStringDate(_forms[_forms.length - 1]?.createdAt, {
                             month: "short",

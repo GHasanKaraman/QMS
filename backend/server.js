@@ -12,6 +12,7 @@ const user = require("./routes/user.js");
 const dashboard = require("./routes/dashboard.js");
 const rundashboard = require("./routes/runDashboard.js");
 const runsignoff = require("./routes/runSignoff.js");
+const runsummary = require("./routes/runSummary.js");
 const signoff = require("./routes/signoff.js");
 const qualityControlForm = require("./routes/qualityControlForm.js");
 const pgqualitycontrol = require("./routes/pgQualityControlForm.js");
@@ -67,6 +68,7 @@ db.once("open", function () {
   app.use("/", dashboard);
   app.use("/", rundashboard);
   app.use("/", runsignoff);
+  app.use("/", runsummary);
   app.use("/", signoff);
 
   app.use("/", preOperationalForm);

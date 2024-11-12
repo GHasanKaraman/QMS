@@ -34,17 +34,27 @@ body,
   background: #555;
 }
 
+div[data-print="true"] {
+  display: none;
+}
+
 @media print {
+  @page {
+    margin: 0;
+    margin-top: 20px !important;
+    margin-bottom: 20px !important;
+    size: auto;
+  }
+  div {
+    page-break-inside: avoid;
+    page-break-after: avoid;
+  }
   body {
-    visibility: hidden;
+    margin: 0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
-  #button {
-    display: none;
-  }
-  #printarea {
-    visibility: visible;
-    position: absolute;
-    left: 0;
-    top: 0;
+  div[data-print="true"] {
+    display: block !important;
   }
 }
