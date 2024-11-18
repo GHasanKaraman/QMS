@@ -230,7 +230,7 @@ const DashboardPage = (props) => {
                       fontSize: "18px",
                       fontWeight: "bold",
                       color:
-                        location?.running == true
+                        location?.running === true
                           ? colors.contrast[100]
                           : colors.grey[500],
                     }}
