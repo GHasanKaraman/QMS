@@ -30,6 +30,8 @@ import ViewRoastingQualityControlPage from "../components/roastingQualityControl
 import RunDashboardPage from "../components/runDashboardPage/runDashboardPage.js";
 import RunSignoffPage from "../components/runSignoffPage/runSignoffPage.js";
 import RunSummaryPage from "../components/runSummaryPage/runSummaryPage.js";
+import SignoffDashboard from "../components/signoffPanelPage/signoffDashboard.js";
+import SignoffSteps from "../components/signoffPanelPage/signoffSteps.js";
 
 const BarLayout = () => {
   const [theme, colorMode] = useMode();
@@ -41,9 +43,7 @@ const BarLayout = () => {
           <Sidebar />
           <main className="content">
             <Topbar />
-            <div id="printarea">
-              <Outlet />
-            </div>
+            <Outlet />
           </main>
         </div>
       </ThemeProvider>
@@ -103,7 +103,17 @@ const Router = () => {
         <Route
           exact
           path="/signoff"
-          element={<SignOffPanelPage title="CiboQA | Sign-Off" />}
+          element={<SignOffPanelPage title="CiboQA | Sign Off Dashboard" />}
+        />
+        <Route
+          exact
+          path="/signoff/:id"
+          element={<SignoffDashboard title="CiboQA | Sign Off Dashboard" />}
+        />
+        <Route
+          exact
+          path="/signoffsteps"
+          element={<SignoffSteps title="CiboQA | Run Signoff" />}
         />
 
         <Route

@@ -12,6 +12,7 @@ import {
   DialogContentText,
   DialogTitle,
   Divider,
+  IconButton,
   Skeleton,
   Stack,
   TextField,
@@ -29,13 +30,15 @@ import axios from "../../api/axios";
 import { useSnackbar } from "notistack";
 import userAuth from "../../utils/userAuth";
 import RunSummaryAccordions from "../RunSummaryAccordions";
-import { LibraryAddCheck } from "@mui/icons-material";
+import { ArrowLeft, LibraryAddCheck } from "@mui/icons-material";
 import Header from "../Header";
 
 const RunSignoffPage = (props) => {
   const params = useParams();
   const loc = useLocation();
-  const { id: product } = params;
+  const { id } = params;
+
+  const product = props.mode === "steps" ? props.product : id;
 
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -43,9 +46,18 @@ const RunSignoffPage = (props) => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
-  const date = new URLSearchParams(loc.search).get("date");
-  const station = new URLSearchParams(loc.search).get("station");
-  const type = new URLSearchParams(loc.search).get("type");
+  const date =
+    props.mode === "steps"
+      ? props.date
+      : new URLSearchParams(loc.search).get("date");
+  const station =
+    props.mode === "steps"
+      ? props.station
+      : new URLSearchParams(loc.search).get("station");
+  const type =
+    props.mode === "steps"
+      ? props.type
+      : new URLSearchParams(loc.search).get("type");
 
   const [forms, setForms] = useState([]);
   const [signedoffForms, setSignedoffForms] = useState([]);
@@ -173,7 +185,9 @@ const RunSignoffPage = (props) => {
     </Box>
   ) : !loading ? (
     <Box m="0 20px">
-      <Header title="Run Sign Off" mb={-5} />
+      {props.mode !== "steps" ? (
+        <Header title="Run Sign Off" mb={-5} />
+      ) : undefined}
       <Dialog
         fullWidth={true}
         open={open}
@@ -267,7 +281,55 @@ const RunSignoffPage = (props) => {
           />
         </DialogContent>
       </Dialog>
-      {signedoffForms.length !== forms.length ? (
+      {props.mode === "steps" ? (
+        <Stack
+          direction="row"
+          alignItems="center"
+          width="100%"
+          justifyContent="space-between"
+        >
+          <IconButton onClick={props.onBack}>
+            <ArrowLeft
+              sx={{ fontSize: 40, color: colors.ciboInnerGreen[500] }}
+            />
+          </IconButton>
+          <Typography pl={10} fontWeight={600} fontSize={17} textAlign="center">
+            {props.text}
+          </Typography>
+          <Stack direction="row" justifyContent="right">
+            <Button
+              onClick={() => {
+                navigate(
+                  "/runsummary/" +
+                    props.product +
+                    "?date=" +
+                    props.date +
+                    "&type=" +
+                    type +
+                    "&station=" +
+                    props.station,
+                );
+              }}
+              size="large"
+              color="secondary"
+              sx={{ mb: 1, fontWeight: 500, fontSize: 17 }}
+            >
+              Summary
+            </Button>
+
+            <Button
+              onClick={() => {
+                props.onChange(formIDList);
+              }}
+              size="large"
+              color="secondary"
+              sx={{ mb: 1, fontWeight: 600, fontSize: 17 }}
+            >
+              {props.isLast ? "Sign Off" : "Continue"}
+            </Button>
+          </Stack>
+        </Stack>
+      ) : signedoffForms.length !== forms.length ? (
         <Stack direction="row" width="100%" justifyContent="right">
           <Button
             onClick={() => {
@@ -314,7 +376,7 @@ const RunSignoffPage = (props) => {
                     " " +
                     type +
                     " • " +
-                    toStringDate(forms[forms.length - 1].createdAt, {
+                    toStringDate(forms[forms.length - 1]?.createdAt, {
                       month: "short",
                       year: "numeric",
                       day: "numeric",
@@ -322,7 +384,7 @@ const RunSignoffPage = (props) => {
                       minute: "numeric",
                     }) +
                     " - " +
-                    toStringDate(forms[0].createdAt, {
+                    toStringDate(forms[0]?.createdAt, {
                       month: "short",
                       year: "numeric",
                       day: "numeric",
@@ -349,7 +411,7 @@ const RunSignoffPage = (props) => {
       </CustomAccordion>
       {signedoffForms.length !== forms.length ? (
         <RunSummaryAccordions
-          isForm={false}
+          isForm={true}
           values={values}
           onChange={handleChange}
           forms={forms.filter((form) => form?.signoffs?.length === 0)}

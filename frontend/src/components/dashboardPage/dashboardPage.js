@@ -27,6 +27,8 @@ import { toStringDate } from "../../utils/helpers";
 import ToggleButtonCheck from "../ToggleButtonCheck";
 import FormCard from "../FormCard";
 
+import { ReactComponent as Signature } from "../../images/signature.svg";
+
 const DashboardPage = (props) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -42,6 +44,27 @@ const DashboardPage = (props) => {
   const [toggleOption, setToggleOption] = useState("All");
   const [open, setOpen] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState({});
+
+  const [options, _] = useState([
+    {
+      label: "All",
+    },
+    {
+      label: "Shifts",
+    },
+    {
+      label: "Runs",
+    },
+    {
+      label: "MAC",
+    },
+    {
+      label: "ROAST",
+    },
+    {
+      label: "MIX",
+    },
+  ]);
 
   useEffect(() => {
     document.title = props.title || "";
@@ -77,6 +100,29 @@ const DashboardPage = (props) => {
       return 1;
     }
     return 2;
+  };
+
+  const handleChange = (value) => {
+    setToggleOption(value);
+    if (value === "Shifts") {
+      setDataSource(
+        locations.filter((loc) => loc.shift && loc.shift === getShift()),
+      );
+    } else if (value === "Runs") {
+      setDataSource(
+        locations.filter((loc) => loc.running && loc.running === true),
+      );
+    } else if (value === "MAC") {
+      setDataSource(locations.filter((loc) => loc.name.slice(0, 3) === "MAC"));
+    } else if (value === "ROAST") {
+      setDataSource(
+        locations.filter((loc) => loc.name.slice(0, 5) === "ROAST"),
+      );
+    } else if (value === "MIX") {
+      setDataSource(locations.filter((loc) => loc.name.slice(0, 3) === "MIX"));
+    } else {
+      setDataSource([...locations]);
+    }
   };
 
   return (
@@ -129,61 +175,36 @@ const DashboardPage = (props) => {
         </DialogContent>
       </Dialog>
       <Header title="My Quality Dashboard" subtitle="Locations" />
-      <ToggleButtonCheck
-        style={{
-          width: "100%",
-          textAlign: "center",
-          justifyContent: "center",
-          alignContent: "center",
-        }}
-        alignment={toggleOption}
-        onChange={(value) => {
-          setToggleOption(value);
-          if (value === "Shifts") {
-            setDataSource(
-              locations.filter((loc) => loc.shift && loc.shift === getShift()),
-            );
-          } else if (value === "Runs") {
-            setDataSource(
-              locations.filter((loc) => loc.running && loc.running === true),
-            );
-          } else if (value === "MAC") {
-            setDataSource(
-              locations.filter((loc) => loc.name.slice(0, 3) === "MAC"),
-            );
-          } else if (value === "ROAST") {
-            setDataSource(
-              locations.filter((loc) => loc.name.slice(0, 5) === "ROAST"),
-            );
-          } else if (value === "MIX") {
-            setDataSource(
-              locations.filter((loc) => loc.name.slice(0, 3) === "MIX"),
-            );
-          } else {
-            setDataSource([...locations]);
-          }
-        }}
-        options={[
-          {
-            label: "All",
-          },
-          {
-            label: "Shifts",
-          },
-          {
-            label: "Runs",
-          },
-          {
-            label: "MAC",
-          },
-          {
-            label: "ROAST",
-          },
-          {
-            label: "MIX",
-          },
-        ]}
-      />
+      <Stack
+        width="100%"
+        justifyContent="space-between"
+        alignItems="center"
+        direction="row"
+      >
+        <ToggleButtonCheck
+          style={{
+            width: "100%",
+            textAlign: "center",
+            justifyContent: "center",
+            alignContent: "center",
+          }}
+          alignment={toggleOption}
+          onChange={handleChange}
+          options={options}
+        />
+        <IconButton
+          onClick={() => {
+            navigate("/signoff");
+          }}
+        >
+          <Signature
+            width={30}
+            fill={colors.ciboInnerGreen[500]}
+            stroke={colors.ciboInnerGreen[500]}
+            strokeWidth={8}
+          />
+        </IconButton>
+      </Stack>
       <List>
         {dataSource
           .filter((loc) => loc.type)
