@@ -73,51 +73,6 @@ const ViewMixingQualityControlPage = (props) => {
     setOpen(false);
   };
 
-  const handleSignOff = async () => {
-    if (!clicked) {
-      const res = await axios.post("/signoff", { id });
-      if (userAuth.control(res)) {
-        switch (res.response?.status) {
-          case 201:
-            enqueueSnackbar("You have successfully signed off the form!", {
-              variant: "success",
-            });
-            break;
-          case 400:
-            enqueueSnackbar("Something went wrong while signin off the form!", {
-              variant: "error",
-            });
-            break;
-          case 406:
-            enqueueSnackbar("You don't have an access for this action!", {
-              variant: "error",
-            });
-            localStorage.removeItem("token");
-            localStorage.removeItem("username");
-            break;
-          case 503:
-            enqueueSnackbar("Something went wrong with the server!", {
-              variant: "error",
-            });
-            break;
-          default:
-            break;
-        }
-        await loadLotInspectionPage();
-        setOpenDialog(false);
-      } else {
-        navigate("/login");
-        localStorage.removeItem("token");
-        localStorage.removeItem("username");
-        enqueueSnackbar("Please sign in again!", {
-          variant: "error",
-        });
-      }
-    }
-
-    setClicked(true);
-  };
-
   useEffect(() => {
     loadLotInspectionPage();
   }, []);
@@ -141,43 +96,6 @@ const ViewMixingQualityControlPage = (props) => {
         },
       }}
     >
-      <Dialog
-        fullScreen={fullScreen}
-        open={openDialog}
-        onClose={() => {
-          setOpenDialog(false);
-        }}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {"Confirm the action"}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Do you really want to sign-off this form?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            variant="contained"
-            color="error"
-            onClick={() => {
-              setOpenDialog(false);
-            }}
-          >
-            Disagree
-          </Button>
-          <Button
-            variant="contained"
-            color="info"
-            onClick={handleSignOff}
-            autoFocus
-          >
-            Agree
-          </Button>
-        </DialogActions>
-      </Dialog>
       <Backdrop
         sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={open}
