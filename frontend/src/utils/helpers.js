@@ -28,6 +28,12 @@ export const extractInformations = (form) => {
       link: "/mixingquality/" + form._id,
       title: "Mixing Quality Check",
     };
+  } else if (form.colorOfFinishedProduct) {
+    info = {
+      type: "roastingquality",
+      link: "/roastingquality/" + form._id,
+      title: "Roasting Quality Check",
+    };
   } else if (form.itemCode1) {
     info = {
       type: "lotinspection",

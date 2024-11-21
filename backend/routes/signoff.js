@@ -10,6 +10,7 @@ const labelInspectionFormModel = require("../models/labelInspectionFormModel");
 const pgQualityControlFormModel = require("../models/pgQualityControlFormModel");
 const xRayFormModel = require("../models/xRayFormModel.js");
 const mixingQualityFormModel = require("../models/mixingQualityFormModel");
+const roastingQualityFormModel = require("../models/roastingQualityFormModel");
 const preOperationalFormModel = require("../models/preOperationalFormModel.js");
 const signOffModel = require("../models/signOffModel.js");
 const lotInspectionFormModel = require("../models/lotInspectionFormModel");
@@ -112,12 +113,15 @@ router.post("/signoff/dashboard", async (req, res) => {
     const preOperationalForms =
       await preOperationalFormModel.aggregate(pipeline);
     const mixingQualityForms = await mixingQualityFormModel.aggregate(pipeline);
+    const roastingQualityForms =
+      await roastingQualityFormModel.aggregate(pipeline);
     const lotInspectionForms = await lotInspectionFormModel.aggregate(pipeline);
 
     const forms = [
       ...ratioForms,
       ...xRayForms,
       ...mixingQualityForms,
+      ...roastingQualityForms,
       ...preOperationalForms,
       ...qualityControlForms,
       ...metalDetectorForms,
@@ -179,7 +183,8 @@ router.post("/signoff/dashboard", async (req, res) => {
       pgQualityControlForms &&
       xRayForms &&
       preOperationalForms &&
-      mixingQualityForms
+      mixingQualityForms &&
+      roastingQualityForms
     ) {
       res.status(200).json({
         stations: data,

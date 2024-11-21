@@ -9,6 +9,7 @@ import MixingQualityAccordion from "./accordionViews/mixingQualityAccordion";
 import PGQualityControlAccordion from "./accordionViews/pgQualityControlAccordion";
 import QualityControlAccordion from "./accordionViews/qualityControlAccordion";
 import XRAYInspectionAccordion from "./accordionViews/xRayInspectionAccordion";
+import RoastingQualityAccordion from "./accordionViews/roastingQualityAccordion";
 
 const RunSummaryAccordions = ({
   forms,
@@ -110,7 +111,17 @@ const RunSummaryAccordions = ({
                   value={values[form._id]}
                 />
               );
-
+            case "roastingquality":
+              return (
+                <RoastingQualityAccordion
+                  isForm={isForm}
+                  onChange={onChange}
+                  key={form._id}
+                  id={form._id}
+                  expanded={expanded}
+                  value={values[form._id]}
+                />
+              );
             case "xray":
               return (
                 <XRAYInspectionAccordion

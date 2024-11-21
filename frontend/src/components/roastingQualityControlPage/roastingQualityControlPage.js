@@ -32,11 +32,15 @@ import axios from "../../api/axios";
 import userAuth from "../../utils/userAuth";
 import { Accordion, AccordionDetails, AccordionSummary } from "../Accordion";
 import ToggleButtonCheck from "../ToggleButtonCheck";
+import UploadImage from "../UploadImage";
 
 const RoastingQualityControlPage = (props) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const isNonMobile = useMediaQuery("(min-width:600px)");
+
+  const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png"];
+
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -47,6 +51,7 @@ const RoastingQualityControlPage = (props) => {
   const [stationState, setStationState] = useState(null);
 
   const [open, setOpen] = useState(false);
+  const [deviationState, setDeviationState] = useState(null);
 
   useEffect(() => {
     document.title = props.title || "";
@@ -128,14 +133,20 @@ const RoastingQualityControlPage = (props) => {
 
   const handleSubmit = async (values, { resetForm }) => {
     setOpen(true);
-
     values.product = values.product.partNum;
     values.started = Number(productDetails?.started);
     values.startDateTime = moment(productDetails?.startDateTime);
 
-    console.log(values);
-    /*
-    const res = await axios.post("/mixingquality/add", values);
+    const formData = new FormData();
+    for (const name in values) {
+      if (values[name]?.constructor?.name === "Blob") {
+        formData.append(name, values[name], name + ".jpeg");
+      } else {
+        formData.append(name, values[name]);
+      }
+    }
+
+    const res = await axios.post("/roastingquality/add", formData);
     if (userAuth.control(res)) {
       if (res?.data) {
         enqueueSnackbar("You have successfully created the form!", {
@@ -165,7 +176,7 @@ const RoastingQualityControlPage = (props) => {
       enqueueSnackbar("Please sign in again!", {
         variant: "error",
       });
-    }*/
+    }
     setOpen(false);
   };
 
@@ -181,10 +192,10 @@ const RoastingQualityControlPage = (props) => {
           .required("Please enter the pre lot code of the liquid!"),
         preLotCodePowder: yup
           .string()
-          .requireds("Please enter the pre lot code of the powder!"),
+          .required("Please enter the pre lot code of the powder!"),
         areAllergensCorrect: yup.string().required(),
         sensoryEvaluation: yup.string().required(),
-        beltSpeed: yup.string().required(),
+        beltSpeed: yup.string().required("Please enter the belt speed!"),
         temperature1: yup
           .string()
           .required("Please enter the temperature of the oven 1!"),
@@ -209,7 +220,7 @@ const RoastingQualityControlPage = (props) => {
         productThickness: yup.string().required(),
         colorOfFinishedProduct: yup.string().required(),
       };
-    } else if (stationState === "ROAST-5") {
+    } else if (stationState === "ROAST-M5") {
       yupObjects = {
         receivingCode: yup
           .string()
@@ -250,7 +261,101 @@ const RoastingQualityControlPage = (props) => {
           .required("Please enter the moisture percentage of roasted product!"),
       };
     } else {
-      yupObjects = {};
+      yupObjects = {
+        receivingCode: yup
+          .string()
+          .required("Please enter the receiving code!"),
+        rawProductTemperature: yup
+          .string()
+          .required("Please enter the temperature of raw product!"),
+        cleaning: yup.string().required(),
+        areAllergensCorrect: yup.string().required(),
+        sensoryEvaluation: yup.string().required(),
+        beltSpeed: yup.string().required("Please enter the belt speed!"),
+        productThickness: yup.string().required(),
+        drumSpeed: yup.string().required("Please enter the drum speed!"),
+        saltSpiralSpeed: yup
+          .string()
+          .required("Please enter the salt spiral speed!"),
+        saltParameter: yup
+          .string()
+          .required("Please enter the salt parameter!"),
+        oilParameter: yup.string().required("Please enter the oil parameter!"),
+        salinityOfWater: yup
+          .string()
+          .required(
+            "Please enter the percentage the of salinity of water (tank)!",
+          ),
+        colorOfFinishedProduct: yup.string().required(),
+        salinityOfProduct: yup
+          .string()
+          .required(
+            "Please enter the percentage of the salinity of finished product!",
+          ),
+        moistureOfRaw: yup
+          .string()
+          .required("Please enter the moisture percentage of raw product!"),
+        moistureOfRoasted: yup
+          .string()
+          .required("Please enter the moisture percentage of roasted product!"),
+        temperature1: yup
+          .string()
+          .required("Please enter the temperature of the oven 1!"),
+        temperature2: yup
+          .string()
+          .required("Please enter the temperature of the oven 2!"),
+        temperature3: yup
+          .string()
+          .required("Please enter the temperature of the oven 3!"),
+        temperature4: yup
+          .string()
+          .required("Please enter the temperature of the oven 4!"),
+        temperature5: yup
+          .string()
+          .required("Please enter the temperature of the oven 5!"),
+        temperature6: yup
+          .string()
+          .required("Please enter the temperature of the oven 6!"),
+        finishedProductTemperature: yup
+          .string()
+          .required("Please enter the temperature of the finished product!"),
+        heatingFan1: yup
+          .string()
+          .required("Please enter the parameter of heating fan 1!"),
+        heatingFan2: yup
+          .string()
+          .required("Please enter the parameter of heating fan 2!"),
+        heatingFan3: yup
+          .string()
+          .required("Please enter the parameter of heating fan 3!"),
+        heatingFan4: yup
+          .string()
+          .required("Please enter the parameter of heating fan 4!"),
+        heatingFan5: yup
+          .string()
+          .required("Please enter the parameter of heating fan 5!"),
+        heatingFan6: yup
+          .string()
+          .required("Please enter the parameter of heating fan 6!"),
+        coolingFan1: yup
+          .string()
+          .required("Please enter the parameter of cooling fan 1!"),
+        coolingFan2: yup
+          .string()
+          .required("Please enter the parameter of cooling fan 2!"),
+        coolingFan3: yup
+          .string()
+          .required("Please enter the parameter of cooling fan 3!"),
+        coolingFan4: yup
+          .string()
+          .required("Please enter the parameter of cooling fan 4!"),
+        coolingFan5: yup
+          .string()
+          .required("Please enter the parameter of cooling fan 5!"),
+        coolingFan6: yup
+          .string()
+          .required("Please enter the parameter of cooling fan 6!"),
+      };
     }
 
     return yupObjects;
@@ -261,6 +366,12 @@ const RoastingQualityControlPage = (props) => {
       station: null,
       product: null,
       lotCode: "",
+
+      rawMaterialPicture: null,
+      finishedProductPicture: null,
+
+      anyDeviations: null,
+      deviationID: "",
 
       //R1
       preLotCodeMixing: "",
@@ -310,6 +421,36 @@ const RoastingQualityControlPage = (props) => {
     },
     onSubmit: handleSubmit,
     validationSchema: yup.object().shape({
+      ...formikRequired(),
+      finishedProductPicture: yup
+        .mixed()
+        .nullable()
+        .required("Please upload the finished product!")
+        .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
+          return !value || (value && value.size < 1024 * 1024 * 10);
+        })
+        .test(
+          "FILE_FORMAT",
+          "You can only upload JPG/JPEG/PNG files!",
+          (value) => {
+            return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
+          },
+        ),
+      rawMaterialPicture: yup
+        .mixed()
+        .nullable()
+        .required("Please upload the raw product!")
+        .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
+          return !value || (value && value.size < 1024 * 1024 * 10);
+        })
+        .test(
+          "FILE_FORMAT",
+          "You can only upload JPG/JPEG/PNG files!",
+          (value) => {
+            return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
+          },
+        ),
+
       station: yup.string().required("Please select the station!"),
       product: yup
         .mixed()
@@ -329,6 +470,11 @@ const RoastingQualityControlPage = (props) => {
       lotCode: yup
         .string()
         .required("Please enter the lot code of the finished product!"),
+      anyDeviations: yup.string().required(),
+      deviationID:
+        deviationState === "Yes"
+          ? yup.string().required("You must enter deviation ID!")
+          : undefined,
     }),
   });
 
@@ -469,7 +615,7 @@ const RoastingQualityControlPage = (props) => {
                 <Typography fontWeight={600} fontSize={18}>
                   QUALITY CHECKS
                 </Typography>
-                <Typography fontWeight={600}>8 Items</Typography>
+                <Typography fontWeight={600}>9 Items</Typography>
               </Stack>
             </AccordionSummary>
             <AccordionDetails>
@@ -973,16 +1119,6 @@ const RoastingQualityControlPage = (props) => {
               </Box>
             </AccordionDetails>
           </Accordion>
-          <Box display="flex" justifyContent="center" mt="20px">
-            <Button
-              type="submit"
-              color="secondary"
-              variant="contained"
-              sx={{ width: "100%" }}
-            >
-              Save
-            </Button>
-          </Box>
         </div>
         <div
           key="R234_Questions"
@@ -1013,7 +1149,7 @@ const RoastingQualityControlPage = (props) => {
                 <Typography fontWeight={600} fontSize={18}>
                   QUALITY CHECKS
                 </Typography>
-                <Typography fontWeight={600}>8 Items</Typography>
+                <Typography fontWeight={600}>17 Items</Typography>
               </Stack>
             </AccordionSummary>
             <AccordionDetails>
@@ -2052,16 +2188,6 @@ const RoastingQualityControlPage = (props) => {
               </Box>
             </AccordionDetails>
           </Accordion>
-          <Box display="flex" justifyContent="center" mt="20px">
-            <Button
-              type="submit"
-              color="secondary"
-              variant="contained"
-              sx={{ width: "100%" }}
-            >
-              Save
-            </Button>
-          </Box>
         </div>
 
         <div
@@ -2091,7 +2217,7 @@ const RoastingQualityControlPage = (props) => {
                 <Typography fontWeight={600} fontSize={18}>
                   QUALITY CHECKS
                 </Typography>
-                <Typography fontWeight={600}>8 Items</Typography>
+                <Typography fontWeight={600}>16 Items</Typography>
               </Stack>
             </AccordionSummary>
             <AccordionDetails>
@@ -2586,17 +2712,199 @@ const RoastingQualityControlPage = (props) => {
               </Box>
             </AccordionDetails>
           </Accordion>
-          <Box display="flex" justifyContent="center" mt="20px">
-            <Button
-              type="submit"
-              color="secondary"
-              variant="contained"
-              sx={{ width: "100%" }}
-            >
-              Save
-            </Button>
-          </Box>
         </div>
+        <div
+          key="common"
+          style={{
+            display:
+              productDetails == null ||
+              productDetails?.err ||
+              formik.values.product == null
+                ? "none"
+                : "block",
+          }}
+        >
+          <Accordion>
+            <AccordionSummary
+              aria-controls="panel8d-content"
+              id="panel8d-header"
+              expandIcon={<ExpandMoreIcon />}
+            >
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                width="100%"
+              >
+                <Typography fontWeight={600} fontSize={18}>
+                  PICTURES
+                </Typography>
+                <Typography fontWeight={600}>2 Items</Typography>
+              </Stack>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Box
+                display="grid"
+                gap="30px"
+                gridTemplateColumns="repeat(4, minmax(0, 1fr))"
+                sx={{
+                  "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
+                  "& .MuiInputBase-root::after": {
+                    borderBottomColor: colors.ciboInnerGreen[500],
+                  },
+                  "& .MuiInputBase-root::before": {
+                    borderBottomColor: colors.ciboInnerGreen[600],
+                  },
+                  "& .MuiFormLabel-root.Mui-focused": {
+                    color: colors.ciboInnerGreen[300],
+                  },
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  color={colors.grey[100]}
+                  fontWeight="600"
+                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                >
+                  Raw Material Picture
+                </Typography>
+                <UploadImage
+                  sx={{ gridColumn: "span 4", justifySelf: "start" }}
+                  value={formik.values.rawMaterialPicture}
+                  error={
+                    !!formik.touched.rawMaterialPicture &&
+                    !!formik.errors.rawMaterialPicture
+                  }
+                  helperText={
+                    formik.touched.rawMaterialPicture &&
+                    formik.errors.rawMaterialPicture
+                  }
+                  onChange={(blob) => {
+                    formik.setFieldValue("rawMaterialPicture", blob);
+                  }}
+                />
+
+                <Typography
+                  variant="h6"
+                  color={colors.grey[100]}
+                  fontWeight="600"
+                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                >
+                  Finished Product Picture
+                </Typography>
+                <UploadImage
+                  sx={{ gridColumn: "span 4", justifySelf: "start" }}
+                  value={formik.values.finishedProductPicture}
+                  error={
+                    !!formik.touched.finishedProductPicture &&
+                    !!formik.errors.finishedProductPicture
+                  }
+                  helperText={
+                    formik.touched.finishedProductPicture &&
+                    formik.errors.finishedProductPicture
+                  }
+                  onChange={(blob) => {
+                    formik.setFieldValue("finishedProductPicture", blob);
+                  }}
+                />
+              </Box>
+            </AccordionDetails>
+          </Accordion>
+          <Accordion>
+            <AccordionSummary
+              aria-controls="panel8d-content"
+              id="panel8d-header"
+              expandIcon={<ExpandMoreIcon />}
+            >
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                width="100%"
+              >
+                <Typography fontWeight={600} fontSize={18}>
+                  ANY DEVIATIONS?
+                </Typography>
+                <Typography fontWeight={600}>1 Items</Typography>
+              </Stack>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Box
+                display="grid"
+                gap="30px"
+                gridTemplateColumns="repeat(4, minmax(0, 1fr))"
+                sx={{
+                  "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
+                  "& .MuiInputBase-root::after": {
+                    borderBottomColor: colors.ciboInnerGreen[500],
+                  },
+                  "& .MuiInputBase-root::before": {
+                    borderBottomColor: colors.ciboInnerGreen[600],
+                  },
+                  "& .MuiFormLabel-root.Mui-focused": {
+                    color: colors.ciboInnerGreen[300],
+                  },
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  color={colors.grey[100]}
+                  fontWeight="600"
+                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                >
+                  Any Deviations?
+                </Typography>
+                <ToggleButtonCheck
+                  style={{ gridColumn: "span 4" }}
+                  alignment={formik.values.anyDeviations}
+                  onChange={(value) => {
+                    formik.setFieldValue("anyDeviations", value);
+                    setDeviationState(value);
+                  }}
+                  error={
+                    !!formik.touched.anyDeviations &&
+                    !!formik.errors.anyDeviations
+                  }
+                  options={[
+                    {
+                      label: "Yes",
+                    },
+                    {
+                      label: "No",
+                    },
+                  ]}
+                />
+                {deviationState === "Yes" ? (
+                  <TextField
+                    variant="filled"
+                    type="text"
+                    label="Deviation ID"
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                    value={formik.values.deviationID}
+                    name="deviationID"
+                    error={
+                      !!formik.touched.deviationID &&
+                      !!formik.errors.deviationID
+                    }
+                    helperText={
+                      formik.touched.deviationID && formik.errors.deviationID
+                    }
+                    sx={{ gridColumn: "span 4" }}
+                  />
+                ) : undefined}
+              </Box>
+            </AccordionDetails>
+          </Accordion>
+        </div>
+        <Box display="flex" justifyContent="center" mt="20px">
+          <Button
+            type="submit"
+            color="secondary"
+            variant="contained"
+            sx={{ width: "100%" }}
+          >
+            Save
+          </Button>
+        </Box>
       </form>
     </Box>
   );

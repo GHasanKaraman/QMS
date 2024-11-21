@@ -8,12 +8,6 @@ import {
   Typography,
   Backdrop,
   CircularProgress,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContentText,
-  DialogContent,
-  DialogActions,
   useMediaQuery,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
@@ -372,7 +366,7 @@ const ViewMixingQualityControlPage = (props) => {
                     title="Deviation Form"
                     subtitle={
                       <a
-                        href={`http://10.12.11.192:3000/deviation/${data?.deviationID}`}
+                        href={`http://10.12.11.192:3000/deviations/ciboqa/${data?.deviationID}`}
                       >
                         {data?.deviationID}
                       </a>

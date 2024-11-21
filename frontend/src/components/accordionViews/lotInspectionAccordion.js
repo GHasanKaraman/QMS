@@ -209,7 +209,7 @@ const LOTInspectionAccordion = ({ id, expanded, isForm, onChange, value }) => {
                     title="Deviation Form"
                     subtitle={
                       <a
-                        href={`http://10.12.11.192:3000/deviation/${data?.deviationID}`}
+                        href={`http://10.12.11.192:3000/deviations/ciboqa/${data?.deviationID}`}
                       >
                         {data?.deviationID}
                       </a>

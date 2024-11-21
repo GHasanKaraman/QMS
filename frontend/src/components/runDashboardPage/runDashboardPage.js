@@ -301,7 +301,11 @@ const RunDashboardPage = (props) => {
             sx={{ color: colors.ciboInnerGreen[400] }}
           />
         </IconButton>
-        <IconButton>
+        <IconButton
+          onClick={() => {
+            navigate("/signoff/filters?page=1&station=" + id);
+          }}
+        >
           <Signature
             width={30}
             fill={colors.ciboInnerGreen[400]}
