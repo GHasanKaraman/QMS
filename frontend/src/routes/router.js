@@ -32,6 +32,9 @@ import RunSignoffPage from "../components/runSignoffPage/runSignoffPage.js";
 import RunSummaryPage from "../components/runSummaryPage/runSummaryPage.js";
 import SignoffDashboard from "../components/signoffPanelPage/signoffDashboard.js";
 import SignoffSteps from "../components/signoffPanelPage/signoffSteps.js";
+import CCPPage from "../components/ccpPage/ccpPage.js";
+import ViewCCPPage from "../components/ccpPage/viewCcpPage.js";
+import ViewRatioFormPage from "../components/ratioFormPage/viewRatioFormPage.js";
 
 const BarLayout = () => {
   const [theme, colorMode] = useMode();
@@ -178,6 +181,17 @@ const Router = () => {
 
         <Route
           exact
+          path="/ccp"
+          element={<CCPPage title="CiboQA | Parameters Inspection Form" />}
+        />
+        <Route
+          exact
+          path="/ccp/:id"
+          element={<ViewCCPPage title="CiboQA | Data Sheet Results" />}
+        />
+
+        <Route
+          exact
           path="/lotinspection"
           element={<LotInspectionPage title="CiboQA | LOT Inspection" />}
         />
@@ -251,11 +265,17 @@ const Router = () => {
 
         <Route
           exact
-          path="/ratioform"
+          path="/ratio"
           element={
             <RatioFormPage title="CiboQA | Finished Product Ratio Form" />
           }
         />
+        <Route
+          exact
+          path="/ratio/:id"
+          element={<ViewRatioFormPage title="CiboQA | Data Sheet Results" />}
+        />
+
         <Route path="*" element={<Navigate to="/" />} />
       </Route>
     </Routes>

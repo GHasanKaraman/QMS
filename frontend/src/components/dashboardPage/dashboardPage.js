@@ -3,16 +3,13 @@ import {
   Box,
   Button,
   Dialog,
-  DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
   Divider,
   IconButton,
   List,
   ListItem,
   Stack,
-  useMediaQuery,
 } from "@mui/material";
 import { useTheme } from "@emotion/react";
 import { useSnackbar } from "notistack";

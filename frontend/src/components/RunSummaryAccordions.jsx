@@ -10,6 +10,8 @@ import PGQualityControlAccordion from "./accordionViews/pgQualityControlAccordio
 import QualityControlAccordion from "./accordionViews/qualityControlAccordion";
 import XRAYInspectionAccordion from "./accordionViews/xRayInspectionAccordion";
 import RoastingQualityAccordion from "./accordionViews/roastingQualityAccordion";
+import CCPAccordion from "./accordionViews/ccpAccordion";
+import RatioAccordion from "./accordionViews/ratioAccordion";
 
 const RunSummaryAccordions = ({
   forms,
@@ -114,6 +116,28 @@ const RunSummaryAccordions = ({
             case "roastingquality":
               return (
                 <RoastingQualityAccordion
+                  isForm={isForm}
+                  onChange={onChange}
+                  key={form._id}
+                  id={form._id}
+                  expanded={expanded}
+                  value={values[form._id]}
+                />
+              );
+            case "ratio":
+              return (
+                <RatioAccordion
+                  isForm={isForm}
+                  onChange={onChange}
+                  key={form._id}
+                  id={form._id}
+                  expanded={expanded}
+                  value={values[form._id]}
+                />
+              );
+            case "ccp":
+              return (
+                <CCPAccordion
                   isForm={isForm}
                   onChange={onChange}
                   key={form._id}

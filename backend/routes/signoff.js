@@ -14,6 +14,7 @@ const roastingQualityFormModel = require("../models/roastingQualityFormModel");
 const preOperationalFormModel = require("../models/preOperationalFormModel.js");
 const signOffModel = require("../models/signOffModel.js");
 const lotInspectionFormModel = require("../models/lotInspectionFormModel");
+const ccpFormModel = require("../models/ccpFormModel.js");
 
 router.post("/signoff", async (req, res) => {
   try {
@@ -116,6 +117,7 @@ router.post("/signoff/dashboard", async (req, res) => {
     const roastingQualityForms =
       await roastingQualityFormModel.aggregate(pipeline);
     const lotInspectionForms = await lotInspectionFormModel.aggregate(pipeline);
+    const ccpForms = await ccpFormModel.aggregate(pipeline);
 
     const forms = [
       ...ratioForms,
@@ -128,6 +130,7 @@ router.post("/signoff/dashboard", async (req, res) => {
       ...labelInspectionForms,
       ...lotInspectionForms,
       ...pgQualityControlForms,
+      ...ccpForms,
     ];
 
     forms.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
@@ -184,7 +187,8 @@ router.post("/signoff/dashboard", async (req, res) => {
       xRayForms &&
       preOperationalForms &&
       mixingQualityForms &&
-      roastingQualityForms
+      roastingQualityForms &&
+      ccpForms
     ) {
       res.status(200).json({
         stations: data,

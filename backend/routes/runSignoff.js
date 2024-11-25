@@ -12,6 +12,7 @@ const mixingQualityFormModel = require("../models/mixingQualityFormModel");
 const roastingQualityFormModel = require("../models/roastingQualityFormModel.js");
 const preOperationalFormModel = require("../models/preOperationalFormModel.js");
 const lotInspectionFormModel = require("../models/lotInspectionFormModel");
+const ccpFormModel = require("../models/ccpFormModel.js");
 
 router.post("/runsignoff", async (req, res) => {
   try {
@@ -39,7 +40,7 @@ router.post("/runsignoff", async (req, res) => {
       },
     ];
 
-    const ratioForms = await ratioFormModel.find({ station });
+    const ratioForms = await ratioFormModel.aggregate(pipeline);
     const qualityControlForms =
       await qualityControlFormModel.aggregate(pipeline);
     const pgQualityControlForms =
@@ -52,6 +53,7 @@ router.post("/runsignoff", async (req, res) => {
       await preOperationalFormModel.aggregate(pipeline);
     const mixingQualityForms = await mixingQualityFormModel.aggregate(pipeline);
     const lotInspectionForms = await lotInspectionFormModel.aggregate(pipeline);
+    const ccpForms = await ccpFormModel.aggregate(pipeline);
     const roastingQualityForms =
       await roastingQualityFormModel.aggregate(pipeline);
 
@@ -83,7 +85,8 @@ router.post("/runsignoff", async (req, res) => {
       xRayForms &&
       preOperationalForms &&
       mixingQualityForms &&
-      roastingQualityForms
+      roastingQualityForms &&
+      ccpForms
     ) {
       res.status(200).json({
         desc,
@@ -98,6 +101,7 @@ router.post("/runsignoff", async (req, res) => {
           ...labelInspectionForms,
           ...lotInspectionForms,
           ...pgQualityControlForms,
+          ...ccpForms,
         ],
       });
       console.log("Fetched all locations from OC DB!");

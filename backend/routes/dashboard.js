@@ -12,6 +12,7 @@ const lotInspectionFormModel = require("../models/lotInspectionFormModel");
 const preOperationalFormModel = require("../models/preOperationalFormModel.js");
 const mixingQualityFormModel = require("../models/mixingQualityFormModel");
 const roastingQualityFormModel = require("../models/roastingQualityFormModel.js");
+const ccpFormModel = require("../models/ccpFormModel.js");
 
 router.use("/dashboard", async (req, res) => {
   try {
@@ -47,7 +48,7 @@ router.use("/dashboard", async (req, res) => {
       { $match: { createdAt: { $gte: startOfToday } } },
     ];
 
-    const ratioForms = await ratioFormModel.find({});
+    const ratioForms = await ratioFormModel.aggregate(pipeline);
     const qualityControlForms =
       await qualityControlFormModel.aggregate(pipeline);
     const pgQualityControlForms =
@@ -62,6 +63,7 @@ router.use("/dashboard", async (req, res) => {
     const roastingQualityForms =
       await roastingQualityFormModel.aggregate(pipeline);
     const lotInspectionForms = await lotInspectionFormModel.aggregate(pipeline);
+    const ccpForms = await ccpFormModel.aggregate(pipeline);
     if (
       data &&
       ratioForms &&
@@ -88,6 +90,7 @@ router.use("/dashboard", async (req, res) => {
           ...lotInspectionForms,
           ...pgQualityControlForms,
           ...roastingQualityForms,
+          ...ccpForms,
         ],
       });
       console.log("Fetched all locations from OC DB!");

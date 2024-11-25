@@ -114,7 +114,7 @@ const RunSummaryPage = (props) => {
               alignItems="center"
               width="100%"
             >
-              <Typography variant="h3" fontWeight={600}>
+              <Typography variant="h4" fontWeight={600}>
                 {product + " • " + description[product]}
               </Typography>
               <Stack spacing={2} direction="row">
@@ -134,7 +134,7 @@ const RunSummaryPage = (props) => {
                     );
                   }}
                 >
-                  Sign Off
+                  Signoff
                 </Button>
                 <ReactToPrint
                   trigger={() => (

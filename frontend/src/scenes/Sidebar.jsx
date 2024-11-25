@@ -32,7 +32,7 @@ import { userInformations } from "../atoms/userAtom";
 import { useRecoilState } from "recoil";
 
 import axios from "../api/axios";
-import { PrecisionManufacturing } from "@mui/icons-material";
+import { HeatPump, PrecisionManufacturing } from "@mui/icons-material";
 import { ReactComponent as NuclearIcon } from "../images/nuclearIcon.svg";
 import { ReactComponent as MixingIcon } from "../images/mixingIcon.svg";
 import { ReactComponent as RoastingIcon } from "../images/roastingIcon.svg";
@@ -138,7 +138,7 @@ const Sidebar = () => {
             />
             {!isCollapsed ? (
               <Typography variant="h6" color={colors.grey[100]}>
-                v0.6b
+                v1.0
               </Typography>
             ) : null}
           </div>
@@ -251,6 +251,14 @@ const Sidebar = () => {
               setSelected={setSelected}
             />
             <Item
+              title="CCP-2"
+              to="/ccp"
+              icon={<HeatPump />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+
+            <Item
               title="Quality Check"
               to="/pgqualitycontrol"
               icon={<div style={{ fontWeight: "600" }}>P&G</div>}
@@ -273,9 +281,8 @@ const Sidebar = () => {
               setSelected={setSelected}
             />
             <Item
-              disabled
               title="Ratio Form"
-              to="/ratioform"
+              to="/ratio"
               icon={<BlenderIcon />}
               selected={selected}
               setSelected={setSelected}

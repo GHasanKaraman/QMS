@@ -34,6 +34,14 @@ export const extractInformations = (form) => {
       link: "/roastingquality/" + form._id,
       title: "Roasting Quality Check",
     };
+  } else if (form.chamberSet1) {
+    info = { type: "ccp", link: "/ccp/" + form._id, title: "CCP-2" };
+  } else if (form.recipe) {
+    info = {
+      type: "ratio",
+      link: "/ratio/" + form._id,
+      title: " Mixing Ratio Form",
+    };
   } else if (form.itemCode1) {
     info = {
       type: "lotinspection",
