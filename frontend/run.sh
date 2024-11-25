@@ -1,1 +1,1 @@
-serve -l 2000 -s build
+serve -l 80 -s build
