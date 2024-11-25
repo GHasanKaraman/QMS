@@ -8,12 +8,6 @@ import {
   Typography,
   Backdrop,
   CircularProgress,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContentText,
-  DialogContent,
-  DialogActions,
   useMediaQuery,
 } from "@mui/material";
 import { useSnackbar } from "notistack";

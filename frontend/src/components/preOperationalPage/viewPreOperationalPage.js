@@ -8,12 +8,6 @@ import {
   Typography,
   Backdrop,
   CircularProgress,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContentText,
-  DialogContent,
-  DialogActions,
   useMediaQuery,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
@@ -44,14 +38,9 @@ const ViewPreOperationalPage = (props) => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
-  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
-
   const [data, setData] = useState();
   const [product, setProduct] = useState();
   const [open, setOpen] = useState(false);
-  const [openDialog, setOpenDialog] = useState(false);
-
-  const [clicked, setClicked] = useState(false);
 
   const loadLotInspectionPage = async () => {
     setOpen(true);

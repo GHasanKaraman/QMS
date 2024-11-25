@@ -809,7 +809,7 @@ const MixingQualityControlPage = (props) => {
                   fontWeight="600"
                   sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
                 >
-                  Finished Product Pictures
+                  Finished Product Picture
                 </Typography>
                 <UploadImage
                   sx={{ gridColumn: "span 4", justifySelf: "start" }}
