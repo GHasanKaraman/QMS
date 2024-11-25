@@ -2,18 +2,53 @@ const express = require("express");
 const fetch = require("node-fetch");
 const router = express.Router();
 
+const mongoose = require("mongoose");
 const ratioFormModel = require("../models/ratioFormModel");
 
-router.post("/ratioform", async (req, res) => {
+router.post("/ratio/get", async (req, res) => {
   try {
-    const resp = await fetch("http://10.12.0.15:81/qac.php?stations", {
-      method: "GET",
-    });
+    const { id } = req.body;
+    const ratioForm = await ratioFormModel.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(id) } },
+      {
+        $lookup: {
+          from: "signoffs",
+          localField: "_id",
+          foreignField: "formID",
+          as: "signOff",
+        },
+      },
+      { $unwind: { preserveNullAndEmptyArrays: true, path: "$signOff" } },
+    ]);
+    if (ratioForm.length === 1) {
+      var details = {
+        part: ratioForm[0].product,
+      };
+      var formBody = [];
+      for (var property in details) {
+        var encodedKey = encodeURIComponent(property);
+        var encodedValue = encodeURIComponent(details[property]);
+        formBody.push(encodedKey + "=" + encodedValue);
+      }
+      formBody = formBody.join("&");
 
-    const data = await resp.json();
-    if (data) {
-      res.status(200).json({ locations: data });
-      console.log("Fetched all locations from OC DB!");
+      const resp = await fetch("http://10.12.0.15:81/qac.php?recipe", {
+        method: "POST",
+        body: formBody,
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        },
+      });
+      const product = await resp.json();
+      if (product) {
+        res.status(200).json({
+          ratioForm: ratioForm[0],
+          product: product,
+        });
+        console.log("Fetched " + id + " Ratio data sheet result!");
+      } else {
+        res.sendStatus(404);
+      }
     } else {
       res.sendStatus(404);
     }
@@ -22,7 +57,7 @@ router.post("/ratioform", async (req, res) => {
     res.sendStatus(503);
   }
 });
-router.post("/ratioform/recipe", async (req, res) => {
+router.post("/ratio/recipe", async (req, res) => {
   try {
     const { product } = req.body;
     var details = {
@@ -58,34 +93,46 @@ router.post("/ratioform/recipe", async (req, res) => {
   }
 });
 
-router.put("/ratioform/save", async (req, res) => {
+router.post("/ratio/add", async (req, res) => {
   try {
-    const values = req.body;
-    if (values) {
-      const ratioForm = await ratioFormModel.create({
-        ...values,
-        username: req.username,
-      });
-      if (ratioForm) {
-        res.sendStatus(200);
-        console.log(
-          "\x1b[32m%s\x1b[0m",
-          req.username + " has succesfully created a ratio form!"
-        );
-      } else {
-        res.sendStatus(500);
-        console.log(
-          "\x1b[31m%s",
-          "Something went wrong while creating a ratio form!",
-          "\x1b[0m"
-        );
+    const { station, product, weights } = req.body;
+    var status = true;
+
+    const totalWeight = Object.values(weights).reduce(
+      (prev, curr) => prev + curr.weight * 1.0,
+      0,
+    );
+
+    Object.values(weights).forEach((weight) => {
+      const percentage = weight.ratio * 0.1;
+      const toleranceMin = weight.ratio - percentage;
+      const toleranceMax = weight.ratio + percentage;
+      const customQty = ((weight.weight * 1.0) / totalWeight) * 1.0;
+      status = status && customQty <= toleranceMax && toleranceMin <= customQty;
+      if (status === false) {
+        return;
       }
+    });
+
+    if (status === true) {
+      status = "passed";
     } else {
-      console.log(
-        "\x1b[31m%s",
-        "Server didn't get the ratio form values!",
-        "\x1b[0m"
-      );
+      status = undefined;
+    }
+
+    const form = await ratioFormModel.create({
+      recipe: weights,
+      station,
+      product: product.partNum,
+      status,
+      username: req.username,
+    });
+
+    if (form) {
+      console.log(req.username + " successfully created a Ratio Form!");
+      res.status(200).json({ form });
+    } else {
+      console.log("Something went wrong while creating Ratio Form!");
       res.sendStatus(500);
     }
   } catch (err) {
