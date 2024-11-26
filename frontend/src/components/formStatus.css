@@ -1,0 +1,11 @@
+@keyframes swing {
+  0% {
+    transform: rotate(6deg);
+  }
+  100% {
+    transform: rotate(-10deg);
+  }
+}
+.swing {
+  animation: swing ease-in-out 1s infinite alternate;
+}

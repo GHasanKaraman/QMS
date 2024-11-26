@@ -1,0 +1,56 @@
+const mongoose = require("mongoose");
+
+const qualityControlFormSchema = new mongoose.Schema(
+  {
+    station: { type: String, required: true },
+    product: { type: String, required: true },
+    username: { type: String, required: true },
+    areIngredientsCorrect: { type: String, required: true },
+    isTasteAcceptable: { type: String, required: true },
+    lotCode: { type: String, required: true },
+    expirationDate: { type: String, required: true },
+    unitOfMeasure: { type: String, default: "oz" },
+    currentWeight: { type: String, required: true },
+    isSealCorrect: { type: String, required: true },
+    isNotchCorrect: { type: String, required: true },
+    xrayRequired: { type: String, required: true },
+    xrayFeDetected: { type: String, default: "" },
+    xrayNonFeDetected: { type: String, default: "" },
+    xraySsDetected: { type: String, default: "" },
+    xrayGlassDetected: { type: String, default: "" },
+    xrayCeramicDetected: { type: String, default: "" },
+    metalCardRequired: { type: String, required: true },
+    metalCardFeDetected: { type: String, default: "" },
+    metalCardNonFeDetected: { type: String, default: "" },
+    metalCardSsDetected: { type: String, default: "" },
+    metalBallSingleRequired: { type: String, required: true },
+    metalBallSingleFeDetected: { type: String, default: "" },
+    metalBallSingleNonFeDetected: { type: String, default: "" },
+    metalBallSingleSsDetected: { type: String, default: "" },
+    metalBallMultipleRequired: { type: String, required: true },
+    metalBallMultipleFeDetected: { type: String, default: "" },
+    metalBallMultipleNonFeDetected: { type: String, default: "" },
+    metalBallMultipleSsDetected: { type: String, default: "" },
+    correctPackaging: { type: String, required: true },
+    areAllergensCorrect: { type: String, required: true },
+    allergenStatement: { type: String, required: true },
+    labelPackageCorrect: { type: String, required: true },
+    unitsCase: { type: String, required: true },
+    salesOrderNumber: { type: String, default: "No" },
+    caseLabel: { type: String, required: true },
+    anyDeviations: { type: String, required: true },
+    deviationID: { type: String, default: "" },
+    imageIDs: [{ type: mongoose.Types.ObjectId }],
+    status: { type: String, default: "failed" },
+    started: { type: Number, default: 0 },
+    startDateTime: { type: Date },
+  },
+  { timestamps: true },
+);
+
+const qualityControlFormModel = mongoose.model(
+  "qualityControlForms",
+  qualityControlFormSchema,
+);
+
+module.exports = qualityControlFormModel;
