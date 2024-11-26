@@ -796,7 +796,7 @@ const ViewQualityControlPage = (props) => {
                   : data?.salesOrderNumber
               }
             />
-            <StatusIndicator status={data?.unitsCase === "Yes"} />
+            <StatusIndicator status={Boolean(data?.salesOrderNumber)} />
           </Stack>
           <Divider />
           <Stack direction="row" justifyContent="space-between">
