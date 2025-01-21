@@ -141,7 +141,7 @@ const QualityControlAccordion = ({ id, expanded, isForm, onChange, value }) => {
         <Divider />
         <Stack direction="row" justifyContent="space-between">
           <ImageLabel
-            title="Picture Of Product"
+            title="Mix Code"
             folderIndex={images[1]?.folderIndex}
             fileName={images[1]?.fileName}
           />
@@ -293,6 +293,44 @@ const QualityControlAccordion = ({ id, expanded, isForm, onChange, value }) => {
                   />
                   <StatusIndicator
                     status={data?.xrayCeramicDetected === "Yes"}
+                  />
+                </Stack>
+              </div>
+            ) : undefined}
+            {data?.xrayGlass10Detected !== "" ? (
+              <div>
+                <Divider />
+                <Stack direction="row" justifyContent="space-between">
+                  <Label
+                    title="Glass 10.00 mm detected?"
+                    subtitle={
+                      <LabelResult
+                        text={data?.xrayGlass10Detected}
+                        status={data?.xrayGlass10Detected === "Yes"}
+                      />
+                    }
+                  />
+                  <StatusIndicator
+                    status={data?.xrayGlass10Detected === "Yes"}
+                  />
+                </Stack>
+              </div>
+            ) : undefined}
+            {data?.xrayCeramic10Detected !== "" ? (
+              <div>
+                <Divider />
+                <Stack direction="row" justifyContent="space-between">
+                  <Label
+                    title="Ceramic 10.00 mm detected?"
+                    subtitle={
+                      <LabelResult
+                        text={data?.xrayCeramic10Detected}
+                        status={data?.xrayCeramic10Detected === "Yes"}
+                      />
+                    }
+                  />
+                  <StatusIndicator
+                    status={data?.xrayCeramic10Detected === "Yes"}
                   />
                 </Stack>
               </div>

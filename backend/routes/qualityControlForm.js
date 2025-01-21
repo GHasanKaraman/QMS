@@ -216,6 +216,8 @@ router.post("/qualitycontrol/add", upload.any(), async (req, res) => {
         formInformations.xraySsDetected !== "No" &&
         formInformations.xrayGlassDetected !== "No" &&
         formInformations.xrayCeramicDetected !== "No" &&
+        formInformations.xrayGlass10Detected !== "No" &&
+        formInformations.xrayCeramic10Detected !== "No" &&
         formInformations.metalCardFeDetected !== "No" &&
         formInformations.metalCardNonFeDetected !== "No" &&
         formInformations.metalCardSsDetected !== "No" &&
