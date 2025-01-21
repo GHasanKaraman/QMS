@@ -101,6 +101,11 @@ const MixingQualityAccordion = ({ id, expanded, isForm, onChange, value }) => {
       </AccordionSummary>
       <AccordionDetails>
         <Stack direction="row" justifyContent="space-between">
+          <Label title="Finished Product Lot Code" subtitle={data?.lotCode} />
+          <StatusIndicator status={true} />
+        </Stack>
+        <Divider />
+        <Stack direction="row" justifyContent="space-between">
           <Label
             title="Probiotic jars correctly labelled?"
             subtitle={
@@ -125,6 +130,24 @@ const MixingQualityAccordion = ({ id, expanded, isForm, onChange, value }) => {
           />
           <StatusIndicator status={data?.probioticMixLot !== "No"} />
         </Stack>
+        {data?.probioticMixLot === "Yes" ? (
+          <div>
+            <Divider />
+            <Stack direction="row" justifyContent="space-between">
+              <Label
+                title="Probiotic Mix Lot Code"
+                subtitle={
+                  <LabelResult
+                    text={data?.probioticMixLotCode}
+                    status={Boolean(data?.probioticMixLotCode)}
+                  />
+                }
+              />
+              <StatusIndicator status={data?.xrayFeDetected === "Yes"} />
+            </Stack>
+          </div>
+        ) : undefined}
+
         <Divider />
         <Stack direction="row" justifyContent="space-between">
           <Label

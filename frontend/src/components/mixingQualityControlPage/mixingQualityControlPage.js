@@ -48,6 +48,7 @@ const MixingQualityControlPage = (props) => {
 
   const [open, setOpen] = useState(false);
   const [deviationState, setDeviationState] = useState(null);
+  const [probioticMixLot, setProbioticMixLot] = useState("No");
 
   useEffect(() => {
     document.title = props.title || "";
@@ -203,8 +204,10 @@ const MixingQualityControlPage = (props) => {
       station: null,
       product: null,
 
+      lotCode: "",
       correctLabel: null,
       probioticMixLot: null,
+      probioticMixLotCode: "",
       cleaning: null,
       allergensSeparate: null,
       sensory: null,
@@ -235,8 +238,15 @@ const MixingQualityControlPage = (props) => {
             return false;
           },
         ),
+      lotCode: yup
+        .string()
+        .required("Please enter the lot code of the finished product!"),
       correctLabel: yup.string().required(),
       probioticMixLot: yup.string().required(),
+      probioticMixLotCode:
+        probioticMixLot === "Yes"
+          ? yup.string().required("Please enter the lot code of the probiotic!")
+          : undefined,
       cleaning: yup.string().required(),
       allergensSeparate: yup.string().required(),
       sensory: yup.string().required(),
@@ -413,6 +423,18 @@ const MixingQualityControlPage = (props) => {
                   },
                 }}
               >
+                <TextField
+                  variant="filled"
+                  type="text"
+                  label="Finished Product Lot Code"
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  value={formik.values.lotCode}
+                  name="lotCode"
+                  error={!!formik.touched.lotCode && !!formik.errors.lotCode}
+                  helperText={formik.touched.lotCode && formik.errors.lotCode}
+                  sx={{ gridColumn: "span 4" }}
+                />
                 <Typography
                   variant="h6"
                   color={colors.grey[100]}
@@ -480,6 +502,7 @@ const MixingQualityControlPage = (props) => {
                   alignment={formik.values.probioticMixLot}
                   onChange={(value) => {
                     formik.setFieldValue("probioticMixLot", value);
+                    setProbioticMixLot(value);
                   }}
                   error={
                     !!formik.touched.probioticMixLot &&
@@ -520,6 +543,28 @@ const MixingQualityControlPage = (props) => {
                     },
                   ]}
                 />
+                {probioticMixLot === "Yes" ? (
+                  <TextField
+                    variant="filled"
+                    type="text"
+                    label="Probiotic Mix Lot Code"
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                    value={formik.values.probioticMixLotCode}
+                    name="probioticMixLotCode"
+                    error={
+                      !!formik.touched.probioticMixLotCode &&
+                      !!formik.errors.probioticMixLotCode
+                    }
+                    helperText={
+                      formik.touched.probioticMixLotCode &&
+                      formik.errors.probioticMixLotCode
+                    }
+                    sx={{ gridColumn: "span 4" }}
+                  />
+                ) : (
+                  <div style={{ display: "none" }} />
+                )}
                 <Typography
                   variant="h6"
                   color={colors.grey[100]}

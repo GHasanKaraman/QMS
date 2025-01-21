@@ -39,8 +39,6 @@ const ViewMixingQualityControlPage = (props) => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
-  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
-
   const [data, setData] = useState();
   const [images, setImages] = useState([]);
   const [product, setProduct] = useState();
@@ -209,6 +207,12 @@ const ViewMixingQualityControlPage = (props) => {
         </AccordionSummary>
         <AccordionDetails>
           <Stack direction="row" justifyContent="space-between">
+            <Label title="Finished Product Lot Code" subtitle={data?.lotCode} />
+            <StatusIndicator status={true} />
+          </Stack>
+          <Divider />
+
+          <Stack direction="row" justifyContent="space-between">
             <Label
               title="Probiotic jars correctly labelled?"
               subtitle={
@@ -233,6 +237,23 @@ const ViewMixingQualityControlPage = (props) => {
             />
             <StatusIndicator status={data?.probioticMixLot !== "No"} />
           </Stack>
+          {data?.probioticMixLot === "Yes" ? (
+            <div>
+              <Divider />
+              <Stack direction="row" justifyContent="space-between">
+                <Label
+                  title="Probiotic Mix Lot Code"
+                  subtitle={
+                    <LabelResult
+                      text={data?.probioticMixLotCode}
+                      status={Boolean(data?.probioticMixLotCode)}
+                    />
+                  }
+                />
+                <StatusIndicator status={data?.xrayFeDetected === "Yes"} />
+              </Stack>
+            </div>
+          ) : undefined}
           <Divider />
           <Stack direction="row" justifyContent="space-between">
             <Label
