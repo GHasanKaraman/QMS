@@ -494,7 +494,11 @@ const QualityControlPage = (props) => {
             }}
             value={formik.values.station}
             sx={{ marginBottom: "30px", gridColumn: "span 2" }}
-            options={stations.map(({ name }) => name)}
+            options={stations
+              .filter(
+                ({ name }) => !name.includes("ROAST") && !name.includes("MIX"),
+              )
+              .map(({ name }) => name)}
             onBlur={formik.handleBlur}
             renderInput={(params) => (
               <TextField
