@@ -415,12 +415,12 @@ const ViewRoastingQualityControlPage = (props) => {
             <Divider />
             <Stack direction="row" justifyContent="space-between">
               <Label title="Oil Parameter" subtitle={data?.oilParameter} />
-              <StatusIndicator status={Boolean(data?.oilParameter)} />
+              <StatusIndicator status={true} />
             </Stack>
             <Divider />
             <Stack direction="row" justifyContent="space-between">
               <Label title="Salt Parameter" subtitle={data?.saltParameter} />
-              <StatusIndicator status={Boolean(data?.saltParameter)} />
+              <StatusIndicator status={true} />
             </Stack>
             <Divider />
             <Stack direction="row" justifyContent="space-between">
@@ -433,7 +433,7 @@ const ViewRoastingQualityControlPage = (props) => {
                 title="Salt Spiral Speed"
                 subtitle={data?.saltSpiralSpeed}
               />
-              <StatusIndicator status={Boolean(data?.saltSpiralSpeed)} />
+              <StatusIndicator status={true} />
             </Stack>
             <Divider />
             <Stack direction="row" justifyContent="space-between">
@@ -488,23 +488,6 @@ const ViewRoastingQualityControlPage = (props) => {
                 }
               />
               <StatusIndicator status={data?.sensoryEvaluation === "Yes"} />
-            </Stack>
-            <Divider />
-
-            <Stack direction="row" justifyContent="space-between">
-              <Label
-                title="Moisture % of Raw (4.5 - 6.5%)"
-                subtitle={data?.moistureOfRaw}
-              />
-              <StatusIndicator status={Boolean(data?.moistureOfRaw)} />
-            </Stack>
-            <Divider />
-            <Stack direction="row" justifyContent="space-between">
-              <Label
-                title="Moisture % of Roasted(0.4 - 1.7%)"
-                subtitle={data?.moistureOfRoasted}
-              />
-              <StatusIndicator status={Boolean(data?.moistureOfRoasted)} />
             </Stack>
             <Divider />
           </AccordionDetails>
@@ -618,17 +601,17 @@ const ViewRoastingQualityControlPage = (props) => {
                 title="Salt Spiral Speed"
                 subtitle={data?.saltSpiralSpeed}
               />
-              <StatusIndicator status={Boolean(data?.saltSpiralSpeed)} />
+              <StatusIndicator status={true} />
             </Stack>
             <Divider />
             <Stack direction="row" justifyContent="space-between">
               <Label title="Salt Parameter" subtitle={data?.saltParameter} />
-              <StatusIndicator status={Boolean(data?.saltParameter)} />
+              <StatusIndicator status={true} />
             </Stack>
             <Divider />
             <Stack direction="row" justifyContent="space-between">
               <Label title="Oil Parameter" subtitle={data?.oilParameter} />
-              <StatusIndicator status={Boolean(data?.oilParameter)} />
+              <StatusIndicator status={true} />
             </Stack>
             <Divider />
             <Stack direction="row" justifyContent="space-between">
@@ -660,22 +643,6 @@ const ViewRoastingQualityControlPage = (props) => {
                 subtitle={data?.salinityOfProduct}
               />
               <StatusIndicator status={Boolean(data?.salinityOfProduct)} />
-            </Stack>
-            <Divider />
-            <Stack direction="row" justifyContent="space-between">
-              <Label
-                title="Moisture % of Raw (4.5 - 6.5%)"
-                subtitle={data?.moistureOfRaw}
-              />
-              <StatusIndicator status={Boolean(data?.moistureOfRaw)} />
-            </Stack>
-            <Divider />
-            <Stack direction="row" justifyContent="space-between">
-              <Label
-                title="Moisture % of Roasted(0.4 - 1.7%)"
-                subtitle={data?.moistureOfRoasted}
-              />
-              <StatusIndicator status={Boolean(data?.moistureOfRoasted)} />
             </Stack>
             <Divider />
           </AccordionDetails>

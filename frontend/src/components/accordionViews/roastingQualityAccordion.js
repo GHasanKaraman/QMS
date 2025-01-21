@@ -354,23 +354,6 @@ const RoastingQualityAccordion = ({
             />
             <StatusIndicator status={data?.sensoryEvaluation === "Yes"} />
           </Stack>
-          <Divider />
-
-          <Stack direction="row" justifyContent="space-between">
-            <Label
-              title="Moisture % of Raw (4.5 - 6.5%)"
-              subtitle={data?.moistureOfRaw}
-            />
-            <StatusIndicator status={Boolean(data?.moistureOfRaw)} />
-          </Stack>
-          <Divider />
-          <Stack direction="row" justifyContent="space-between">
-            <Label
-              title="Moisture % of Roasted(0.4 - 1.7%)"
-              subtitle={data?.moistureOfRoasted}
-            />
-            <StatusIndicator status={Boolean(data?.moistureOfRoasted)} />
-          </Stack>
         </div>
         <div
           key="R234_View"
@@ -503,22 +486,6 @@ const RoastingQualityAccordion = ({
               subtitle={data?.salinityOfProduct}
             />
             <StatusIndicator status={Boolean(data?.salinityOfProduct)} />
-          </Stack>
-          <Divider />
-          <Stack direction="row" justifyContent="space-between">
-            <Label
-              title="Moisture % of Raw (4.5 - 6.5%)"
-              subtitle={data?.moistureOfRaw}
-            />
-            <StatusIndicator status={Boolean(data?.moistureOfRaw)} />
-          </Stack>
-          <Divider />
-          <Stack direction="row" justifyContent="space-between">
-            <Label
-              title="Moisture % of Roasted(0.4 - 1.7%)"
-              subtitle={data?.moistureOfRoasted}
-            />
-            <StatusIndicator status={Boolean(data?.moistureOfRoasted)} />
           </Stack>
           <Divider />
           <Stack direction="row" justifyContent="space-between">

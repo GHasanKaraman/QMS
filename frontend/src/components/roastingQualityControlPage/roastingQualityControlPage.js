@@ -230,14 +230,7 @@ const RoastingQualityControlPage = (props) => {
         rawProductTemperature: yup
           .string()
           .required("Please enter the temperature of raw product!"),
-        oilParameter: yup.string().required("Please enter the oil parameter!"),
-        saltParameter: yup
-          .string()
-          .required("Please enter the salt parameter!"),
         drumSpeed: yup.string().required("Please enter the drum speed!"),
-        saltSpiralSpeed: yup
-          .string()
-          .required("Please enter the salt spiral speed!"),
         salinityOfWater: yup
           .string()
           .required(
@@ -253,12 +246,6 @@ const RoastingQualityControlPage = (props) => {
           .string()
           .required("Please enter the temperature of the finished product!"),
         sensoryEvaluation: yup.string().required(),
-        moistureOfRaw: yup
-          .string()
-          .required("Please enter the moisture percentage of raw product!"),
-        moistureOfRoasted: yup
-          .string()
-          .required("Please enter the moisture percentage of roasted product!"),
       };
     } else {
       yupObjects = {
@@ -274,13 +261,6 @@ const RoastingQualityControlPage = (props) => {
         beltSpeed: yup.string().required("Please enter the belt speed!"),
         productThickness: yup.string().required(),
         drumSpeed: yup.string().required("Please enter the drum speed!"),
-        saltSpiralSpeed: yup
-          .string()
-          .required("Please enter the salt spiral speed!"),
-        saltParameter: yup
-          .string()
-          .required("Please enter the salt parameter!"),
-        oilParameter: yup.string().required("Please enter the oil parameter!"),
         salinityOfWater: yup
           .string()
           .required(
@@ -292,12 +272,6 @@ const RoastingQualityControlPage = (props) => {
           .required(
             "Please enter the percentage of the salinity of finished product!",
           ),
-        moistureOfRaw: yup
-          .string()
-          .required("Please enter the moisture percentage of raw product!"),
-        moistureOfRoasted: yup
-          .string()
-          .required("Please enter the moisture percentage of roasted product!"),
         temperature1: yup
           .string()
           .required("Please enter the temperature of the oven 1!"),
@@ -402,8 +376,6 @@ const RoastingQualityControlPage = (props) => {
       saltSpiralSpeed: "",
       salinityOfWater: "",
       salinityOfProduct: "",
-      moistureOfRaw: "",
-      moistureOfRoasted: "",
 
       //R2-3-4
       heatingFan1: "",
@@ -1636,53 +1608,6 @@ const RoastingQualityControlPage = (props) => {
                     inputProps: { inputMode: "decimal", min: 0, step: 0.01 },
                   }}
                 />
-
-                <TextField
-                  variant="filled"
-                  type="number"
-                  aria-valuemin={2}
-                  label="Moisture % of Raw"
-                  placeholder="0.00"
-                  onBlur={formik.handleBlur}
-                  onChange={formik.handleChange}
-                  value={formik.values.moistureOfRaw}
-                  name="moistureOfRaw"
-                  error={
-                    !!formik.touched.moistureOfRaw &&
-                    !!formik.errors.moistureOfRaw
-                  }
-                  helperText={
-                    formik.touched.moistureOfRaw && formik.errors.moistureOfRaw
-                  }
-                  sx={{ gridColumn: "span 4" }}
-                  InputProps={{
-                    inputProps: { inputMode: "decimal", min: 0, step: 0.01 },
-                  }}
-                />
-
-                <TextField
-                  variant="filled"
-                  type="number"
-                  aria-valuemin={2}
-                  label="Moisture % of Roasted"
-                  placeholder="0.00"
-                  onBlur={formik.handleBlur}
-                  onChange={formik.handleChange}
-                  value={formik.values.moistureOfRoasted}
-                  name="moistureOfRoasted"
-                  error={
-                    !!formik.touched.moistureOfRoasted &&
-                    !!formik.errors.moistureOfRoasted
-                  }
-                  helperText={
-                    formik.touched.moistureOfRoasted &&
-                    formik.errors.moistureOfRoasted
-                  }
-                  sx={{ gridColumn: "span 4" }}
-                  InputProps={{
-                    inputProps: { inputMode: "decimal", min: 0, step: 0.01 },
-                  }}
-                />
               </Box>
             </AccordionDetails>
           </Accordion>
@@ -2661,53 +2586,6 @@ const RoastingQualityControlPage = (props) => {
                       ),
                     },
                   ]}
-                />
-
-                <TextField
-                  variant="filled"
-                  type="number"
-                  aria-valuemin={2}
-                  label="Moisture % of Raw (4.5 - 6.5%)"
-                  placeholder="0.00"
-                  onBlur={formik.handleBlur}
-                  onChange={formik.handleChange}
-                  value={formik.values.moistureOfRaw}
-                  name="moistureOfRaw"
-                  error={
-                    !!formik.touched.moistureOfRaw &&
-                    !!formik.errors.moistureOfRaw
-                  }
-                  helperText={
-                    formik.touched.moistureOfRaw && formik.errors.moistureOfRaw
-                  }
-                  sx={{ gridColumn: "span 4" }}
-                  InputProps={{
-                    inputProps: { inputMode: "decimal", min: 0, step: 0.01 },
-                  }}
-                />
-
-                <TextField
-                  variant="filled"
-                  type="number"
-                  aria-valuemin={2}
-                  label="Moisture % of Roasted(0.4 - 1.7%)"
-                  placeholder="0.00"
-                  onBlur={formik.handleBlur}
-                  onChange={formik.handleChange}
-                  value={formik.values.moistureOfRoasted}
-                  name="moistureOfRoasted"
-                  error={
-                    !!formik.touched.moistureOfRoasted &&
-                    !!formik.errors.moistureOfRoasted
-                  }
-                  helperText={
-                    formik.touched.moistureOfRoasted &&
-                    formik.errors.moistureOfRoasted
-                  }
-                  sx={{ gridColumn: "span 4" }}
-                  InputProps={{
-                    inputProps: { inputMode: "decimal", min: 0, step: 0.01 },
-                  }}
                 />
               </Box>
             </AccordionDetails>

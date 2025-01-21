@@ -30,14 +30,12 @@ const roastingQualityFormSchema = new mongoose.Schema(
     receivingCode: { type: String, required: false },
     cleaning: { type: String, required: false },
     rawProductTemperature: { type: Number, required: false },
-    oilParameter: { type: Number, required: false },
-    saltParameter: { type: Number, required: false },
+    oilParameter: { type: Number, required: false, default: "" },
+    saltParameter: { type: Number, required: false, default: "" },
     drumSpeed: { type: Number, required: false },
-    saltSpiralSpeed: { type: Number, required: false },
+    saltSpiralSpeed: { type: Number, required: false, default: "" },
     salinityOfWater: { type: Number, required: false },
     salinityOfProduct: { type: Number, required: false },
-    moistureOfRaw: { type: Number, required: false },
-    moistureOfRoasted: { type: Number, required: false },
 
     //R2-3-4
     heatingFan1: { type: Number, required: false },
