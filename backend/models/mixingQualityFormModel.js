@@ -11,6 +11,7 @@ const mixingQualityFormSchema = new mongoose.Schema(
     probioticMixLotCode: { type: String, default: "" },
     cleaning: { type: String, required: true },
     allergensSeparate: { type: String, required: true },
+    areAllergensCorrect: { type: String, required: true },
     sensory: { type: String, required: true },
     cleanFloor: { type: String, required: true },
     garbageOrganized: { type: String, required: true },

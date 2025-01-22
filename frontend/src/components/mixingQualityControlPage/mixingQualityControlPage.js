@@ -11,6 +11,7 @@ import {
   Stack,
   Backdrop,
   CircularProgress,
+  Chip,
 } from "@mui/material";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -96,6 +97,10 @@ const MixingQualityControlPage = (props) => {
     if (userAuth.control(res)) {
       if (res?.data) {
         setProductDetails(res.data.details);
+
+        if (res.data.details?.allergens === "") {
+          formik.setFieldValue("areAllergensCorrect", "Yes");
+        }
       } else {
         switch (res.response?.status) {
           case 404:
@@ -208,6 +213,7 @@ const MixingQualityControlPage = (props) => {
       correctLabel: null,
       probioticMixLot: null,
       probioticMixLotCode: "",
+      areAllergensCorrect: null,
       cleaning: null,
       allergensSeparate: null,
       sensory: null,
@@ -243,6 +249,7 @@ const MixingQualityControlPage = (props) => {
         .required("Please enter the lot code of the finished product!"),
       correctLabel: yup.string().required(),
       probioticMixLot: yup.string().required(),
+      areAllergensCorrect: yup.string().required(),
       probioticMixLotCode:
         probioticMixLot === "Yes"
           ? yup.string().required("Please enter the lot code of the probiotic!")
@@ -615,6 +622,83 @@ const MixingQualityControlPage = (props) => {
                     },
                   ]}
                 />
+                <Stack direction="column" spacing={2}>
+                  <Typography
+                    variant="h6"
+                    color={colors.grey[100]}
+                    fontWeight="600"
+                    sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                  >
+                    Are the allergens correct?
+                  </Typography>
+                  <Stack direction="row" spacing={0.5}>
+                    {productDetails?.allergens === "" ? (
+                      <div style={{ fontWeight: 600 }}>
+                        {" "}
+                        There is no allergen!
+                      </div>
+                    ) : (
+                      productDetails?.allergens?.split("").map((allergen) => {
+                        return (
+                          <Chip
+                            key={allergen}
+                            label={allergen}
+                            variant="filled"
+                            color="primary"
+                            style={{
+                              color: colors.contrast[300],
+                              fontWeight: "bold",
+                              fontSize: "13px",
+                              backgroundColor: colors.contrast[100],
+                              borderRadius: "5px",
+                            }}
+                          />
+                        );
+                      })
+                    )}
+                  </Stack>
+                </Stack>
+
+                {productDetails?.allergens === "" ? (
+                  <div style={{ gridColumn: "span 4" }} />
+                ) : (
+                  <ToggleButtonCheck
+                    style={{ gridColumn: "span 4" }}
+                    alignment={formik.values.areAllergensCorrect}
+                    onChange={(value) => {
+                      formik.setFieldValue("areAllergensCorrect", value);
+                    }}
+                    error={
+                      !!formik.touched.areAllergensCorrect &&
+                      !!formik.errors.areAllergensCorrect
+                    }
+                    options={[
+                      {
+                        label: "Yes",
+                        icon: (
+                          <CheckBoxIcon
+                            sx={{
+                              fill: colors.ciboInnerGreen[500],
+                            }}
+                          />
+                        ),
+                      },
+                      {
+                        label: "No",
+                        icon: (
+                          <CloseIcon
+                            sx={{
+                              color: colors.yoggieRed[500],
+                              stroke: colors.yoggieRed[500],
+                              strokeWidth: "2",
+                            }}
+                          />
+                        ),
+                      },
+                    ]}
+                  />
+                )}
+
                 <Typography
                   variant="h6"
                   color={colors.grey[100]}

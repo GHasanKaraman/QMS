@@ -270,6 +270,19 @@ const ViewMixingQualityControlPage = (props) => {
           <Divider />
           <Stack direction="row" justifyContent="space-between">
             <Label
+              title="Are allergens correct?"
+              subtitle={
+                <LabelResult
+                  text={data?.areAllergensCorrect}
+                  status={data?.areAllergensCorrect === "Yes"}
+                />
+              }
+            />
+            <StatusIndicator status={data?.areAllergensCorrect === "Yes"} />
+          </Stack>
+          <Divider />
+          <Stack direction="row" justifyContent="space-between">
+            <Label
               title="Allergens kept separate?"
               subtitle={
                 <LabelResult

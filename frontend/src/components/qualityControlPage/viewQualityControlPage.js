@@ -418,7 +418,7 @@ const ViewQualityControlPage = (props) => {
                   </Stack>
                 </div>
               ) : undefined}
-              {data?.xrayGlass10Detected !== "" ? (
+              {data.xrayGlass10Detected && data?.xrayGlass10Detected !== "" ? (
                 <div>
                   <Divider />
                   <Stack direction="row" justifyContent="space-between">
@@ -437,7 +437,8 @@ const ViewQualityControlPage = (props) => {
                   </Stack>
                 </div>
               ) : undefined}
-              {data?.xrayCeramic10Detected !== "" ? (
+              {data.xrayCeramic10Detected &&
+              data?.xrayCeramic10Detected !== "" ? (
                 <div>
                   <Divider />
                   <Stack direction="row" justifyContent="space-between">

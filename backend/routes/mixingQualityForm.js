@@ -103,6 +103,7 @@ router.post("/mixingquality/add", upload.any(), async (req, res) => {
         data.allergensSeparate === "Yes" &&
         data.sensory === "Yes" &&
         data.cleanFloor === "Yes" &&
+        data.areAllergensCorrect === "Yes" &&
         data.garbageOrganized === "Yes"
       ) {
         status = "passed";
