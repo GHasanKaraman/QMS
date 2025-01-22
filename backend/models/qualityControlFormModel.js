@@ -35,6 +35,7 @@ const qualityControlFormSchema = new mongoose.Schema(
     metalBallMultipleSsDetected: { type: String, default: "" },
     correctPackaging: { type: String, required: true },
     areAllergensCorrect: { type: String, required: true },
+    treenuts: { type: String, default: "" },
     allergenStatement: { type: String, required: true },
     labelPackageCorrect: { type: String, required: true },
     unitsCase: { type: String, required: true },

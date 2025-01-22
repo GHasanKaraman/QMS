@@ -323,7 +323,7 @@ const ViewQualityControlPage = (props) => {
             <Typography fontWeight={600} fontSize={18}>
               X-RAYS METAL DETECTOR CARD CHECK
             </Typography>
-            <Typography fontWeight={600}>4 Items</Typography>
+            <Typography fontWeight={600}>6 Items</Typography>
           </Stack>
         </AccordionSummary>
         <AccordionDetails>

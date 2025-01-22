@@ -225,6 +225,7 @@ const QualityControlPage = (props) => {
       pictureLabelFront: null,
       pictureLabelBack: null,
       areAllergensCorrect: null,
+      treenuts: [],
       allergenStatement: null,
       pictureOfAllergenStatement: null,
       labelPackageCorrect: null,
@@ -363,6 +364,15 @@ const QualityControlPage = (props) => {
           },
         ),
       areAllergensCorrect: yup.string().required(),
+      treenuts: productDetails?.allergens?.includes("T")
+        ? yup
+            .mixed()
+            .nullable()
+            .required("Please select the treenuts!")
+            .test("SELECTION_CHECK", "Please select the treenuts!", (value) => {
+              return value.length > 0;
+            })
+        : undefined,
       allergenStatement: yup.string().required(),
       pictureOfAllergenStatement: yup
         .mixed()
@@ -2202,6 +2212,44 @@ const QualityControlPage = (props) => {
                     ]}
                   />
                 )}
+                {productDetails?.allergens?.includes("T") ? (
+                  <Autocomplete
+                    multiple
+                    disableCloseOnSelect
+                    onChange={async (_, value) => {
+                      formik.setFieldValue("treenuts", value);
+                    }}
+                    value={formik.values.treenuts}
+                    sx={{ marginBottom: "30px", gridColumn: "span 4" }}
+                    options={[
+                      "Pecan",
+                      "Almond",
+                      "Walnut",
+                      "Pistachio",
+                      "Hazelnut",
+                      "Pine Nut",
+                      "Brazil Nut",
+                      "Coconut",
+                      " Cashew",
+                      "Macadamia",
+                    ]}
+                    onBlur={formik.handleBlur}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        variant="filled"
+                        label="Tree Nuts"
+                        name="treenuts"
+                        error={
+                          !!formik.touched.treenuts && !!formik.errors.treenuts
+                        }
+                        helperText={
+                          formik.touched.treenuts && formik.errors.treenuts
+                        }
+                      />
+                    )}
+                  />
+                ) : undefined}
                 <Typography
                   variant="h6"
                   color={colors.grey[100]}
