@@ -103,10 +103,7 @@ const QualityControlPage = (props) => {
     if (userAuth.control(res)) {
       if (res?.data) {
         setProductDetails(res.data.details);
-
-        if (res.data.details?.allergens === "") {
-          formik.setFieldValue("areAllergensCorrect", "Yes");
-        }
+        return res.data.details;
       } else {
         switch (res.response?.status) {
           case 404:
@@ -462,14 +459,12 @@ const QualityControlPage = (props) => {
 
       <form
         onSubmit={(e) => {
-          if (productDetails?.soList?.length === 0) {
-            formik.setFieldValue("salesOrderNumber", "No");
-          }
           if (!formik.isValid && !formik.isValidating) {
             enqueueSnackbar("Please fill out all the missing fields!", {
               variant: "error",
             });
           }
+          console.log(formik.errors);
           formik.handleSubmit(e);
         }}
         style={{ paddingBottom: "10px" }}
@@ -532,7 +527,15 @@ const QualityControlPage = (props) => {
               formik.setFieldValue("station", station);
               formik.setFieldValue("product", value);
               if (value != null) {
-                await loadDetails(formik.values.station, value.partNum);
+                const details = await loadDetails(station, value.partNum);
+                if (details) {
+                  if (details?.soList?.length === 0) {
+                    formik.setFieldValue("salesOrderNumber", "No");
+                  }
+                  if (details?.allergens === "") {
+                    formik.setFieldValue("areAllergensCorrect", "Yes");
+                  }
+                }
               }
             }}
             value={formik.values.product}

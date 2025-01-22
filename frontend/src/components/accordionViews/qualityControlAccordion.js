@@ -578,6 +578,32 @@ const QualityControlAccordion = ({ id, expanded, isForm, onChange, value }) => {
           <StatusIndicator status={data?.areAllergensCorrect === "Yes"} />
         </Stack>
         <Divider />
+        {data?.treenuts && data?.treenuts.length > 0 ? (
+          <div>
+            <Label title="Treenuts" />
+
+            {data?.treenuts?.split(",").map((treenut) => {
+              return (
+                <Chip
+                  key={treenut}
+                  label={treenut}
+                  variant="filled"
+                  color="primary"
+                  style={{
+                    color: colors.contrast[300],
+                    fontWeight: "bold",
+                    fontSize: "13px",
+                    backgroundColor: colors.contrast[100],
+                    borderRadius: "5px",
+                    marginRight: "2px",
+                  }}
+                />
+              );
+            })}
+            <Divider sx={{ pt: 1 }} />
+          </div>
+        ) : undefined}
+
         <Stack direction="row" justifyContent="space-between">
           <Label
             title="Allergen Statement?"

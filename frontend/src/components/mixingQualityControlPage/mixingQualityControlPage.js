@@ -97,10 +97,7 @@ const MixingQualityControlPage = (props) => {
     if (userAuth.control(res)) {
       if (res?.data) {
         setProductDetails(res.data.details);
-
-        if (res.data.details?.allergens === "") {
-          formik.setFieldValue("areAllergensCorrect", "Yes");
-        }
+        return res.data.details;
       } else {
         switch (res.response?.status) {
           case 404:
@@ -366,7 +363,15 @@ const MixingQualityControlPage = (props) => {
               formik.setFieldValue("station", station);
               formik.setFieldValue("product", value);
               if (value != null) {
-                await loadDetails(formik.values.station, value.partNum);
+                const details = await loadDetails(
+                  formik.values.station,
+                  value.partNum,
+                );
+                if (details) {
+                  if (details?.allergens === "") {
+                    formik.setFieldValue("areAllergensCorrect", "Yes");
+                  }
+                }
               }
             }}
             value={formik.values.product}
