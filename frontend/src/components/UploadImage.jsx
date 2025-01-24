@@ -69,7 +69,8 @@ const UploadImage = ({
 
     if (file && file.type.includes("image")) {
       setImage(URL.createObjectURL(file));
-      setOpenDialog(true);
+      setCroppedImage(URL.createObjectURL(file));
+      //setOpenDialog(true);
     }
     event.target.value = "";
   };
