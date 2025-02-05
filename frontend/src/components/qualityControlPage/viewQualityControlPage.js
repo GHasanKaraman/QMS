@@ -47,6 +47,7 @@ const ViewQualityControlPage = (props) => {
   const [product, setProduct] = useState();
   const [open, setOpen] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
+  const [mixCodeLength, setMixCodeLength] = useState(1);
 
   const [clicked, setClicked] = useState(false);
 
@@ -56,6 +57,7 @@ const ViewQualityControlPage = (props) => {
     if (userAuth.control(res)) {
       setData(res.data.qualityControlForm);
       setImages(res.data.images);
+      setMixCodeLength(res.data.qualityControlForm.mixCodeLength ?? 1);
       setProduct(res.data.product);
     } else {
       navigate("/login");
@@ -246,14 +248,24 @@ const ViewQualityControlPage = (props) => {
             />
           </Stack>
           <Divider />
-          <Stack direction="row" justifyContent="space-between">
-            <ImageLabel
-              title="Mix Code"
-              folderIndex={images[1]?.folderIndex}
-              fileName={images[1]?.fileName}
-            />
-            <StatusIndicator status={Boolean(images[1])} />
-          </Stack>
+          {images.slice(1, mixCodeLength + 1).map((image, index) => {
+            if (index !== images.length - 1) {
+              return (
+                <Stack
+                  direction="row"
+                  justifyContent="space-between"
+                  key={index}
+                >
+                  <ImageLabel
+                    title={`Mix Code ${index + 1}`}
+                    folderIndex={image?.folderIndex}
+                    fileName={image?.fileName}
+                  />
+                  <StatusIndicator status={Boolean(image)} />
+                </Stack>
+              );
+            }
+          })}
           <Divider />
           <Stack direction="row" justifyContent="space-between">
             <Label title="Finished Product Lot Code" subtitle={data?.lotCode} />
@@ -263,11 +275,19 @@ const ViewQualityControlPage = (props) => {
           <Stack direction="row" justifyContent="space-between">
             <Label
               title="Expiration Date"
-              subtitle={toStringDate(data?.expirationDate, {
-                month: "short",
-                year: "numeric",
-                day: "numeric",
-              })}
+              subtitle={
+                toStringDate(data?.expirationDate, {
+                  month: "short",
+                  year: "numeric",
+                  day: "numeric",
+                }) === "Invalid Date"
+                  ? data?.expirationDate
+                  : toStringDate(data?.expirationDate, {
+                      month: "short",
+                      year: "numeric",
+                      day: "numeric",
+                    })
+              }
             />
             <StatusIndicator status={Boolean(data?.expirationDate)} />
           </Stack>
@@ -703,19 +723,19 @@ const ViewQualityControlPage = (props) => {
           <Stack direction="row" justifyContent="space-between">
             <ImageLabel
               title="Picture (Front)"
-              folderIndex={images[2]?.folderIndex}
-              fileName={images[2]?.fileName}
+              folderIndex={images[mixCodeLength + 1]?.folderIndex}
+              fileName={images[mixCodeLength + 1]?.fileName}
             />
-            <StatusIndicator status={Boolean(images[2])} />
+            <StatusIndicator status={Boolean(images[mixCodeLength + 1])} />
           </Stack>
           <Divider />
           <Stack direction="row" justifyContent="space-between">
             <ImageLabel
               title="Picture (Back)"
-              folderIndex={images[3]?.folderIndex}
-              fileName={images[3]?.fileName}
+              folderIndex={images[mixCodeLength + 2]?.folderIndex}
+              fileName={images[mixCodeLength + 2]?.fileName}
             />
-            <StatusIndicator status={Boolean(images[3])} />
+            <StatusIndicator status={Boolean(images[mixCodeLength + 2])} />
           </Stack>
           <Divider />
           <Stack direction="row" spacing={0.5}>
@@ -793,10 +813,10 @@ const ViewQualityControlPage = (props) => {
           <Stack direction="row" justifyContent="space-between">
             <ImageLabel
               title="Picture Of Allergen Statement"
-              folderIndex={images[4]?.folderIndex}
-              fileName={images[4]?.fileName}
+              folderIndex={images[mixCodeLength + 3]?.folderIndex}
+              fileName={images[mixCodeLength + 3]?.fileName}
             />
-            <StatusIndicator status={Boolean(images[4])} />
+            <StatusIndicator status={Boolean(images[mixCodeLength + 3])} />
           </Stack>
           <Divider />
           <Stack direction="row" justifyContent="space-between">
@@ -815,10 +835,10 @@ const ViewQualityControlPage = (props) => {
           <Stack direction="row" justifyContent="space-between">
             <ImageLabel
               title="Picture Of Barcode"
-              folderIndex={images[5]?.folderIndex}
-              fileName={images[5]?.fileName}
+              folderIndex={images[mixCodeLength + 4]?.folderIndex}
+              fileName={images[mixCodeLength + 4]?.fileName}
             />
-            <StatusIndicator status={Boolean(images[5])} />
+            <StatusIndicator status={Boolean(images[mixCodeLength + 4])} />
           </Stack>
         </AccordionDetails>
       </Accordion>
@@ -877,10 +897,10 @@ const ViewQualityControlPage = (props) => {
           >
             <ImageLabel
               title="Picture Of Box-Label"
-              folderIndex={images[6]?.folderIndex}
-              fileName={images[6]?.fileName}
+              folderIndex={images[images.length - 1]?.folderIndex}
+              fileName={images[images.length - 1]?.fileName}
             />
-            <StatusIndicator status={Boolean(images[6])} />
+            <StatusIndicator status={Boolean(images[images.length - 1])} />
           </Stack>
         </AccordionDetails>
       </Accordion>

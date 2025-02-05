@@ -68,8 +68,17 @@ const UploadImage = ({
     const file = event.target.files && event.target.files[0];
 
     if (file && file.type.includes("image")) {
-      setImage(URL.createObjectURL(file));
-      setCroppedImage(URL.createObjectURL(file));
+      const url = URL.createObjectURL(file);
+      setImage(url);
+      setCroppedImage(url);
+      fetch(url)
+        .then((res) => res.blob())
+        .then((blob) => {
+          const jpegBlob = new Blob([blob], { type: "image/jpeg" });
+          if (jpegBlob) {
+            onChange(jpegBlob);
+          }
+        });
       //setOpenDialog(true);
     }
     event.target.value = "";

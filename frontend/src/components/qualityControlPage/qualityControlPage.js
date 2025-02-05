@@ -39,6 +39,7 @@ import userAuth from "../../utils/userAuth";
 import UploadImage from "../UploadImage";
 import ToggleButtonCheck from "../ToggleButtonCheck";
 import { Accordion, AccordionDetails, AccordionSummary } from "../Accordion";
+import UploadMultipleImage from "../UploadMultipleImage";
 
 const QualityControlPage = (props) => {
   const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png"];
@@ -60,6 +61,7 @@ const QualityControlPage = (props) => {
   const [metalBallStateMultiple, setMetalBallStateMultiple] = useState(null);
   const [deviationState, setDeviationState] = useState(null);
   const [caseLabelState, setCaseLabelState] = useState(null);
+  const [mixCodeState, setMixCodeState] = useState(null);
 
   useEffect(() => {
     document.title = props.title || "";
@@ -138,15 +140,23 @@ const QualityControlPage = (props) => {
     values.product = values.product.partNum;
     values.started = Number(productDetails?.started);
     values.startDateTime = moment(productDetails?.startDateTime);
+    values.mixCodeLength = values.pictureMixCode.length;
 
     const formData = new FormData();
     for (const name in values) {
       if (values[name]?.constructor?.name === "Blob") {
         formData.append(name, values[name], name + ".jpeg");
+      } else if (Array.isArray(values[name])) {
+        values[name].forEach((blob, index) => {
+          if (blob.constructor.name === "Blob") {
+            formData.append(`${name}`, blob, `${name}-${index}.jpeg`); // Use index to differentiate files
+          }
+        });
       } else {
         formData.append(name, values[name]);
       }
     }
+
     const res = await axios.post("/qualitycontrol/add", formData);
     if (userAuth.control(res)) {
       if (res?.data) {
@@ -179,6 +189,23 @@ const QualityControlPage = (props) => {
     setOpen(false);
   };
 
+  const uploadRequired = (message) => {
+    return yup
+      .mixed()
+      .nullable()
+      .required(message)
+      .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
+        return !value || (value && value.size < 1024 * 1024 * 10);
+      })
+      .test(
+        "FILE_FORMAT",
+        "You can only upload JPG/JPEG/PNG files!",
+        (value) => {
+          return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
+        },
+      );
+  };
+
   const formik = useFormik({
     initialValues: {
       station: null,
@@ -186,7 +213,7 @@ const QualityControlPage = (props) => {
       areIngredientsCorrect: null,
       pictureOfProduct: null,
       isTasteAcceptable: null,
-      pictureMixCode: null,
+      pictureMixCode: [],
       lotCode: "",
       expirationDate: "",
       currentWeight: "",
@@ -247,7 +274,7 @@ const QualityControlPage = (props) => {
           "Please select the running product!",
           (value) => {
             if (value) {
-              if (value?.partnum != "") {
+              if (value?.partnum !== "") {
                 return true;
               }
             }
@@ -270,20 +297,14 @@ const QualityControlPage = (props) => {
           },
         ),
       isTasteAcceptable: yup.string().required(),
-      pictureMixCode: yup
-        .mixed()
-        .nullable()
-        .required("Please upload the image of the mix code!")
-        .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
-          return !value || (value && value.size < 1024 * 1024 * 10);
-        })
-        .test(
-          "FILE_FORMAT",
-          "You can only upload JPG/JPEG/PNG files!",
-          (value) => {
-            return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          },
-        ),
+      pictureMixCode:
+        mixCodeState === "Yes"
+          ? yup
+              .array()
+              .of(uploadRequired("Please upload pictures of raw materials!"))
+              .required("You must upload at leat one image!")
+              .min(1, "You must upload at least one image!")
+          : undefined,
       lotCode: yup
         .string()
         .required("Please enter the lot code of the finished product!"),
@@ -732,23 +753,68 @@ const QualityControlPage = (props) => {
                   fontWeight="600"
                   sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
                 >
-                  Mix Code
+                  You you have mix code?
                 </Typography>
-                <UploadImage
-                  sx={{ gridColumn: "span 4", justifySelf: "start" }}
-                  value={formik.values.pictureMixCode}
-                  error={
-                    !!formik.touched.pictureMixCode &&
-                    !!formik.errors.pictureMixCode
-                  }
-                  helperText={
-                    formik.touched.pictureMixCode &&
-                    formik.errors.pictureMixCode
-                  }
-                  onChange={(blob) => {
-                    formik.setFieldValue("pictureMixCode", blob);
+                <ToggleButtonCheck
+                  style={{ gridColumn: "span 4" }}
+                  alignment={mixCodeState}
+                  onChange={(value) => {
+                    setMixCodeState(value);
                   }}
+                  error={
+                    !!formik.touched.mixCodeState &&
+                    !!formik.errors.mixCodeState
+                  }
+                  options={[
+                    {
+                      label: "Yes",
+                      icon: (
+                        <CheckBoxIcon
+                          sx={{
+                            fill: colors.ciboInnerGreen[500],
+                          }}
+                        />
+                      ),
+                    },
+                    {
+                      label: "N/A",
+                      icon: (
+                        <CheckBoxIcon
+                          sx={{
+                            fill: colors.ciboInnerGreen[500],
+                          }}
+                        />
+                      ),
+                    },
+                  ]}
                 />
+                {mixCodeState === "Yes" ? (
+                  <Stack direction="column" spacing={1.5}>
+                    <Typography
+                      variant="h6"
+                      color={colors.grey[100]}
+                      fontWeight="600"
+                      sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                    >
+                      Mix Code
+                    </Typography>
+                    <UploadMultipleImage
+                      sx={{ gridColumn: "span 4", justifySelf: "start" }}
+                      value={formik.values.pictureMixCode}
+                      error={
+                        !!formik.touched.pictureMixCode &&
+                        !!formik.errors.pictureMixCode
+                      }
+                      helperText={
+                        formik.touched.pictureMixCode &&
+                        formik.errors.pictureMixCode
+                      }
+                      onChange={(blobs) => {
+                        formik.setFieldValue("pictureMixCode", blobs);
+                      }}
+                    />
+                  </Stack>
+                ) : undefined}
                 <TextField
                   variant="filled"
                   type="text"
@@ -761,81 +827,25 @@ const QualityControlPage = (props) => {
                   helperText={formik.touched.lotCode && formik.errors.lotCode}
                   sx={{ gridColumn: "span 4" }}
                 />
-                <LocalizationProvider dateAdapter={AdapterMoment}>
-                  <DatePicker
-                    slotProps={{
-                      toolbar: {
-                        sx: {
-                          "& span.MuiDatePickerToolbar-separator": {
-                            marginTop: "10px",
-                          },
-                        },
-                      },
-                      popper: {
-                        sx: {
-                          "& .Mui-selected": {
-                            background:
-                              colors.ciboInnerGreen[600] + " !important",
-                          },
-                          "& .Mui-selected:hover": {
-                            background: colors.ciboInnerGreen[700],
-                          },
-                          "& .MuiButtonBase-root:hover": {
-                            background: colors.ciboInnerGreen[700],
-                          },
-                          "& .MuiButtonBase-root": {
-                            color: colors.grey[100],
-                          },
-                        },
-                      },
-                      dialog: {
-                        sx: {
-                          "& button.Mui-selected": {
-                            color: colors.ciboInnerGreen[500] + " !important",
-                          },
-                          "& .Mui-selected:hover": {
-                            color: colors.ciboInnerGreen[700],
-                          },
-                          "& .MuiButtonBase-root:hover": {
-                            color: colors.ciboInnerGreen[500],
-                          },
-                          "& .MuiButtonBase-root": {
-                            color: colors.grey[100],
-                          },
-                          "& .MuiTabs-indicator": {
-                            background: colors.ciboInnerGreen[500],
-                          },
-                          "& button.MuiButtonBase-root.MuiPickersDay-root.Mui-selected":
-                            {
-                              background: colors.ciboInnerGreen[500],
-                              color: colors.primary[400] + " !important",
-                            },
-                        },
-                      },
-                      textField: {
-                        error:
-                          !!formik.touched.expirationDate &&
-                          !!formik.errors.expirationDate,
-                        helperText:
-                          formik.touched.expirationDate &&
-                          formik.errors.expirationDate,
-                      },
-                    }}
-                    label="Expiration Date"
-                    format="L"
-                    formatDensity="spacious"
-                    value={moment(formik.values.expirationDate)}
-                    onChange={(value) => {
-                      if (value != null) {
-                        formik.setFieldValue("expirationDate", value.format());
-                      } else {
-                        formik.setFieldValue("expirationDate", "");
-                      }
-                    }}
-                    views={["year", "month", "day"]}
-                    sx={{ gridColumn: "span 4" }}
-                  />
-                </LocalizationProvider>
+                <TextField
+                  variant="filled"
+                  type="text"
+                  label="Expiration Date"
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                  value={formik.values.expirationDate}
+                  name="expirationDate"
+                  error={
+                    !!formik.touched.expirationDate &&
+                    !!formik.errors.expirationDate
+                  }
+                  helperText={
+                    formik.touched.expirationDate &&
+                    formik.errors.expirationDate
+                  }
+                  sx={{ gridColumn: "span 4" }}
+                />
+
                 <Typography
                   variant="h6"
                   color={colors.grey[100]}
@@ -2525,6 +2535,16 @@ const QualityControlPage = (props) => {
                                 color: colors.yoggieRed[500],
                                 stroke: colors.yoggieRed[500],
                                 strokeWidth: "2",
+                              }}
+                            />
+                          ),
+                        },
+                        {
+                          label: "N/A",
+                          icon: (
+                            <CheckBoxIcon
+                              sx={{
+                                fill: colors.ciboInnerGreen[500],
                               }}
                             />
                           ),

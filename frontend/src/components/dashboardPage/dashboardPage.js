@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import {
+  Autocomplete,
   Box,
   Button,
   Dialog,
@@ -10,6 +11,8 @@ import {
   List,
   ListItem,
   Stack,
+  TextField,
+  Typography,
 } from "@mui/material";
 import { useTheme } from "@emotion/react";
 import { useSnackbar } from "notistack";
@@ -25,6 +28,7 @@ import ToggleButtonCheck from "../ToggleButtonCheck";
 import FormCard from "../FormCard";
 
 import { ReactComponent as Signature } from "../../images/signature.svg";
+import { FilterList, PlayArrow } from "@mui/icons-material";
 
 const DashboardPage = (props) => {
   const theme = useTheme();
@@ -40,7 +44,11 @@ const DashboardPage = (props) => {
 
   const [toggleOption, setToggleOption] = useState("All");
   const [open, setOpen] = useState(false);
+  const [openFilters, setOpenFilters] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState({});
+  const [stations, setStations] = useState([]);
+  const [station, setStation] = useState([]);
+  const [filtered, setFiltered] = useState(false);
 
   const [options, _] = useState([
     {
@@ -77,6 +85,16 @@ const DashboardPage = (props) => {
           (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
         ),
       );
+      const filteredStations = JSON.parse(localStorage.getItem("filter"));
+      if (filteredStations) {
+        setStation(filteredStations);
+        setFiltered(true);
+        setDataSource(
+          res.data.locations.filter((loc) =>
+            filteredStations.includes(loc.name),
+          ),
+        );
+      }
     } else {
       navigate("/login");
       localStorage.removeItem("token");
@@ -122,8 +140,120 @@ const DashboardPage = (props) => {
     }
   };
 
+  const loadStations = async () => {
+    const res = await axios.post("/signoff/dashboard/stations", {});
+    if (userAuth.control(res)) {
+      if (res.data) {
+        setStations(res.data.stations);
+        setOpenFilters(true);
+      } else {
+        switch (res.response?.status) {
+          case 404:
+            enqueueSnackbar("Didn't fetch the stations!", {
+              variant: "error",
+            });
+            break;
+          case 406:
+            enqueueSnackbar(
+              "You do not have access to fetch the stations. Please contact system admin.",
+              {
+                variant: "error",
+              },
+            );
+            break;
+          default:
+            enqueueSnackbar("Something went wrong with the server!", {
+              variant: "error",
+            });
+            break;
+        }
+      }
+    } else {
+      navigate("/login");
+      localStorage.removeItem("token");
+      localStorage.removeItem("username");
+      enqueueSnackbar("Please sign in again!", {
+        variant: "error",
+      });
+    }
+  };
+
   return (
     <Box m="0 20px">
+      <Dialog
+        open={openFilters}
+        fullWidth={true}
+        onClose={() => {
+          setOpenFilters(false);
+        }}
+      >
+        <DialogTitle>
+          <Stack
+            direction="row"
+            width="100%"
+            alignItems="center"
+            justifyContent="space-between"
+          >
+            <Button
+              color="error"
+              sx={{ fontWeight: 600, fontSize: 18 }}
+              onClick={() => {
+                setOpenFilters(false);
+              }}
+            >
+              Cancel
+            </Button>
+            <Typography fontWeight={600} fontSize={25}>
+              Sign Off Dashboard Filters
+            </Typography>
+            <IconButton
+              onClick={() => {
+                if (station.length !== 0) {
+                  setDataSource(
+                    locations.filter((loc) => station.includes(loc.name)),
+                  );
+                  setFiltered(true);
+                  localStorage.setItem("filter", JSON.stringify(station));
+                } else {
+                  localStorage.removeItem("filter");
+                  setFiltered(false);
+                  setDataSource(locations);
+                }
+                setOpenFilters(false);
+              }}
+            >
+              <PlayArrow
+                sx={{ color: colors.ciboInnerGreen[500], fontSize: 40 }}
+              />
+            </IconButton>
+          </Stack>
+        </DialogTitle>
+        <DialogContent>
+          <Stack spacing={1}>
+            <Typography variant="h3" pl={2} fontWeight={700}>
+              BASIC PARAMETERS
+            </Typography>
+            <Autocomplete
+              multiple
+              disableCloseOnSelect
+              onChange={(_, value) => {
+                setStation(value);
+              }}
+              value={station}
+              options={stations.map(({ name }) => name)}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="outlined"
+                  label="Stations"
+                  name="station"
+                />
+              )}
+            />
+          </Stack>
+        </DialogContent>
+      </Dialog>
+
       <Dialog
         open={open}
         onClose={() => {
@@ -189,6 +319,51 @@ const DashboardPage = (props) => {
           onChange={handleChange}
           options={options}
         />
+        <IconButton
+          onClick={() => {
+            setOpenFilters(true);
+          }}
+        >
+          <IconButton
+            onClick={async () => {
+              await loadStations();
+            }}
+          >
+            {!filtered ? (
+              <FilterList
+                sx={{
+                  fontSize: 25,
+                  border: "2px solid",
+                  borderColor: colors.ciboInnerGreen[400],
+                  borderRadius: 10,
+                  p: 0.1,
+                  color: colors.ciboInnerGreen[400],
+                }}
+              />
+            ) : (
+              <div
+                style={{
+                  background: colors.ciboInnerGreen[400],
+                  padding: 4,
+                  paddingBottom: 1,
+                  borderRadius: 5,
+                }}
+              >
+                <FilterList
+                  sx={{
+                    fontSize: 25,
+                    border: "2px solid",
+                    borderColor: colors.primary[400],
+                    borderRadius: 10,
+
+                    color: colors.primary[400],
+                  }}
+                />
+              </div>
+            )}
+          </IconButton>
+        </IconButton>
+
         <IconButton
           onClick={() => {
             navigate("/signoff");

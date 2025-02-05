@@ -1,5 +1,6 @@
 export const toStringDate = (date, format) => {
-  return new Date(date).toLocaleString("en-us", format);
+  const newDate = new Date(date).toLocaleString("en-us", format);
+  return newDate;
 };
 
 export const extractUniqueProducts = (...forms) => {

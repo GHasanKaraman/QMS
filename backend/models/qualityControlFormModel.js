@@ -44,6 +44,7 @@ const qualityControlFormSchema = new mongoose.Schema(
     anyDeviations: { type: String, required: true },
     deviationID: { type: String, default: "" },
     imageIDs: [{ type: mongoose.Types.ObjectId }],
+    mixCodeLength: { type: Number, default: 1 },
     status: { type: String, default: "failed" },
     started: { type: Number, default: 0 },
     startDateTime: { type: Date },
