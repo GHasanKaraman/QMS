@@ -225,8 +225,6 @@ const QualityControlPage = (props) => {
       xrayFeDetected: null,
       xrayNonFeDetected: null,
       xraySsDetected: null,
-      xrayGlassDetected: null,
-      xrayCeramicDetected: null,
       xrayGlass10Detected: null,
       xrayCeramic10Detected: null,
 
@@ -323,9 +321,9 @@ const QualityControlPage = (props) => {
       xrayNonFeDetected:
         xRayState === "Yes" ? yup.string().required() : undefined,
       xraySsDetected: xRayState === "Yes" ? yup.string().required() : undefined,
-      xrayGlassDetected:
+      xrayGlass10Detected:
         xRayState === "Yes" ? yup.string().required() : undefined,
-      xrayCeramicDetected:
+      xrayCeramic10Detected:
         xRayState === "Yes" ? yup.string().required() : undefined,
 
       metalCardRequired: yup.string().required(),
@@ -1202,92 +1200,6 @@ const QualityControlPage = (props) => {
                     error={
                       !!formik.touched.xraySsDetected &&
                       !!formik.errors.xraySsDetected
-                    }
-                    options={[
-                      {
-                        label: "Yes",
-                        icon: (
-                          <CheckBoxIcon
-                            sx={{
-                              fill: colors.ciboInnerGreen[500],
-                            }}
-                          />
-                        ),
-                      },
-                      {
-                        label: "No",
-                        icon: (
-                          <CloseIcon
-                            sx={{
-                              color: colors.yoggieRed[500],
-                              stroke: colors.yoggieRed[500],
-                              strokeWidth: "2",
-                            }}
-                          />
-                        ),
-                      },
-                    ]}
-                  />
-                  <Typography
-                    variant="h6"
-                    color={colors.grey[100]}
-                    fontWeight="600"
-                    sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
-                  >
-                    Glass 8.0 mm detected?
-                  </Typography>
-                  <ToggleButtonCheck
-                    style={{ gridColumn: "span 4" }}
-                    alignment={formik.values.xrayGlassDetected}
-                    onChange={(value) => {
-                      formik.setFieldValue("xrayGlassDetected", value);
-                    }}
-                    error={
-                      !!formik.touched.xrayGlassDetected &&
-                      !!formik.errors.xrayGlassDetected
-                    }
-                    options={[
-                      {
-                        label: "Yes",
-                        icon: (
-                          <CheckBoxIcon
-                            sx={{
-                              fill: colors.ciboInnerGreen[500],
-                            }}
-                          />
-                        ),
-                      },
-                      {
-                        label: "No",
-                        icon: (
-                          <CloseIcon
-                            sx={{
-                              color: colors.yoggieRed[500],
-                              stroke: colors.yoggieRed[500],
-                              strokeWidth: "2",
-                            }}
-                          />
-                        ),
-                      },
-                    ]}
-                  />
-                  <Typography
-                    variant="h6"
-                    color={colors.grey[100]}
-                    fontWeight="600"
-                    sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
-                  >
-                    Ceramic 6.00 mm detected?
-                  </Typography>
-                  <ToggleButtonCheck
-                    style={{ gridColumn: "span 4" }}
-                    alignment={formik.values.xrayCeramicDetected}
-                    onChange={(value) => {
-                      formik.setFieldValue("xrayCeramicDetected", value);
-                    }}
-                    error={
-                      !!formik.touched.xrayCeramicDetected &&
-                      !!formik.errors.xrayCeramicDetected
                     }
                     options={[
                       {

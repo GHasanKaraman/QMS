@@ -441,7 +441,7 @@ const ViewRoastingQualityControlPage = (props) => {
                 title="Salinity of water (tank) %"
                 subtitle={data?.salinityOfWater}
               />
-              <StatusIndicator status={Boolean(data?.salinityOfWater)} />
+              <StatusIndicator status={true} />
             </Stack>
             <Divider />
             <Stack direction="row" justifyContent="space-between">
@@ -619,7 +619,7 @@ const ViewRoastingQualityControlPage = (props) => {
                 title="Salinity of water (tank) %"
                 subtitle={data?.salinityOfWater}
               />
-              <StatusIndicator status={Boolean(data?.salinityOfWater)} />
+              <StatusIndicator status={true} />
             </Stack>
             <Divider />
             <Stack direction="row" justifyContent="space-between">

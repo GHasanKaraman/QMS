@@ -34,7 +34,7 @@ const roastingQualityFormSchema = new mongoose.Schema(
     saltParameter: { type: Number, required: false, default: "" },
     drumSpeed: { type: Number, required: false },
     saltSpiralSpeed: { type: Number, required: false, default: "" },
-    salinityOfWater: { type: Number, required: false },
+    salinityOfWater: { type: Number, required: false, default: "" },
     salinityOfProduct: { type: Number, required: false },
 
     //R2-3-4

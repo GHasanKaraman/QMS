@@ -231,11 +231,6 @@ const RoastingQualityControlPage = (props) => {
           .string()
           .required("Please enter the temperature of raw product!"),
         drumSpeed: yup.string().required("Please enter the drum speed!"),
-        salinityOfWater: yup
-          .string()
-          .required(
-            "Please enter the percentage the of salinity of water (tank)!",
-          ),
         salinityOfProduct: yup
           .string()
           .required(
@@ -261,11 +256,6 @@ const RoastingQualityControlPage = (props) => {
         beltSpeed: yup.string().required("Please enter the belt speed!"),
         productThickness: yup.string().required(),
         drumSpeed: yup.string().required("Please enter the drum speed!"),
-        salinityOfWater: yup
-          .string()
-          .required(
-            "Please enter the percentage the of salinity of water (tank)!",
-          ),
         colorOfFinishedProduct: yup.string().required(),
         salinityOfProduct: yup
           .string()
