@@ -99,7 +99,6 @@ router.post("/mixingquality/add", upload.any(), async (req, res) => {
       if (
         data.correctLabel !== "No" &&
         data.probioticMixLot !== "No" &&
-        data.cleaning !== "Quality" &&
         data.allergensSeparate === "Yes" &&
         data.sensory === "Yes" &&
         data.cleanFloor === "Yes" &&

@@ -2213,11 +2213,9 @@ const RoastingQualityControlPage = (props) => {
                     {
                       label: "Quality",
                       icon: (
-                        <CloseIcon
+                        <CheckBoxIcon
                           sx={{
-                            color: colors.yoggieRed[500],
-                            stroke: colors.yoggieRed[500],
-                            strokeWidth: "2",
+                            fill: colors.ciboInnerGreen[500],
                           }}
                         />
                       ),

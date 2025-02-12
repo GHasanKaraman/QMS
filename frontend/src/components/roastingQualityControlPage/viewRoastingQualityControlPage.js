@@ -382,14 +382,9 @@ const ViewRoastingQualityControlPage = (props) => {
             <Stack direction="row" justifyContent="space-between">
               <Label
                 title="Cleaning by Allergen or Quality?"
-                subtitle={
-                  <LabelResult
-                    text={data?.cleaning}
-                    status={data?.cleaning !== "Quality"}
-                  />
-                }
+                subtitle={<LabelResult text={data?.cleaning} status={true} />}
               />
-              <StatusIndicator status={data?.cleaning !== "Quality"} />
+              <StatusIndicator status={true} />
             </Stack>
             <Divider />
             <Stack direction="row" justifyContent="space-between">
