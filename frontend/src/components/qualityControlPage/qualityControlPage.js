@@ -15,9 +15,6 @@ import {
   Chip,
 } from "@mui/material";
 
-import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CloseIcon from "@mui/icons-material/Close";
 import ScaleIcon from "@mui/icons-material/Scale";
@@ -40,6 +37,7 @@ import UploadImage from "../UploadImage";
 import ToggleButtonCheck from "../ToggleButtonCheck";
 import { Accordion, AccordionDetails, AccordionSummary } from "../Accordion";
 import UploadMultipleImage from "../UploadMultipleImage";
+import { Schedule } from "@mui/icons-material";
 
 const QualityControlPage = (props) => {
   const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png"];
@@ -81,9 +79,10 @@ const QualityControlPage = (props) => {
     }
   };
 
-  const loadProducts = async (station) => {
+  const loadProducts = async (station, shift) => {
     const res = await axios.post("/qualitycontrol/stationplan", {
       station: station,
+      shift: shift,
     });
     if (userAuth.control(res)) {
       setProducts(res.data.products);
@@ -210,6 +209,7 @@ const QualityControlPage = (props) => {
     initialValues: {
       station: null,
       product: null,
+      shift: null,
       areIngredientsCorrect: null,
       pictureOfProduct: null,
       isTasteAcceptable: null,
@@ -264,6 +264,7 @@ const QualityControlPage = (props) => {
     onSubmit: handleSubmit,
     validationSchema: yup.object().shape({
       station: yup.string().required("Please select the station!"),
+      shift: yup.string().required("Please select the shift!"),
       product: yup
         .mixed()
         .nullable()
@@ -512,12 +513,10 @@ const QualityControlPage = (props) => {
               setProductDetails(null);
               formik.setFieldValue("station", value);
               formik.setFieldValue("product", null);
-              if (value != null) {
-                await loadProducts(value);
-              }
+              formik.setFieldValue("shift", null);
             }}
             value={formik.values.station}
-            sx={{ marginBottom: "30px", gridColumn: "span 2" }}
+            sx={{ gridColumn: "span 4" }}
             options={stations
               .filter(
                 ({ name }) => !name.includes("ROAST") && !name.includes("MIX"),
@@ -535,6 +534,44 @@ const QualityControlPage = (props) => {
               />
             )}
           />
+          <Typography
+            variant="h6"
+            color={colors.grey[100]}
+            fontWeight="600"
+            sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+          >
+            Shift
+          </Typography>
+
+          <ToggleButtonCheck
+            style={{ gridColumn: "span 4" }}
+            alignment={formik.values.shift}
+            onChange={async (value) => {
+              setProductDetails(null);
+              formik.setFieldValue("shift", value);
+              formik.setFieldValue("product", null);
+              if (value != null) {
+                await loadProducts(formik.values.station, value);
+              }
+            }}
+            disabled={!Boolean(formik.values.station)}
+            error={!!formik.touched.shift && !!formik.errors.shift}
+            options={[
+              {
+                label: "1",
+                icon: <Schedule />,
+              },
+              {
+                label: "2",
+                icon: <Schedule />,
+              },
+              {
+                label: "3",
+                icon: <Schedule />,
+              },
+            ]}
+          />
+
           <Autocomplete
             getOptionLabel={({ partNum, description }) =>
               partNum + " - " + description
@@ -542,8 +579,6 @@ const QualityControlPage = (props) => {
             disabled={products.length == 0}
             onChange={async (_, value) => {
               const station = formik.values.station;
-              formik.resetForm();
-              formik.setFieldValue("station", station);
               formik.setFieldValue("product", value);
               if (value != null) {
                 const details = await loadDetails(station, value.partNum);
@@ -558,7 +593,7 @@ const QualityControlPage = (props) => {
               }
             }}
             value={formik.values.product}
-            sx={{ marginBottom: "30px", gridColumn: "span 2" }}
+            sx={{ marginBottom: "30px", gridColumn: "span 4" }}
             options={products}
             onBlur={formik.handleBlur}
             renderInput={(params) => (

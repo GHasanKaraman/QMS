@@ -200,7 +200,12 @@ const ViewQualityControlPage = (props) => {
             : ""
         }
       />
-      <RunLabel started={data?.started} startDateTime={data?.startDateTime} />
+      <RunLabel
+        started={data?.started}
+        startDateTime={data?.startDateTime}
+        shift={data?.shift}
+      />
+
       <Accordion defaultExpanded>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Stack direction="row" justifyContent="space-between" width="100%">
@@ -273,22 +278,7 @@ const ViewQualityControlPage = (props) => {
           </Stack>
           <Divider />
           <Stack direction="row" justifyContent="space-between">
-            <Label
-              title="Expiration Date"
-              subtitle={
-                toStringDate(data?.expirationDate, {
-                  month: "short",
-                  year: "numeric",
-                  day: "numeric",
-                }) === "Invalid Date"
-                  ? data?.expirationDate
-                  : toStringDate(data?.expirationDate, {
-                      month: "short",
-                      year: "numeric",
-                      day: "numeric",
-                    })
-              }
-            />
+            <Label title="Expiration Date" subtitle={data?.expirationDate} />
             <StatusIndicator status={Boolean(data?.expirationDate)} />
           </Stack>
           <Divider />

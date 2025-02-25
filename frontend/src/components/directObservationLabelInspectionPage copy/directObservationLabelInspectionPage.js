@@ -32,6 +32,7 @@ import axios from "../../api/axios";
 import userAuth from "../../utils/userAuth";
 import ToggleButtonCheck from "../ToggleButtonCheck";
 import { Accordion, AccordionDetails, AccordionSummary } from "../Accordion";
+import { Schedule } from "@mui/icons-material";
 
 const DirectObservationLabelInspectionPage = (props) => {
   const theme = useTheme();
@@ -65,9 +66,10 @@ const DirectObservationLabelInspectionPage = (props) => {
     }
   };
 
-  const loadProducts = async (station) => {
+  const loadProducts = async (station, shift) => {
     const res = await axios.post("/qualitycontrol/stationplan", {
       station: station,
+      shift: shift,
     });
     if (userAuth.control(res)) {
       setProducts(res.data.products);
@@ -175,6 +177,7 @@ const DirectObservationLabelInspectionPage = (props) => {
   const formik = useFormik({
     initialValues: {
       station: null,
+      shift: null,
       product: null,
       lotCode: "",
       isAllergenStatementCorrect: null,
@@ -183,6 +186,7 @@ const DirectObservationLabelInspectionPage = (props) => {
     onSubmit: handleSubmit,
     validationSchema: yup.object().shape({
       station: yup.string().required("Please select the station!"),
+      shift: yup.string().required("Please select the shift!"),
       product: yup
         .mixed()
         .nullable()
@@ -267,12 +271,10 @@ const DirectObservationLabelInspectionPage = (props) => {
               setProductDetails(null);
               formik.setFieldValue("station", value);
               formik.setFieldValue("product", null);
-              if (value != null) {
-                await loadProducts(value);
-              }
+              formik.setFieldValue("shift", null);
             }}
             value={formik.values.station}
-            sx={{ marginBottom: "30px", gridColumn: "span 2" }}
+            sx={{ gridColumn: "span 4" }}
             options={stations.map(({ name }) => name)}
             onBlur={formik.handleBlur}
             renderInput={(params) => (
@@ -286,6 +288,44 @@ const DirectObservationLabelInspectionPage = (props) => {
               />
             )}
           />
+          <Typography
+            variant="h6"
+            color={colors.grey[100]}
+            fontWeight="600"
+            sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+          >
+            Shift
+          </Typography>
+
+          <ToggleButtonCheck
+            style={{ gridColumn: "span 4" }}
+            alignment={formik.values.shift}
+            onChange={async (value) => {
+              setProductDetails(null);
+              formik.setFieldValue("shift", value);
+              formik.setFieldValue("product", null);
+              if (value != null) {
+                await loadProducts(formik.values.station, value);
+              }
+            }}
+            disabled={!Boolean(formik.values.station)}
+            error={!!formik.touched.shift && !!formik.errors.shift}
+            options={[
+              {
+                label: "1",
+                icon: <Schedule />,
+              },
+              {
+                label: "2",
+                icon: <Schedule />,
+              },
+              {
+                label: "3",
+                icon: <Schedule />,
+              },
+            ]}
+          />
+
           <Autocomplete
             getOptionLabel={({ partNum, description }) =>
               partNum + " - " + description
@@ -293,15 +333,21 @@ const DirectObservationLabelInspectionPage = (props) => {
             disabled={products.length == 0}
             onChange={async (_, value) => {
               const station = formik.values.station;
-              formik.resetForm();
-              formik.setFieldValue("station", station);
               formik.setFieldValue("product", value);
               if (value != null) {
-                await loadDetails(formik.values.station, value.partNum);
+                const details = await loadDetails(station, value.partNum);
+                if (details) {
+                  if (details?.soList?.length === 0) {
+                    formik.setFieldValue("salesOrderNumber", "No");
+                  }
+                  if (details?.allergens === "") {
+                    formik.setFieldValue("areAllergensCorrect", "Yes");
+                  }
+                }
               }
             }}
             value={formik.values.product}
-            sx={{ marginBottom: "30px", gridColumn: "span 2" }}
+            sx={{ marginBottom: "30px", gridColumn: "span 4" }}
             options={products}
             onBlur={formik.handleBlur}
             renderInput={(params) => (

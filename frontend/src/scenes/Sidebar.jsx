@@ -1,10 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Sidebar as ProSidebar,
-  Menu,
-  SubMenu,
-  MenuItem,
-} from "react-pro-sidebar";
+import { Sidebar as ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
 import {
   Box,
   IconButton,
@@ -23,7 +18,6 @@ import ContentPasteSearchIcon from "@mui/icons-material/ContentPasteSearch";
 import BlenderIcon from "@mui/icons-material/Blender";
 import RadarIcon from "@mui/icons-material/Radar";
 import CollectionsBookmarkIcon from "@mui/icons-material/CollectionsBookmark";
-import EditNoteIcon from "@mui/icons-material/EditNote";
 import TagIcon from "@mui/icons-material/Tag";
 
 import logo from "../images/logo.png";

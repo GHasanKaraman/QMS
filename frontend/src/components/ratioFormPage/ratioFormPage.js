@@ -26,6 +26,8 @@ import { tokens } from "../../theme";
 
 import axios from "../../api/axios";
 import userAuth from "../../utils/userAuth";
+import ToggleButtonCheck from "../ToggleButtonCheck";
+import { Schedule } from "@mui/icons-material";
 
 const RatioFormPage = (props) => {
   const theme = useTheme();
@@ -60,9 +62,10 @@ const RatioFormPage = (props) => {
     }
   };
 
-  const loadProducts = async (station) => {
+  const loadProducts = async (station, shift) => {
     const res = await axios.post("/qualitycontrol/stationplan", {
       station: station,
+      shift: shift,
     });
     if (userAuth.control(res)) {
       setProducts(res.data.products);
@@ -115,6 +118,7 @@ const RatioFormPage = (props) => {
   const formik = useFormik({
     initialValues: {
       station: null,
+      shift: null,
       product: null,
       weights: {},
     },
@@ -282,13 +286,15 @@ const RatioFormPage = (props) => {
               setProductRecipe(null);
               formik.setFieldValue("station", value);
               formik.setFieldValue("product", null);
-              if (value != null) {
-                await loadProducts(value);
-              }
+              formik.setFieldValue("shift", null);
             }}
             value={formik.values.station}
-            sx={{ marginBottom: "30px", gridColumn: "span 2" }}
-            options={stations.map(({ name }) => name)}
+            sx={{ gridColumn: "span 4" }}
+            options={stations
+              .filter(
+                ({ name }) => !name.includes("ROAST") && !name.includes("MIX"),
+              )
+              .map(({ name }) => name)}
             onBlur={formik.handleBlur}
             renderInput={(params) => (
               <TextField
@@ -301,6 +307,45 @@ const RatioFormPage = (props) => {
               />
             )}
           />
+
+          <Typography
+            variant="h6"
+            color={colors.grey[100]}
+            fontWeight="600"
+            sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+          >
+            Shift
+          </Typography>
+
+          <ToggleButtonCheck
+            style={{ gridColumn: "span 4" }}
+            alignment={formik.values.shift}
+            onChange={async (value) => {
+              setProductRecipe(null);
+              formik.setFieldValue("shift", value);
+              formik.setFieldValue("product", null);
+              if (value != null) {
+                await loadProducts(formik.values.station, value);
+              }
+            }}
+            disabled={!Boolean(formik.values.station)}
+            error={!!formik.touched.shift && !!formik.errors.shift}
+            options={[
+              {
+                label: "1",
+                icon: <Schedule />,
+              },
+              {
+                label: "2",
+                icon: <Schedule />,
+              },
+              {
+                label: "3",
+                icon: <Schedule />,
+              },
+            ]}
+          />
+
           <Autocomplete
             getOptionLabel={({ partNum, description }) =>
               partNum + " - " + description
@@ -316,7 +361,7 @@ const RatioFormPage = (props) => {
               }
             }}
             value={formik.values.product}
-            sx={{ marginBottom: "30px", gridColumn: "span 2" }}
+            sx={{ marginBottom: "30px", gridColumn: "span 4" }}
             options={products}
             onBlur={formik.handleBlur}
             renderInput={(params) => (

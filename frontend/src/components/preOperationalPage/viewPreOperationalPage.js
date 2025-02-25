@@ -189,7 +189,12 @@ const ViewPreOperationalPage = (props) => {
             : ""
         }
       />
-      <RunLabel started={data?.started} startDateTime={data?.startDateTime} />
+      <RunLabel
+        started={data?.started}
+        startDateTime={data?.startDateTime}
+        shift={data?.shift}
+      />
+
       <Accordion defaultExpanded>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Stack direction="row" justifyContent="space-between" width="100%">

@@ -162,22 +162,7 @@ const QualityControlAccordion = ({ id, expanded, isForm, onChange, value }) => {
         </Stack>
         <Divider />
         <Stack direction="row" justifyContent="space-between">
-          <Label
-            title="Expiration Date"
-            subtitle={
-              toStringDate(data?.expirationDate, {
-                month: "short",
-                year: "numeric",
-                day: "numeric",
-              }) === "Invalid Date"
-                ? data?.expirationDate
-                : toStringDate(data?.expirationDate, {
-                    month: "short",
-                    year: "numeric",
-                    day: "numeric",
-                  })
-            }
-          />
+          <Label title="Expiration Date" subtitle={data?.expirationDate} />
           <StatusIndicator status={Boolean(data?.expirationDate)} />
         </Stack>
         <Divider />

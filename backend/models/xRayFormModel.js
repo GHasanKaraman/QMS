@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const xRayFormSchema = new mongoose.Schema(
   {
     station: { type: String, required: true },
+    shift: { type: String, required: true },
     product: { type: String, required: true },
     username: { type: String, required: true },
     lotCode: { type: String, required: true },

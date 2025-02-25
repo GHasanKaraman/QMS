@@ -3,7 +3,6 @@ const fetch = require("node-fetch");
 const router = express.Router();
 const mongoose = require("mongoose");
 
-const essentials = require("../utils/essentials");
 const preOperationalFormModel = require("../models/preOperationalFormModel.js");
 
 router.post("/preoperational/get", async (req, res) => {

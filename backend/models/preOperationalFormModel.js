@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const preOperationalFormSchema = new mongoose.Schema(
   {
     station: { type: String, required: true },
+    shift: { type: String, required: true },
     product: { type: String, required: true },
     username: { type: String, required: true },
     dumper: { type: String, required: true },

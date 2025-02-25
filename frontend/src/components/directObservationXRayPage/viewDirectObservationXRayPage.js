@@ -8,7 +8,6 @@ import {
   Typography,
   Backdrop,
   CircularProgress,
-  useMediaQuery,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useTheme } from "@emotion/react";
@@ -39,14 +38,9 @@ const ViewDirectObservationXRayPage = (props) => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
-  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
-
   const [data, setData] = useState();
   const [product, setProduct] = useState();
   const [open, setOpen] = useState(false);
-  const [openDialog, setOpenDialog] = useState(false);
-
-  const [clicked, setClicked] = useState(false);
 
   const loadMetalDetectorPage = async () => {
     setOpen(true);
@@ -195,7 +189,11 @@ const ViewDirectObservationXRayPage = (props) => {
             : ""
         }
       />
-      <RunLabel started={data?.started} startDateTime={data?.startDateTime} />
+      <RunLabel
+        started={data?.started}
+        startDateTime={data?.startDateTime}
+        shift={data?.shift}
+      />
       <Accordion defaultExpanded>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Stack direction="row" justifyContent="space-between" width="100%">

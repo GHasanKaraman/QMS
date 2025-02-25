@@ -6,7 +6,6 @@ const mongoose = require("mongoose");
 const router = express.Router();
 const upload = require("../file");
 
-const essentials = require("../utils/essentials");
 const imageModel = require("../models/imageModel");
 const pgQualityControlModel = require("../models/pgQualityControlFormModel");
 
@@ -29,22 +28,14 @@ router.post("/pgqualitycontrol", async (req, res) => {
   }
 });
 
-const getShift = () => {
-  const currentHour = new Date().getHours();
-  if (currentHour > 7 && currentHour < 18) {
-    return 1;
-  }
-  return 2;
-};
-
 router.post("/pgqualitycontrol/stationplan", async (req, res) => {
   try {
-    const { station } = req.body;
+    const { station, shift } = req.body;
 
     var details = {
       station: station,
       runDate: new Date().toLocaleDateString(),
-      runShift: getShift(),
+      runShift: shift,
     };
 
     var formBody = [];

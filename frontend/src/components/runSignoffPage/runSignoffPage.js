@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   AccordionSummary,
-  Backdrop,
   Box,
   Button,
   Checkbox,
@@ -32,6 +31,8 @@ import userAuth from "../../utils/userAuth";
 import RunSummaryAccordions from "../RunSummaryAccordions";
 import { ArrowLeft, LibraryAddCheck } from "@mui/icons-material";
 import Header from "../Header";
+import { useRecoilState } from "recoil";
+import { userInformations } from "../../atoms/userAtom";
 
 const RunSignoffPage = (props) => {
   const params = useParams();
@@ -73,6 +74,8 @@ const RunSignoffPage = (props) => {
 
   const [open, setOpen] = useState(false);
   const [clicked, setClicked] = useState(false);
+
+  const [user] = useRecoilState(userInformations);
 
   const initiateChecks = (forms) => {
     const temp = {};
@@ -127,6 +130,42 @@ const RunSignoffPage = (props) => {
 
   const handleChange = (id, value) => {
     setValues((prevState) => ({ ...prevState, [id]: value }));
+  };
+
+  const checkPassword = async () => {
+    const res = await axios.post("/runsignoff/password", {
+      username: user.username,
+      password,
+    });
+
+    if (userAuth.control(res)) {
+      const status = res.data?.status;
+      if (status === 1) {
+        if (!clicked) {
+          setClicked(true);
+          handleSignoff();
+        }
+      } else {
+        setPassword("");
+        enqueueSnackbar("Your password is incorrect!", {
+          variant: "error",
+        });
+      }
+    } else {
+      switch (res.response?.status) {
+        case 404:
+          enqueueSnackbar("Contact to your system administrator!", {
+            variant: "error",
+          });
+          break;
+        default:
+          enqueueSnackbar("Something went wrong with the server!", {
+            variant: "error",
+          });
+          break;
+      }
+    }
+    setOpen(false);
   };
 
   const handleSignoff = async () => {
@@ -219,24 +258,7 @@ const RunSignoffPage = (props) => {
             <Button
               color="secondary"
               sx={{ fontWeight: 600, fontSize: 18 }}
-              onClick={() => {
-                if (password === "134679") {
-                  if (!clicked) {
-                    setClicked(true);
-                    setOpen(false);
-                    handleSignoff();
-                  }
-                } else {
-                  setOpen(false);
-                  setPassword("");
-                  enqueueSnackbar(
-                    "Please enter special pin number for this action!",
-                    {
-                      variant: "error",
-                    },
-                  );
-                }
-              }}
+              onClick={checkPassword}
             >
               Confirm
             </Button>

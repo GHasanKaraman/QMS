@@ -192,7 +192,12 @@ const ViewRoastingQualityControlPage = (props) => {
             : ""
         }
       />
-      <RunLabel started={data?.started} startDateTime={data?.startDateTime} />
+      <RunLabel
+        started={data?.started}
+        startDateTime={data?.startDateTime}
+        shift={data?.shift}
+      />
+
       <div
         key="R1_View"
         style={{ display: data?.station === "ROAST-1" ? "block" : "none" }}

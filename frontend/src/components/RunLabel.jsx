@@ -2,7 +2,7 @@ import { Divider } from "@mui/material";
 import Label from "./Label";
 import { toStringDate } from "../utils/helpers";
 
-const RunLabel = ({ started, startDateTime }) => {
+const RunLabel = ({ started, startDateTime, shift = 1 }) => {
   const runType = started == 1 ? "Machine" : "Product";
   return started == 0 ? undefined : (
     <div>
@@ -15,7 +15,7 @@ const RunLabel = ({ started, startDateTime }) => {
           day: "numeric",
           hour: "numeric",
           minute: "numeric",
-        })}`}
+        })} - Shift ${shift}`}
       />
     </div>
   );

@@ -8,6 +8,7 @@ const pgQualityControlFormSchema = new mongoose.Schema(
     metalBallSsDetected: { type: String, default: "" },
     areIngredientsCorrect: { type: String, required: true },
     station: { type: String, required: true },
+    shift: { type: String, required: true },
     product: { type: String, required: true },
     username: { type: String, required: true },
     lotCodePouch: { type: String, required: true },
