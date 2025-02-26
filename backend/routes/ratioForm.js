@@ -104,7 +104,7 @@ router.post("/ratio/add", async (req, res) => {
     );
 
     Object.values(weights).forEach((weight) => {
-      const percentage = weight.ratio * 0.1;
+      const percentage = 5;
       const toleranceMin = weight.ratio - percentage;
       const toleranceMax = weight.ratio + percentage;
       const customQty = ((weight.weight * 1.0) / totalWeight) * 1.0;

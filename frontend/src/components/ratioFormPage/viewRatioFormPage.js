@@ -208,7 +208,7 @@ const ViewRatioFormPage = (props) => {
         </AccordionSummary>
         <AccordionDetails>
           <div style={{ color: colors.yoggieRed[500] }}>
-            Form status is calculated by 10% tolerence value!
+            Form status is calculated by 5% static value!
           </div>
           <Divider />
           <Box
@@ -232,7 +232,7 @@ const ViewRatioFormPage = (props) => {
             const group = Object.keys(data.recipe)[index];
             const groupName = group.includes("null") ? "?" : group;
             const ratio = recipe.weight / totalWeight;
-            const tolerance = recipe.ratio * 0.1;
+            const tolerance = 5;
             const lowerbound = recipe.ratio - tolerance;
             const upperbound = recipe.ratio + tolerance;
             const passed = lowerbound <= ratio && ratio <= upperbound;
