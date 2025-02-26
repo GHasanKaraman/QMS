@@ -140,7 +140,6 @@ const QualityControlPage = (props) => {
     values.started = Number(productDetails?.started);
     values.startDateTime = moment(productDetails?.startDateTime);
     values.mixCodeLength = values.pictureMixCode.length;
-
     const formData = new FormData();
     for (const name in values) {
       if (values[name]?.constructor?.name === "Blob") {
@@ -155,6 +154,7 @@ const QualityControlPage = (props) => {
         formData.append(name, values[name]);
       }
     }
+    formData.append("treenuts", values.treenuts);
 
     const res = await axios.post("/qualitycontrol/add", formData);
     if (userAuth.control(res)) {
@@ -484,7 +484,6 @@ const QualityControlPage = (props) => {
               variant: "error",
             });
           }
-          console.log(formik.errors);
           formik.handleSubmit(e);
         }}
         style={{ paddingBottom: "10px" }}

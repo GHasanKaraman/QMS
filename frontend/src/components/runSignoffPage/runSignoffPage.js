@@ -103,7 +103,6 @@ const RunSignoffPage = (props) => {
       const forms = res.data.forms.sort(
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
       );
-      console.log(forms);
       setForms(forms);
       setDescription(res.data.desc[0]);
       setSignedoffForms(forms.filter((form) => form.signoffs.length > 0));
@@ -334,7 +333,7 @@ const RunSignoffPage = (props) => {
               onClick={() => {
                 navigate(
                   "/runsummary/" +
-                    props.product +
+                    encodeURIComponent(props.product) +
                     "?date=" +
                     props.date +
                     "&type=" +

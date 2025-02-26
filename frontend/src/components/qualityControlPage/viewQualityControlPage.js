@@ -774,7 +774,7 @@ const ViewQualityControlPage = (props) => {
                     variant="filled"
                     color="primary"
                     style={{
-                      color: colors.contrast[300],
+                      color: colors.ciboInnerGreen[600],
                       fontWeight: "bold",
                       fontSize: "13px",
                       backgroundColor: colors.contrast[100],
