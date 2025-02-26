@@ -101,7 +101,7 @@ const RunSignoffPage = (props) => {
     });
     if (userAuth.control(res)) {
       const forms = res.data.forms.sort(
-        (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+        (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
       );
       setForms(forms);
       setDescription(res.data.desc[0]);
@@ -432,7 +432,7 @@ const RunSignoffPage = (props) => {
                     " " +
                     type +
                     " • " +
-                    toStringDate(forms[forms.length - 1]?.createdAt, {
+                    toStringDate(forms[0]?.createdAt, {
                       month: "short",
                       year: "numeric",
                       day: "numeric",
@@ -440,7 +440,7 @@ const RunSignoffPage = (props) => {
                       minute: "numeric",
                     }) +
                     " - " +
-                    toStringDate(forms[0]?.createdAt, {
+                    toStringDate(forms[forms.length - 1]?.createdAt, {
                       month: "short",
                       year: "numeric",
                       day: "numeric",

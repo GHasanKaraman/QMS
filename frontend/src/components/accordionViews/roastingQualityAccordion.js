@@ -13,6 +13,7 @@ import Label from "../Label";
 import StatusIndicator from "../StatusIndicator";
 import LabelResult from "../LabelResult";
 import ImageLabel from "../ImageLabel";
+import { toStringDate } from "../../utils/helpers";
 
 const RoastingQualityAccordion = ({
   id,
@@ -106,6 +107,24 @@ const RoastingQualityAccordion = ({
         </Stack>
       </AccordionSummary>
       <AccordionDetails>
+        <Stack direction="row" justifyContent="space-between">
+          <Label
+            title="Created At"
+            subtitle={toStringDate(data?.createdAt, {
+              month: "short",
+              year: "numeric",
+              day: "numeric",
+              hour: "numeric",
+              minute: "numeric",
+            })}
+          />
+        </Stack>
+        <Divider />
+        <Stack direction="row" justifyContent="space-between">
+          <Label title="QC" subtitle={data?.username} />
+        </Stack>
+        <Divider />
+
         <div
           key="R1_View"
           style={{ display: data?.station === "ROAST-1" ? "block" : "none" }}

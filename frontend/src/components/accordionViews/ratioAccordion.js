@@ -19,6 +19,7 @@ import { Accordion, AccordionDetails, AccordionSummary } from "../Accordion";
 import Label from "../Label";
 
 import "../formStatus.css";
+import { toStringDate } from "../../utils/helpers";
 
 const RatioAccordion = ({ id, expanded, isForm, onChange, value }) => {
   const theme = useTheme();
@@ -110,7 +111,24 @@ const RatioAccordion = ({ id, expanded, isForm, onChange, value }) => {
         </Stack>
       </AccordionSummary>
       <AccordionDetails>
+        <Stack direction="row" justifyContent="space-between">
+          <Label
+            title="Created At"
+            subtitle={toStringDate(data?.createdAt, {
+              month: "short",
+              year: "numeric",
+              day: "numeric",
+              hour: "numeric",
+              minute: "numeric",
+            })}
+          />
+        </Stack>
         <Divider />
+        <Stack direction="row" justifyContent="space-between">
+          <Label title="QC" subtitle={data?.username} />
+        </Stack>
+        <Divider />
+
         <Box
           mt="10px"
           display="grid"

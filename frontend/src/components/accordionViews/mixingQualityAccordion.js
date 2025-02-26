@@ -13,6 +13,7 @@ import Label from "../Label";
 import StatusIndicator from "../StatusIndicator";
 import LabelResult from "../LabelResult";
 import ImageLabel from "../ImageLabel";
+import { toStringDate } from "../../utils/helpers";
 
 const MixingQualityAccordion = ({ id, expanded, isForm, onChange, value }) => {
   const theme = useTheme();
@@ -100,6 +101,24 @@ const MixingQualityAccordion = ({ id, expanded, isForm, onChange, value }) => {
         </Stack>
       </AccordionSummary>
       <AccordionDetails>
+        <Stack direction="row" justifyContent="space-between">
+          <Label
+            title="Created At"
+            subtitle={toStringDate(data?.createdAt, {
+              month: "short",
+              year: "numeric",
+              day: "numeric",
+              hour: "numeric",
+              minute: "numeric",
+            })}
+          />
+        </Stack>
+        <Divider />
+        <Stack direction="row" justifyContent="space-between">
+          <Label title="QC" subtitle={data?.username} />
+        </Stack>
+        <Divider />
+
         <Stack direction="row" justifyContent="space-between">
           <Label title="Finished Product Lot Code" subtitle={data?.lotCode} />
           <StatusIndicator status={true} />

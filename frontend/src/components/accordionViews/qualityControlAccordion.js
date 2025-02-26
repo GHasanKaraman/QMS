@@ -106,6 +106,23 @@ const QualityControlAccordion = ({ id, expanded, isForm, onChange, value }) => {
       <AccordionDetails>
         <Stack direction="row" justifyContent="space-between">
           <Label
+            title="Created At"
+            subtitle={toStringDate(data?.createdAt, {
+              month: "short",
+              year: "numeric",
+              day: "numeric",
+              hour: "numeric",
+              minute: "numeric",
+            })}
+          />
+        </Stack>
+        <Divider />
+        <Stack direction="row" justifyContent="space-between">
+          <Label title="QC" subtitle={data?.username} />
+        </Stack>
+        <Divider />
+        <Stack direction="row" justifyContent="space-between">
+          <Label
             title="Are the ingredients correct?"
             subtitle={
               <LabelResult

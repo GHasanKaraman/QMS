@@ -63,7 +63,7 @@ const RunSummaryPage = (props) => {
     });
     if (userAuth.control(res)) {
       const forms = res.data.forms.sort(
-        (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+        (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
       );
       setForms(forms);
       setSignedoffForms(forms.filter((form) => form.signoffs.length > 0));

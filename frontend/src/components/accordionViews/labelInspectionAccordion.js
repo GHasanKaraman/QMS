@@ -14,6 +14,7 @@ import LabelResult from "../LabelResult";
 import StatusIndicator from "../StatusIndicator";
 
 import "../formStatus.css";
+import { toStringDate } from "../../utils/helpers";
 
 const LabelInspectionAccordion = ({
   id,
@@ -103,6 +104,24 @@ const LabelInspectionAccordion = ({
         </Stack>
       </AccordionSummary>
       <AccordionDetails>
+        <Stack direction="row" justifyContent="space-between">
+          <Label
+            title="Created At"
+            subtitle={toStringDate(data?.createdAt, {
+              month: "short",
+              year: "numeric",
+              day: "numeric",
+              hour: "numeric",
+              minute: "numeric",
+            })}
+          />
+        </Stack>
+        <Divider />
+        <Stack direction="row" justifyContent="space-between">
+          <Label title="QC" subtitle={data?.username} />
+        </Stack>
+        <Divider />
+
         <Stack direction="row" justifyContent="space-between">
           <Label title="Lot Code #" subtitle={data?.lotCode} />
           <StatusIndicator status={Boolean(data?.lotCode)} />

@@ -13,6 +13,7 @@ import Label from "../Label";
 import StatusIndicator from "../StatusIndicator";
 
 import "../formStatus.css";
+import { toStringDate } from "../../utils/helpers";
 
 const MetalDetectorAccordion = ({ id, expanded, isForm, onChange, value }) => {
   const theme = useTheme();
@@ -98,6 +99,24 @@ const MetalDetectorAccordion = ({ id, expanded, isForm, onChange, value }) => {
         </Stack>
       </AccordionSummary>
       <AccordionDetails>
+        <Stack direction="row" justifyContent="space-between">
+          <Label
+            title="Created At"
+            subtitle={toStringDate(data?.createdAt, {
+              month: "short",
+              year: "numeric",
+              day: "numeric",
+              hour: "numeric",
+              minute: "numeric",
+            })}
+          />
+        </Stack>
+        <Divider />
+        <Stack direction="row" justifyContent="space-between">
+          <Label title="QC" subtitle={data?.username} />
+        </Stack>
+        <Divider />
+
         <Stack direction="row" justifyContent="space-between">
           <Label
             title="Product name"
