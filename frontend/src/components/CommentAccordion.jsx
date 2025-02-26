@@ -94,37 +94,43 @@ const CommentAccordion = ({ formID, form }) => {
   }, []);
 
   const handleSubmit = async (values, { resetForm }) => {
-    const formData = new FormData();
-    for (const name in values) {
-      formData.append(name, values[name]);
-    }
-    const res = await axios.post("/comment/add", formData);
-    if (userAuth.control(res)) {
-      if (res?.data) {
-        enqueueSnackbar("You have left a comment on this form!", {
-          variant: "success",
-        });
-        loadComments();
-        resetForm();
-      } else {
-        switch (res.response?.status) {
-          case 404:
-            enqueueSnackbar("Station or product is wrong!", {
-              variant: "error",
-            });
-            break;
-          case 503:
-            enqueueSnackbar("Something went wrong with the server!", {
-              variant: "error",
-            });
-            break;
+    if (values.comment !== "" || values.picture) {
+      const formData = new FormData();
+      for (const name in values) {
+        formData.append(name, values[name]);
+      }
+      const res = await axios.post("/comment/add", formData);
+      if (userAuth.control(res)) {
+        if (res?.data) {
+          enqueueSnackbar("You have left a comment on this form!", {
+            variant: "success",
+          });
+          loadComments();
+          resetForm();
+        } else {
+          switch (res.response?.status) {
+            case 404:
+              enqueueSnackbar("Station or product is wrong!", {
+                variant: "error",
+              });
+              break;
+            default:
+              enqueueSnackbar("Something went wrong with the server!", {
+                variant: "error",
+              });
+              break;
+          }
         }
+      } else {
+        navigate("/login");
+        localStorage.removeItem("token");
+        localStorage.removeItem("username");
+        enqueueSnackbar("Please sign in again!", {
+          variant: "error",
+        });
       }
     } else {
-      navigate("/login");
-      localStorage.removeItem("token");
-      localStorage.removeItem("username");
-      enqueueSnackbar("Please sign in again!", {
+      enqueueSnackbar("You should either upload an image or put a comment!", {
         variant: "error",
       });
     }
@@ -141,7 +147,6 @@ const CommentAccordion = ({ formID, form }) => {
     },
     onSubmit: handleSubmit,
     validationSchema: yup.object().shape({
-      comment: yup.string().required("Please enter your comment!"),
       picture: yup
         .mixed()
         .nullable()
