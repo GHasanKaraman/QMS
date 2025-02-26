@@ -503,7 +503,7 @@ const SignoffDashboard = (props) => {
                           onClick={() => {
                             navigate(
                               "/runsignoff/" +
-                                product +
+                                encodeURIComponent(product) +
                                 "?dateStart=" +
                                 moment(currentRun[0]?.createdAt).format() +
                                 "&dateEnd=" +

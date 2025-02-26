@@ -78,14 +78,12 @@ const getStatus = (data) => {
     );
   } else if (station === "ROAST-M5") {
     return (
-      data.cleaning !== "Quality" &&
       data.areAllergensCorrect === "Yes" &&
       data.colorOfFinishedProduct === "Yes" &&
       data.sensoryEvaluation === "Yes"
     );
   } else {
     return (
-      data.cleaning !== "Quality" &&
       data.areAllergensCorrect === "Yes" &&
       data.sensoryEvaluation === "Yes" &&
       data.productThickness === "Yes" &&

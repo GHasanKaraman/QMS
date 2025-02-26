@@ -39,7 +39,8 @@ const RunSignoffPage = (props) => {
   const loc = useLocation();
   const { id } = params;
 
-  const product = props.mode === "steps" ? props.product : id;
+  const product =
+    props.mode === "steps" ? props.product : decodeURIComponent(id);
 
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
