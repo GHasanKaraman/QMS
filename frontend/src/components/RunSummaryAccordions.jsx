@@ -12,6 +12,7 @@ import XRAYInspectionAccordion from "./accordionViews/xRayInspectionAccordion";
 import RoastingQualityAccordion from "./accordionViews/roastingQualityAccordion";
 import CCPAccordion from "./accordionViews/ccpAccordion";
 import RatioAccordion from "./accordionViews/ratioAccordion";
+import PreOperationalAccordion from "./accordionViews/preOperationalAccordion";
 
 const RunSummaryAccordions = ({
   forms,
@@ -58,6 +59,17 @@ const RunSummaryAccordions = ({
         {forms.map((form) => {
           const { type } = extractInformations(form);
           switch (type) {
+            case "preoperational":
+              return (
+                <PreOperationalAccordion
+                  isForm={isForm}
+                  onChange={onChange}
+                  key={form._id}
+                  id={form._id}
+                  expanded={expanded}
+                  value={values[form._id]}
+                />
+              );
             case "pgqualitycontrol":
               return (
                 <PGQualityControlAccordion

@@ -17,6 +17,12 @@ export const extractInformations = (form) => {
       link: "/qualitycontrol/" + form._id,
       title: "Quality Control Inspection",
     };
+  } else if (form.okStart) {
+    info = {
+      type: "preoperational",
+      link: "/preoperational/" + form._id,
+      title: "Pre-Operational Inspection",
+    };
   } else if (form.lotCodePouch) {
     info = {
       type: "pgqualitycontrol",
