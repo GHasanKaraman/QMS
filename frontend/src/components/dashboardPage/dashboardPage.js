@@ -396,7 +396,7 @@ const DashboardPage = (props) => {
                   </IconButton>
                 }
               >
-                <Stack spacing={1} sx={{ width: "100%" }}>
+                <Stack spacing={1} sx={{ width: "100%", display: "grid" }}>
                   <div
                     style={{
                       fontSize: "18px",

@@ -41,7 +41,8 @@ const RunSummaryPage = (props) => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
-  const date = new URLSearchParams(loc.search).get("date");
+  const dateStart = new URLSearchParams(loc.search).get("dateStart");
+  const dateEnd = new URLSearchParams(loc.search).get("dateEnd");
   const station = new URLSearchParams(loc.search).get("station");
   const type = new URLSearchParams(loc.search).get("type");
 
@@ -54,7 +55,12 @@ const RunSummaryPage = (props) => {
   const ref = useRef();
 
   const loadRunSummaryPage = async () => {
-    const res = await axios.post("/runsummary", { station, product, date });
+    const res = await axios.post("/runsummary", {
+      station,
+      product,
+      dateStart,
+      dateEnd,
+    });
     if (userAuth.control(res)) {
       const forms = res.data.forms.sort(
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
@@ -125,8 +131,10 @@ const RunSummaryPage = (props) => {
                     navigate(
                       "/runsignoff/" +
                         product +
-                        "?date=" +
-                        date +
+                        "?dateStart=" +
+                        dateStart +
+                        "&dateEnd=" +
+                        dateEnd +
                         "&type=" +
                         type +
                         "&station=" +
@@ -162,7 +170,7 @@ const RunSummaryPage = (props) => {
                 " " +
                 type +
                 " • " +
-                toStringDate(forms[forms.length - 1].createdAt, {
+                toStringDate(forms[forms.length - 1]?.createdAt, {
                   month: "short",
                   year: "numeric",
                   day: "numeric",
@@ -170,7 +178,7 @@ const RunSummaryPage = (props) => {
                   minute: "numeric",
                 }) +
                 " - " +
-                toStringDate(forms[0].createdAt, {
+                toStringDate(forms[0]?.createdAt, {
                   month: "short",
                   year: "numeric",
                   day: "numeric",

@@ -334,8 +334,10 @@ const RunSignoffPage = (props) => {
                 navigate(
                   "/runsummary/" +
                     encodeURIComponent(props.product) +
-                    "?date=" +
-                    props.date +
+                    "?dateStart=" +
+                    props.dateStart +
+                    "&dateEnd=" +
+                    props.dateEnd +
                     "&type=" +
                     type +
                     "&station=" +
@@ -363,6 +365,28 @@ const RunSignoffPage = (props) => {
         </Stack>
       ) : signedoffForms.length !== forms.length ? (
         <Stack direction="row" width="100%" justifyContent="right">
+          <Button
+            onClick={() => {
+              navigate(
+                "/runsummary/" +
+                  encodeURIComponent(product) +
+                  "?dateStart=" +
+                  dateStart +
+                  "&dateEnd=" +
+                  dateEnd +
+                  "&type=" +
+                  type +
+                  "&station=" +
+                  station,
+              );
+            }}
+            size="large"
+            color="secondary"
+            sx={{ mb: 1, fontWeight: 600, fontSize: 17 }}
+          >
+            Summary
+          </Button>
+
           <Button
             onClick={() => {
               setOpen(true);
@@ -449,13 +473,30 @@ const RunSignoffPage = (props) => {
           forms={forms.filter((form) => form?.signoffs?.length === 0)}
         />
       ) : (
-        <Stack
-          spacing={1}
-          textAlign="center"
-          width="100%"
-          alignItems="center"
-          mt={20}
-        >
+        <Stack spacing={1} textAlign="center" width="100%" alignItems="center">
+          <Stack direction="row" width="100%" justifyContent="right">
+            <Button
+              onClick={() => {
+                navigate(
+                  "/runsummary/" +
+                    encodeURIComponent(product) +
+                    "?dateStart=" +
+                    dateStart +
+                    "&dateEnd=" +
+                    dateEnd +
+                    "&type=" +
+                    type +
+                    "&station=" +
+                    station,
+                );
+              }}
+              size="large"
+              color="secondary"
+              sx={{ mb: 1, fontWeight: 600, fontSize: 17 }}
+            >
+              Summary
+            </Button>
+          </Stack>
           <LibraryAddCheck
             sx={{ fontSize: 150, color: colors.ciboInnerGreen[500] }}
           />
