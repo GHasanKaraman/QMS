@@ -146,7 +146,7 @@ const SignoffSteps = (props) => {
   };
 
   const Steps = () => {
-    const [station, product, date] = forms[index].split("&");
+    const [station, product, dateStart, dateEnd] = forms[index].split("&");
     return (
       <RunSignoffPage
         mode="steps"
@@ -156,7 +156,8 @@ const SignoffSteps = (props) => {
         product={product}
         onBack={handleBack}
         type=""
-        date={date}
+        dateStart={dateStart}
+        dateEnd={dateEnd}
         onChange={handleChange}
       />
     );

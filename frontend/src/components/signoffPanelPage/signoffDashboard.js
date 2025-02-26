@@ -504,10 +504,12 @@ const SignoffDashboard = (props) => {
                             navigate(
                               "/runsignoff/" +
                                 product +
-                                "?date=" +
-                                moment(currentRun[0]?.createdAt).format(
-                                  "YYYY-MM-DD",
-                                ) +
+                                "?dateStart=" +
+                                moment(currentRun[0]?.createdAt).format() +
+                                "&dateEnd=" +
+                                moment(
+                                  currentRun[currentRun.length - 1]?.createdAt,
+                                ).format() +
                                 "&type=" +
                                 "" +
                                 "&station=" +
@@ -611,7 +613,11 @@ const SignoffDashboard = (props) => {
                                 "&" +
                                 product +
                                 "&" +
-                                moment(group[0].createdAt).format("YYYY-MM-DD")
+                                moment(group[0].createdAt).format() +
+                                "&" +
+                                moment(
+                                  group[group.length - 1].createdAt,
+                                ).format()
                             ],
                           )}
                           onChange={(e, checked) => {
@@ -621,7 +627,11 @@ const SignoffDashboard = (props) => {
                                 "&" +
                                 product +
                                 "&" +
-                                moment(group[0].createdAt).format("YYYY-MM-DD")
+                                moment(group[0].createdAt).format() +
+                                "&" +
+                                moment(
+                                  group[group.length - 1].createdAt,
+                                ).format()
                             ] = checked;
                             setValues(temp);
                           }}

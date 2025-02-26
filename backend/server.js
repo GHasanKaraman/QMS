@@ -35,7 +35,7 @@ require("dotenv").config();
 
 const app = express();
 mongoose.set("strictQuery", false);
-mongoose.connect(process.env.MONGO_TEST);
+mongoose.connect(process.env.MONGO_PRODUCTION);
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 

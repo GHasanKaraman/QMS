@@ -47,10 +47,14 @@ const RunSignoffPage = (props) => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
-  const date =
+  const dateStart =
     props.mode === "steps"
-      ? props.date
-      : new URLSearchParams(loc.search).get("date");
+      ? props.dateStart
+      : new URLSearchParams(loc.search).get("dateStart");
+  const dateEnd =
+    props.mode === "steps"
+      ? props.dateEnd
+      : new URLSearchParams(loc.search).get("dateEnd");
   const station =
     props.mode === "steps"
       ? props.station
@@ -88,11 +92,17 @@ const RunSignoffPage = (props) => {
   };
 
   const loadSignoffPage = async () => {
-    const res = await axios.post("/runsignoff", { station, product, date });
+    const res = await axios.post("/runsignoff", {
+      station,
+      product,
+      dateStart,
+      dateEnd,
+    });
     if (userAuth.control(res)) {
       const forms = res.data.forms.sort(
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
       );
+      console.log(forms);
       setForms(forms);
       setDescription(res.data.desc[0]);
       setSignedoffForms(forms.filter((form) => form.signoffs.length > 0));

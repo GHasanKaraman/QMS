@@ -51,12 +51,11 @@ router.post("/runsignoff/password", async (req, res) => {
 
 router.post("/runsignoff", async (req, res) => {
   try {
-    const { station, product, date } = req.body;
+    const { station, product, dateStart, dateEnd } = req.body;
 
-    const s = new Date(date);
-    const e = new Date(date);
-    e.setDate(s.getDate() + 1);
-
+    const s = new Date(dateStart);
+    const e = new Date(dateEnd);
+    e.setSeconds(e.getSeconds() + 1);
     const pipeline = [
       {
         $match: {
