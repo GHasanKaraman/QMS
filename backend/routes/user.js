@@ -3,12 +3,14 @@ const express = require("express");
 const router = express.Router();
 
 router.post("/user/get", async (req, res) => {
+  const loginUser = req.loginUser;
   const username = req.username;
   const access = req.access;
   try {
     if (username) {
       res.status(200).json({
         status: "success",
+        loginUser: loginUser,
         username: username,
         access: access,
       });

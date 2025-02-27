@@ -90,7 +90,11 @@ const Sidebar = () => {
   useEffect(() => {
     if (user?.username === "") {
       loadUser().then((res) => {
-        setUser({ username: res.data?.username, access: res.data?.access });
+        setUser({
+          loginUser: res.data?.loginUser,
+          username: res.data?.username,
+          access: res.data?.access,
+        });
       });
     }
   });

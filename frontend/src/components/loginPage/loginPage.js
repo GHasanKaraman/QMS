@@ -39,8 +39,8 @@ const LoginPage = (props) => {
         /%([0-9A-F]{2})/g,
         function toSolidBytes(match, p1) {
           return String.fromCharCode("0x" + p1);
-        }
-      )
+        },
+      ),
     );
   };
 
@@ -56,6 +56,7 @@ const LoginPage = (props) => {
       localStorage.setItem("username", res.data.token.userName);
       localStorage.setItem("access", res.data.token.access);
       setUser({
+        loginUser: username,
         username: res.data.token.userName,
         access: res.data.token.access,
       });
@@ -74,7 +75,7 @@ const LoginPage = (props) => {
             "Something went wrong while authenticate the credentials!",
             {
               variant: "error",
-            }
+            },
           );
           break;
 

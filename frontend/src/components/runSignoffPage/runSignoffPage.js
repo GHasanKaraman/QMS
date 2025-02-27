@@ -144,7 +144,7 @@ const RunSignoffPage = (props) => {
 
   const checkPassword = async () => {
     const res = await axios.post("/runsignoff/password", {
-      username: user.username,
+      username: user.loginUser,
       password,
     });
 
@@ -291,7 +291,7 @@ const RunSignoffPage = (props) => {
           </DialogContentText>
           <TextField
             type="password"
-            inputProps={{ maxLength: 6 }}
+            inputProps={{ maxLength: 12 }}
             InputProps={{ sx: { fontSize: 18, fontWeight: 600 } }}
             value={password}
             onChange={(e) => {
