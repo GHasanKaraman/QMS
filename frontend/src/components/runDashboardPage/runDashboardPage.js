@@ -58,7 +58,8 @@ const RunDashboardPage = (props) => {
   const [currentForms, setCurrentForms] = useState([]);
 
   const [selectedProduct, setSelectedProduct] = useState();
-  const [selectedDay, setSelectedDay] = useState();
+  const [selectedStart, setSelectedStart] = useState();
+  const [selectedEnd, setSelectedEnd] = useState();
 
   const getDates = () => {
     const _days = [];
@@ -147,8 +148,10 @@ const RunDashboardPage = (props) => {
                 navigate(
                   "/runsummary/" +
                     selectedProduct +
-                    "?date=" +
-                    selectedDay +
+                    "?dateStart=" +
+                    selectedStart +
+                    "&dateEnd=" +
+                    selectedEnd +
                     "&type=" +
                     type +
                     "&station=" +
@@ -166,8 +169,10 @@ const RunDashboardPage = (props) => {
                 navigate(
                   "/runsignoff/" +
                     selectedProduct +
-                    "?date=" +
-                    selectedDay +
+                    "?dateStart=" +
+                    selectedStart +
+                    "&dateEnd=" +
+                    selectedEnd +
                     "&type=" +
                     type +
                     "&station=" +
@@ -375,7 +380,10 @@ const RunDashboardPage = (props) => {
                       onClick={() => {
                         setOpen(true);
                         setSelectedProduct(currentRun);
-                        setSelectedDay(moment().format("YYYY-MM-DD"));
+                        setSelectedStart(currentForms[0]?.createdAt);
+                        setSelectedEnd(
+                          currentForms[currentForms.length - 1]?.createdAt,
+                        );
                       }}
                     >
                       <MenuIcon />
@@ -473,13 +481,17 @@ const RunDashboardPage = (props) => {
                             " Completed Data Sheets"}
                         </Typography>
                         <ListItem
+                          sx={{ display: "grid" }}
                           secondaryAction={
                             <IconButton
                               sx={{ padding: "0 0px" }}
                               onClick={() => {
                                 setOpen(true);
                                 setSelectedProduct(product);
-                                setSelectedDay(day);
+                                setSelectedStart(_forms[0]?.createdAt);
+                                setSelectedEnd(
+                                  _forms[_forms.length - 1]?.createdAt,
+                                );
                               }}
                             >
                               <MenuIcon />
