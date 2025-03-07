@@ -23,45 +23,45 @@ router.post("/roastingquality/get", async (req, res) => {
       },
       { $unwind: { preserveNullAndEmptyArrays: true, path: "$signOff" } },
     ]);
-    if (roastingQualityForm.length === 1) {
-      var details = {
-        part: roastingQualityForm[0].product,
-      };
-      var formBody = [];
-      for (var property in details) {
-        var encodedKey = encodeURIComponent(property);
-        var encodedValue = encodeURIComponent(details[property]);
-        formBody.push(encodedKey + "=" + encodedValue);
-      }
-      formBody = formBody.join("&");
+    // if (roastingQualityForm.length === 1) {
+    var details = {
+      part: roastingQualityForm[0].product,
+    };
+    var formBody = [];
+    for (var property in details) {
+      var encodedKey = encodeURIComponent(property);
+      var encodedValue = encodeURIComponent(details[property]);
+      formBody.push(encodedKey + "=" + encodedValue);
+    }
+    formBody = formBody.join("&");
 
-      const resp = await fetch("http://10.12.0.15:81/qac.php?recipe", {
-        method: "POST",
-        body: formBody,
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-        },
-      });
-      const product = await resp.json();
-      const images = await imageModel.find({
-        _id: { $in: roastingQualityForm[0].imageIDs },
-      });
+    const resp = await fetch("http://10.12.0.15:81/qac.php?recipe", {
+      method: "POST",
+      body: formBody,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+      },
+    });
+    const product = await resp.json();
+    const images = await imageModel.find({
+      _id: { $in: roastingQualityForm[0].imageIDs },
+    });
 
-      if (images) {
-        res.status(200).json({
-          roastingQualityForm: roastingQualityForm[0],
-          product: product,
-          images,
-        });
-        console.log(
-          "Fetched " + id + " Roasting Quality form data sheet result!",
-        );
-      } else {
-        res.sendStatus(404);
-      }
+    if (images) {
+      res.status(200).json({
+        roastingQualityForm: roastingQualityForm[0],
+        product: product,
+        images,
+      });
+      console.log(
+        "Fetched " + id + " Roasting Quality form data sheet result!",
+      );
     } else {
       res.sendStatus(404);
     }
+    /*} else {
+      res.sendStatus(404);
+    }*/
   } catch (err) {
     console.log(err);
     res.sendStatus(503);

@@ -125,44 +125,44 @@ router.post("/qualitycontrol/get", async (req, res) => {
       },
       { $unwind: { preserveNullAndEmptyArrays: true, path: "$signOff" } },
     ]);
-    if (qualityControlForm.length === 1) {
-      var details = {
-        part: qualityControlForm[0].product,
-      };
-      var formBody = [];
-      for (var property in details) {
-        var encodedKey = encodeURIComponent(property);
-        var encodedValue = encodeURIComponent(details[property]);
-        formBody.push(encodedKey + "=" + encodedValue);
-      }
-      formBody = formBody.join("&");
+    //if (qualityControlForm.length === 1) {
+    var details = {
+      part: qualityControlForm[0].product,
+    };
+    var formBody = [];
+    for (var property in details) {
+      var encodedKey = encodeURIComponent(property);
+      var encodedValue = encodeURIComponent(details[property]);
+      formBody.push(encodedKey + "=" + encodedValue);
+    }
+    formBody = formBody.join("&");
 
-      const resp = await fetch("http://10.12.0.15:81/qac.php?recipe", {
-        method: "POST",
-        body: formBody,
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-        },
+    const resp = await fetch("http://10.12.0.15:81/qac.php?recipe", {
+      method: "POST",
+      body: formBody,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+      },
+    });
+    const product = await resp.json();
+    const images = await imageModel.find({
+      _id: { $in: qualityControlForm[0].imageIDs },
+    });
+    if (images) {
+      res.status(200).json({
+        qualityControlForm: qualityControlForm[0],
+        images: images,
+        product: product,
       });
-      const product = await resp.json();
-      const images = await imageModel.find({
-        _id: { $in: qualityControlForm[0].imageIDs },
-      });
-      if (images) {
-        res.status(200).json({
-          qualityControlForm: qualityControlForm[0],
-          images: images,
-          product: product,
-        });
-        console.log(
-          "Fetched " + id + " quality control inspection data sheet result!",
-        );
-      } else {
-        res.sendStatus(404);
-      }
+      console.log(
+        "Fetched " + id + " quality control inspection data sheet result!",
+      );
     } else {
       res.sendStatus(404);
     }
+    /*} else {
+      res.sendStatus(404);
+    }*/
   } catch (err) {
     console.log(err);
     res.sendStatus(503);

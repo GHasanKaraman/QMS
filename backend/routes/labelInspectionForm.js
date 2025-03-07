@@ -41,38 +41,38 @@ router.post("/labelinspection/get", async (req, res) => {
       },
       { $unwind: { preserveNullAndEmptyArrays: true, path: "$signOff" } },
     ]);
-    if (labelInspectionForm.length === 1) {
-      var details = {
-        part: labelInspectionForm[0].product,
-      };
-      var formBody = [];
-      for (var property in details) {
-        var encodedKey = encodeURIComponent(property);
-        var encodedValue = encodeURIComponent(details[property]);
-        formBody.push(encodedKey + "=" + encodedValue);
-      }
-      formBody = formBody.join("&");
+    //if (labelInspectionForm.length === 1) {
+    var details = {
+      part: labelInspectionForm[0].product,
+    };
+    var formBody = [];
+    for (var property in details) {
+      var encodedKey = encodeURIComponent(property);
+      var encodedValue = encodeURIComponent(details[property]);
+      formBody.push(encodedKey + "=" + encodedValue);
+    }
+    formBody = formBody.join("&");
 
-      const resp = await fetch("http://10.12.0.15:81/qac.php?recipe", {
-        method: "POST",
-        body: formBody,
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-        },
+    const resp = await fetch("http://10.12.0.15:81/qac.php?recipe", {
+      method: "POST",
+      body: formBody,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+      },
+    });
+    const product = await resp.json();
+    if (product) {
+      res.status(200).json({
+        labelInspectionForm: labelInspectionForm[0],
+        product: product,
       });
-      const product = await resp.json();
-      if (product) {
-        res.status(200).json({
-          labelInspectionForm: labelInspectionForm[0],
-          product: product,
-        });
-        console.log("Fetched " + id + " label inspection data sheet result!");
-      } else {
-        res.sendStatus(404);
-      }
+      console.log("Fetched " + id + " label inspection data sheet result!");
     } else {
       res.sendStatus(404);
     }
+    /*} else {
+      res.sendStatus(404);
+    }*/
   } catch (err) {
     console.log(err);
     res.sendStatus(503);
