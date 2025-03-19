@@ -353,8 +353,10 @@ const RatioFormPage = (props) => {
             disabled={products.length == 0}
             onChange={async (_, value) => {
               const station = formik.values.station;
+              const shift = formik.values.shift;
               formik.resetForm();
               formik.setFieldValue("station", station);
+              formik.setFieldValue("shift", shift);
               formik.setFieldValue("product", value);
               if (value != null) {
                 await loadRecipe(value.partNum);
