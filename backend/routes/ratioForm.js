@@ -95,7 +95,7 @@ router.post("/ratio/recipe", async (req, res) => {
 
 router.post("/ratio/add", async (req, res) => {
   try {
-    const { station, product, weights } = req.body;
+    const { station, product, weights, shift } = req.body;
     var status = true;
 
     const totalWeight = Object.values(weights).reduce(
@@ -122,6 +122,7 @@ router.post("/ratio/add", async (req, res) => {
 
     const form = await ratioFormModel.create({
       recipe: weights,
+      shift,
       station,
       product: product.partNum,
       status,
