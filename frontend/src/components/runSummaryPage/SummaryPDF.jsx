@@ -88,7 +88,7 @@ const SummaryPDF = forwardRef((props, ref) => {
           <TableRow>
             <TableCell variant="head">Start Date</TableCell>
             <TableCell>
-              {toStringDate(forms[0]?.createdAt, {
+              {toStringDate(forms[forms.length - 1]?.createdAt, {
                 month: "short",
                 year: "numeric",
                 day: "numeric",
@@ -101,7 +101,7 @@ const SummaryPDF = forwardRef((props, ref) => {
           <TableRow>
             <TableCell variant="head">End Date</TableCell>
             <TableCell>
-              {toStringDate(forms[forms.length - 1]?.createdAt, {
+              {toStringDate(forms[0]?.createdAt, {
                 month: "short",
                 year: "numeric",
                 day: "numeric",
