@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -14,9 +14,12 @@ import {
   ListItemText,
   ListItemAvatar,
   TextField,
+  InputAdornment,
+  Chip,
 } from "@mui/material";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ImageIcon from "@mui/icons-material/Image";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 import { useSnackbar } from "notistack";
@@ -24,8 +27,6 @@ import { useTheme } from "@emotion/react";
 
 import { useFormik } from "formik";
 import * as yup from "yup";
-
-import { MentionsInput, Mention } from "react-mentions";
 
 import { Accordion, AccordionDetails, AccordionSummary } from "./Accordion";
 
@@ -170,10 +171,6 @@ const CommentAccordion = ({ formID, form }) => {
     } catch (e) {}
   };
 
-  const CommentTextBox = forwardRef((props, ref) => {
-    return <TextField ref={ref} {...props} />;
-  });
-
   return (
     <Box
       sx={{
@@ -222,6 +219,7 @@ const CommentAccordion = ({ formID, form }) => {
                 component="label"
                 aria-label="attach"
                 sx={{
+                  width: "5%",
                   transform: "scale(1.2)",
                   color:
                     !!formik.touched.picture && !!formik.errors.picture
@@ -249,23 +247,7 @@ const CommentAccordion = ({ formID, form }) => {
                   }}
                 />
               </IconButton>
-              <MentionsInput
-                singleLine
-                value={formik.values.comment}
-                onChange={(e) => {
-                  formik.setFieldValue("comment", e.target.value);
-                }}
-                placeholder="Add a comment"
-                a11ySuggestionsListLabel="Suggested mentions"
-                inputComponent={CommentTextBox}
-                name="comment"
-              >
-                <Mention
-                  trigger="@"
-                  data={[{ id: "asd", display: "@Gurkan" }]}
-                />
-              </MentionsInput>
-              {/*<TextField
+              <TextField
                 sx={{ width: "90%" }}
                 variant="filled"
                 type="text"
@@ -295,7 +277,7 @@ const CommentAccordion = ({ formID, form }) => {
                       </InputAdornment>
                     ) : undefined,
                 }}
-              />*/}
+              />
               <Button
                 color="secondary"
                 type="submit"
