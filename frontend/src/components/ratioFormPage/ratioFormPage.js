@@ -290,11 +290,7 @@ const RatioFormPage = (props) => {
             }}
             value={formik.values.station}
             sx={{ gridColumn: "span 4" }}
-            options={stations
-              .filter(
-                ({ name }) => !name.includes("ROAST") && !name.includes("MIX"),
-              )
-              .map(({ name }) => name)}
+            options={stations.map(({ name }) => name)}
             onBlur={formik.handleBlur}
             renderInput={(params) => (
               <TextField
