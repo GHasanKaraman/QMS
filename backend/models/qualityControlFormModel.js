@@ -22,8 +22,6 @@ const qualityControlFormSchema = new mongoose.Schema(
     xrayCeramicDetected: { type: String, default: "" },
     xrayGlass10Detected: { type: String, default: "" },
     xrayCeramic10Detected: { type: String, default: "" },
-    xrayGlass7Detected: { type: String, default: "" },
-    xrayCeramic8Detected: { type: String, default: "" },
     metalCardRequired: { type: String, required: true },
     metalCardFeDetected: { type: String, default: "" },
     metalCardNonFeDetected: { type: String, default: "" },
