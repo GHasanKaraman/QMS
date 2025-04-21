@@ -227,6 +227,8 @@ const QualityControlPage = (props) => {
       xraySsDetected: null,
       xrayGlass10Detected: null,
       xrayCeramic10Detected: null,
+      xrayGlass7Detected: null,
+      xrayCeramic8Detected: null,
 
       metalCardRequired: null,
       metalCardFeDetected: null,
@@ -322,9 +324,9 @@ const QualityControlPage = (props) => {
       xrayNonFeDetected:
         xRayState === "Yes" ? yup.string().required() : undefined,
       xraySsDetected: xRayState === "Yes" ? yup.string().required() : undefined,
-      xrayGlass10Detected:
+      xrayGlass7Detected:
         xRayState === "Yes" ? yup.string().required() : undefined,
-      xrayCeramic10Detected:
+      xrayCeramic8Detected:
         xRayState === "Yes" ? yup.string().required() : undefined,
 
       metalCardRequired: yup.string().required(),
@@ -1266,17 +1268,17 @@ const QualityControlPage = (props) => {
                     fontWeight="600"
                     sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
                   >
-                    Glass 10.0 mm detected?
+                    Glass 7.0 mm detected?
                   </Typography>
                   <ToggleButtonCheck
                     style={{ gridColumn: "span 4" }}
-                    alignment={formik.values.xrayGlass10Detected}
+                    alignment={formik.values.xrayGlass7Detected}
                     onChange={(value) => {
-                      formik.setFieldValue("xrayGlass10Detected", value);
+                      formik.setFieldValue("xrayGlass7Detected", value);
                     }}
                     error={
-                      !!formik.touched.xrayGlass10Detected &&
-                      !!formik.errors.xrayGlass10Detected
+                      !!formik.touched.xrayGlass7Detected &&
+                      !!formik.errors.xrayGlass7Detected
                     }
                     options={[
                       {
@@ -1309,17 +1311,17 @@ const QualityControlPage = (props) => {
                     fontWeight="600"
                     sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
                   >
-                    Ceramic 10.00 mm detected?
+                    Ceramic 8.00 mm detected?
                   </Typography>
                   <ToggleButtonCheck
                     style={{ gridColumn: "span 4" }}
-                    alignment={formik.values.xrayCeramic10Detected}
+                    alignment={formik.values.xrayCeramic8Detected}
                     onChange={(value) => {
-                      formik.setFieldValue("xrayCeramic10Detected", value);
+                      formik.setFieldValue("xrayCeramic8Detected", value);
                     }}
                     error={
-                      !!formik.touched.xrayCeramic10Detected &&
-                      !!formik.errors.xrayCeramic10Detected
+                      !!formik.touched.xrayCeramic8Detected &&
+                      !!formik.errors.xrayCeramic8Detected
                     }
                     options={[
                       {
