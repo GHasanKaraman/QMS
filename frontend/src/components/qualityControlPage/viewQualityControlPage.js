@@ -9,7 +9,6 @@ import {
   Typography,
   Backdrop,
   CircularProgress,
-  useMediaQuery,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useTheme } from "@emotion/react";
@@ -40,16 +39,11 @@ const ViewQualityControlPage = (props) => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
-  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
-
   const [data, setData] = useState();
   const [images, setImages] = useState([]);
   const [product, setProduct] = useState();
   const [open, setOpen] = useState(false);
-  const [openDialog, setOpenDialog] = useState(false);
   const [mixCodeLength, setMixCodeLength] = useState(1);
-
-  const [clicked, setClicked] = useState(false);
 
   const loadQualityControlPage = async () => {
     setOpen(true);
@@ -428,7 +422,9 @@ const ViewQualityControlPage = (props) => {
                   </Stack>
                 </div>
               ) : undefined}
-              {data.xrayGlass10Detected && data?.xrayGlass10Detected !== "" ? (
+              {data.xrayGlass10Detected &&
+              data?.xrayGlass10Detected !== "" &&
+              data?.xrayGlass10Detected !== "null" ? (
                 <div>
                   <Divider />
                   <Stack direction="row" justifyContent="space-between">
@@ -448,7 +444,8 @@ const ViewQualityControlPage = (props) => {
                 </div>
               ) : undefined}
               {data.xrayCeramic10Detected &&
-              data?.xrayCeramic10Detected !== "" ? (
+              data?.xrayCeramic10Detected !== "" &&
+              data?.xrayCeramic10Detected !== "null" ? (
                 <div>
                   <Divider />
                   <Stack direction="row" justifyContent="space-between">

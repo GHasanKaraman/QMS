@@ -315,7 +315,9 @@ const QualityControlAccordion = ({ id, expanded, isForm, onChange, value }) => {
                 </Stack>
               </div>
             ) : undefined}
-            {data.xrayGlass10Detected && data?.xrayGlass10Detected !== "" ? (
+            {data.xrayGlass10Detected &&
+            data?.xrayGlass10Detected !== "" &&
+            data?.xrayGlass10Detected !== "null" ? (
               <div>
                 <Divider />
                 <Stack direction="row" justifyContent="space-between">
@@ -335,7 +337,8 @@ const QualityControlAccordion = ({ id, expanded, isForm, onChange, value }) => {
               </div>
             ) : undefined}
             {data.xrayCeramic10Detected &&
-            data?.xrayCeramic10Detected !== "" ? (
+            data?.xrayCeramic10Detected !== "" &&
+            data?.xrayCeramic10Detected !== "null" ? (
               <div>
                 <Divider />
                 <Stack direction="row" justifyContent="space-between">
@@ -350,6 +353,44 @@ const QualityControlAccordion = ({ id, expanded, isForm, onChange, value }) => {
                   />
                   <StatusIndicator
                     status={data?.xrayCeramic10Detected === "Yes"}
+                  />
+                </Stack>
+              </div>
+            ) : undefined}
+            {data.xrayGlass7Detected && data?.xrayGlass7Detected !== "" ? (
+              <div>
+                <Divider />
+                <Stack direction="row" justifyContent="space-between">
+                  <Label
+                    title="Glass 7.00 mm detected?"
+                    subtitle={
+                      <LabelResult
+                        text={data?.xrayGlass7Detected}
+                        status={data?.xrayGlass7Detected === "Yes"}
+                      />
+                    }
+                  />
+                  <StatusIndicator
+                    status={data?.xrayGlass7Detected === "Yes"}
+                  />
+                </Stack>
+              </div>
+            ) : undefined}
+            {data.xrayCeramic8Detected && data?.xrayCeramic8Detected !== "" ? (
+              <div>
+                <Divider />
+                <Stack direction="row" justifyContent="space-between">
+                  <Label
+                    title="Ceramic 8.00 mm detected?"
+                    subtitle={
+                      <LabelResult
+                        text={data?.xrayCeramic8Detected}
+                        status={data?.xrayCeramic8Detected === "Yes"}
+                      />
+                    }
+                  />
+                  <StatusIndicator
+                    status={data?.xrayCeramic8Detected === "Yes"}
                   />
                 </Stack>
               </div>
