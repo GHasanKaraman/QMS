@@ -787,7 +787,7 @@ const QualityControlPage = (props) => {
                   fontWeight="600"
                   sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
                 >
-                  You you have mix code?
+                  Do you have mix code?
                 </Typography>
                 <ToggleButtonCheck
                   style={{ gridColumn: "span 4" }}
