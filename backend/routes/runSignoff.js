@@ -13,13 +13,14 @@ const roastingQualityFormModel = require("../models/roastingQualityFormModel.js"
 const preOperationalFormModel = require("../models/preOperationalFormModel.js");
 const lotInspectionFormModel = require("../models/lotInspectionFormModel");
 const ccpFormModel = require("../models/ccpFormModel.js");
+const md5 = require("md5");
 
 router.post("/runsignoff/password", async (req, res) => {
   try {
     const { username, password } = req.body;
     var details = {
       u: username,
-      p: password,
+      p: md5(password),
     };
 
     var formBody = [];
