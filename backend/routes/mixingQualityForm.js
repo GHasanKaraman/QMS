@@ -67,28 +67,9 @@ router.post("/mixingquality/get", async (req, res) => {
   }
 });
 
-router.post("/mixingquality/add", upload.any(), async (req, res) => {
+router.post("/mixingquality/add", upload, async (req, res) => {
   try {
-    await Promise.all(
-      req.files.map(async (file) => {
-        const filename = file.filename.replace(/\..+$/, "");
-        const newFilename = `thumbnail-${filename}.jpeg`;
-        await sharp(file.path)
-          .rotate()
-          .resize(200)
-          .toFormat("jpeg")
-          .jpeg({ quality: 90 })
-          .toFile(`${file.destination}/${newFilename}`);
-      }),
-    );
-
-    const imageDetails = req.files.map((file) => {
-      let i = file.destination.lastIndexOf("/") + 1;
-      return {
-        folderIndex: file.destination.slice(i),
-        fileName: file.filename,
-      };
-    });
+    const imageDetails = req.savedImages;
 
     const result = await imageModel.insertMany(imageDetails);
     if (result) {
@@ -116,7 +97,7 @@ router.post("/mixingquality/add", upload.any(), async (req, res) => {
 
       if (form) {
         console.log(
-          req.username + " successfully created a Mixing Quality form!",
+          req.username + " successfully created a Mixing Quality form!"
         );
         res.status(200).json({ form });
       } else {

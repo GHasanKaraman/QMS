@@ -45,29 +45,9 @@ router.post("/comment", async (req, res) => {
   }
 });
 
-router.post("/comment/add", upload.any(), async (req, res) => {
+router.post("/comment/add", upload, async (req, res) => {
   try {
-    //Resizing the images and saving them
-    await Promise.all(
-      req.files.map(async (file) => {
-        const filename = file.filename.replace(/\..+$/, "");
-        const newFilename = `thumbnail-${filename}.jpeg`;
-        await sharp(file.path)
-          .rotate()
-          .resize(200)
-          .toFormat("jpeg")
-          .jpeg({ quality: 90 })
-          .toFile(`${file.destination}/${newFilename}`);
-      })
-    );
-
-    const imageDetails = req.files.map((file) => {
-      let i = file.destination.lastIndexOf("/") + 1;
-      return {
-        folderIndex: file.destination.slice(i),
-        fileName: file.filename,
-      };
-    });
+    const imageDetails = req.savedImages;
     const result = await imageModel.insertMany(imageDetails);
 
     if (result) {

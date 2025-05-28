@@ -100,7 +100,7 @@ router.post("/qualitycontrol/getproduct", async (req, res) => {
           station +
           " and " +
           product +
-          " from OC DB!",
+          " from OC DB!"
       );
     } else {
       res.sendStatus(404);
@@ -155,7 +155,7 @@ router.post("/qualitycontrol/get", async (req, res) => {
         product: product,
       });
       console.log(
-        "Fetched " + id + " quality control inspection data sheet result!",
+        "Fetched " + id + " quality control inspection data sheet result!"
       );
     } else {
       res.sendStatus(404);
@@ -169,29 +169,9 @@ router.post("/qualitycontrol/get", async (req, res) => {
   }
 });
 
-router.post("/qualitycontrol/add", upload.any(), async (req, res) => {
+router.post("/qualitycontrol/add", upload, async (req, res) => {
   try {
-    //Resizing the images and saving them
-    await Promise.all(
-      req.files.map(async (file) => {
-        const filename = file.filename.replace(/\..+$/, "");
-        const newFilename = `thumbnail-${filename}.jpeg`;
-        await sharp(file.path)
-          .rotate()
-          .resize(200)
-          .toFormat("jpeg")
-          .jpeg({ quality: 90 })
-          .toFile(`${file.destination}/${newFilename}`);
-      }),
-    );
-
-    const imageDetails = req.files.map((file) => {
-      let i = file.destination.lastIndexOf("/") + 1;
-      return {
-        folderIndex: file.destination.slice(i),
-        fileName: file.filename,
-      };
-    });
+    const imageDetails = req.savedImages;
 
     const result = await imageModel.insertMany(imageDetails);
     if (result) {
@@ -236,12 +216,12 @@ router.post("/qualitycontrol/add", upload.any(), async (req, res) => {
       });
       if (form) {
         console.log(
-          req.username + " successfully created a quality control form!",
+          req.username + " successfully created a quality control form!"
         );
         res.status(200).json({ form });
       } else {
         console.log(
-          "Something went wrong while creating quality control form!",
+          "Something went wrong while creating quality control form!"
         );
         res.sendStatus(500);
       }
