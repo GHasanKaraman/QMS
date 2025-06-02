@@ -10,6 +10,7 @@ const authentication = require("./routes/authentication.js");
 const authorization = require("./routes/authorization.js");
 const user = require("./routes/user.js");
 const dashboard = require("./routes/dashboard.js");
+const gemba = require("./routes/gemba.js");
 const rundashboard = require("./routes/runDashboard.js");
 const runsignoff = require("./routes/runSignoff.js");
 const runsummary = require("./routes/runSummary.js");
@@ -58,7 +59,7 @@ db.once("open", function () {
   app.get("/", async (req, res) => {
     //res.send("<h2 style = color:green>Listening port...</h2>");
     res.send(
-      "<div style='width:100%;text-align:center'><img width='50%' src='/utils/logo.png'/><h1 style = color:green>Server is running...</h1></div>",
+      "<div style='width:100%;text-align:center'><img width='50%' src='/utils/logo.png'/><h1 style = color:green>Server is running...</h1></div>"
     );
   });
 
@@ -68,6 +69,7 @@ db.once("open", function () {
 
   app.use("/", user);
   app.use("/", dashboard);
+  app.use("/", gemba);
   app.use("/", rundashboard);
   app.use("/", runsignoff);
   app.use("/", runsummary);
@@ -94,7 +96,7 @@ db.once("open", function () {
 / /___/ / /_/ / /_/ / /_/ / / ___ |
 \\____/_/_.___/\\____/\\___\\_\\/_/  |_|
                                    
-  `,
+  `
   );
   txt = decodeURIComponent(txt);
   console.log("\x1b[35m%s\x1b[0m", txt);
@@ -102,7 +104,7 @@ db.once("open", function () {
   app.listen(process.env.PORT, (req, res) => {
     console.log(
       "\x1b[33m%s\x1b[0m",
-      "mongo connection established successfully!",
+      "mongo connection established successfully!"
     );
     console.log("\x1b[34m%s\x1b[0m", "Listening on port " + process.env.PORT);
   });

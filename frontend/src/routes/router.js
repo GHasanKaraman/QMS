@@ -35,6 +35,9 @@ import SignoffSteps from "../components/signoffPanelPage/signoffSteps.js";
 import CCPPage from "../components/ccpPage/ccpPage.js";
 import ViewCCPPage from "../components/ccpPage/viewCcpPage.js";
 import ViewRatioFormPage from "../components/ratioFormPage/viewRatioFormPage.js";
+import AddGEMBAPage from "../components/gembaPage/addGembaPage.js";
+import ViewGEMBAPage from "../components/gembaPage/viewGembaPage.js";
+import GEMBAReportPage from "../components/gembaPage/gembaReport.js";
 
 const BarLayout = () => {
   const [theme, colorMode] = useMode();
@@ -87,6 +90,23 @@ const Router = () => {
           path="/dashboard"
           element={<DashboardPage title="CiboQA | Dashboard" />}
         />
+
+        <Route
+          exact
+          path="/gemba/add"
+          element={<AddGEMBAPage title="CiboQA | GEMBA Control" />}
+        />
+        <Route
+          exact
+          path="/gemba/view"
+          element={<ViewGEMBAPage title="CiboQA | GEMBA Cards" />}
+        />
+        <Route
+          exact
+          path="/gemba/:id"
+          element={<GEMBAReportPage title="CiboQA | GEMBA Report" />}
+        />
+
         <Route
           exact
           path="/runqualitydashboard/:id"

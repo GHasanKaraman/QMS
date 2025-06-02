@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Sidebar as ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
+import { Sidebar as ProSidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 import {
   Box,
   IconButton,
@@ -26,10 +26,32 @@ import { userInformations } from "../atoms/userAtom";
 import { useRecoilState } from "recoil";
 
 import axios from "../api/axios";
-import { HeatPump, PrecisionManufacturing } from "@mui/icons-material";
+import { AddTask, Checklist, HeatPump, PrecisionManufacturing, ViewList } from "@mui/icons-material";
 import { ReactComponent as NuclearIcon } from "../images/nuclearIcon.svg";
 import { ReactComponent as MixingIcon } from "../images/mixingIcon.svg";
 import { ReactComponent as RoastingIcon } from "../images/roastingIcon.svg";
+
+const ItemGroup = ({ label, icon, items, selected }) => {
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
+
+
+  return (
+    <SubMenu
+      active={selected === label}
+      label={label}
+      icon={icon}
+      style={{
+        color: colors.grey[100],
+      }}
+    >
+      {items.map((item, index) => {
+        return <div key={index}>{item}</div>;
+      })}
+    </SubMenu>
+  );
+};
+
 
 const Item = ({
   title,
@@ -205,6 +227,34 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
             />
+
+            <ItemGroup
+              label="GEMBA"
+              icon={<Checklist />}
+              selected={selected}
+              items={[
+
+              <Item 
+              sub
+              title="Add "
+              parentTitle="GEMBA"
+              to="/gemba/add"
+              icon={<AddTask />}
+              selected={selected}
+              setSelected={setSelected}
+            />,
+            <Item 
+              sub
+              title="View"
+              parentTitle="GEMBA"
+              to="/gemba/view"
+              icon={<ViewList />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+          ]}
+            />
+
             <Typography
               variant="h6"
               color={colors.grey[300]}
