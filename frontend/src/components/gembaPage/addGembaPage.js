@@ -17,7 +17,6 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { useFormik } from "formik";
 import * as yup from "yup";
-import moment from "moment-timezone";
 
 import axios from "../../api/axios";
 import userAuth from "../../utils/userAuth";
@@ -28,9 +27,11 @@ import { tokens } from "../../theme";
 import ToggleButtonCheck from "../ToggleButtonCheck";
 import { Accordion, AccordionDetails, AccordionSummary } from "../Accordion";
 
-import gembaQuestions from "./gembaQuestions";
+import useQuestions from "./gembaQuestions";
 
 const AddGEMBAPage = (props) => {
+  const { gembaQuestions } = useQuestions();
+
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const isNonMobile = useMediaQuery("(min-width:600px)");
@@ -48,7 +49,6 @@ const AddGEMBAPage = (props) => {
     const answers = values.questions;
     const keys = Object.keys(answers);
     const questions = gembaQuestions.filter(({ id }) => keys.includes(id + ""));
-
     questions.forEach((item) => {
       item.answer = answers[item.id];
       delete item.id;
