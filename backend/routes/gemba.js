@@ -42,7 +42,10 @@ router.post("/gemba/get", async (req, res) => {
   }
 });
 
-router.use("/gemba/add", async (req, res) => {
+router.post("/gemba/add", async (req, res) => {
+  console.log(req);
+
+  /*
   try {
     const data = req.body;
     var status = undefined;
@@ -66,7 +69,7 @@ router.use("/gemba/add", async (req, res) => {
   } catch (err) {
     console.log(err);
     res.sendStatus(503);
-  }
+  }*/
 });
 
 module.exports = router;

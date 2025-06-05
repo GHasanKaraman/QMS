@@ -28,6 +28,7 @@ import ToggleButtonCheck from "../ToggleButtonCheck";
 import { Accordion, AccordionDetails, AccordionSummary } from "../Accordion";
 
 import useQuestions from "./gembaQuestions";
+import GembaComment from "./GembaComment";
 
 const AddGEMBAPage = (props) => {
   const { gembaQuestions } = useQuestions();
@@ -56,7 +57,29 @@ const AddGEMBAPage = (props) => {
     });
 
     values.questions = questions;
-    const res = await axios.post("/gemba/add", values);
+
+    const formData = new FormData();
+
+    // Append simple key
+    formData.append("area", values.area);
+
+    // Append questions array
+    values.questions.forEach((q, index) => {
+      formData.append(`questions[${index}][question]`, q.question);
+      formData.append(`questions[${index}][answer]`, q.answer);
+    });
+
+    // Append comments object
+    Object.entries(values.comments).forEach(([key, value]) => {
+      formData.append(`comments[${key}][comment]`, value.comment);
+      formData.append(`comments[${key}][picture]`, value.picture); // File or Blob
+    });
+
+    const res = await axios.post("/gemba/add", formData, {
+      headers: {
+        "content-type": "multipart/form-data;",
+      },
+    });
     if (userAuth.control(res)) {
       if (res?.data) {
         enqueueSnackbar("You have successfully created the GEMBA checklist!", {
@@ -92,6 +115,7 @@ const AddGEMBAPage = (props) => {
     initialValues: {
       area: null,
       questions: {},
+      comments: {},
     },
     onSubmit: handleSubmit,
     validationSchema: yup.object().shape({
@@ -114,6 +138,37 @@ const AddGEMBAPage = (props) => {
               }
             }
             return false;
+          }
+        ),
+      comments: yup
+        .mixed()
+        .nullable()
+        .test(
+          "COMMENT_VALIDATION",
+          "You must both upload an picture and type something!",
+          (value) => {
+            const allComments = Object.values(value);
+
+            if (
+              allComments.length !==
+              Object.values(formik.values.questions).filter((a) => a === "Fail")
+                .length
+            ) {
+              return false;
+            }
+
+            for (let i = 0; i < allComments.length; i++) {
+              if (
+                allComments[i].picture === null ||
+                !allComments[i].comment ||
+                allComments[i].comment === "" ||
+                allComments[i].comment.length === 0
+              ) {
+                return false;
+              }
+            }
+
+            return true;
           }
         ),
     }),
@@ -231,7 +286,6 @@ const AddGEMBAPage = (props) => {
               <Box
                 display="grid"
                 gap="30px"
-                gridTemplateColumns="repeat(4, minmax(0, 1fr))"
                 sx={{
                   "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
                   "& .MuiInputBase-root::after": {
@@ -245,42 +299,64 @@ const AddGEMBAPage = (props) => {
                   },
                 }}
               >
-                {gembaQuestions
-                  .filter(({ area }) => area === formik.values.area)
-                  .map((item) => {
-                    const { id, area, question } = item;
-                    return [
-                      <Typography
-                        variant="h6"
-                        color={colors.grey[100]}
-                        fontWeight="600"
-                        sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
-                      >
-                        {question}
-                      </Typography>,
-                      <ToggleButtonCheck
-                        style={{ gridColumn: "span 4" }}
-                        alignment={formik.values.questions[id]}
-                        onChange={(value) => {
-                          const temp = formik.values.questions;
-                          temp[id] = value;
-                          formik.setFieldValue("questions", temp);
-                        }}
-                        error={
-                          !!formik.touched.ballOrCard &&
-                          !!formik.errors.ballOrCard
-                        }
-                        options={[
-                          {
-                            label: "Pass",
-                          },
-                          {
-                            label: "Fail",
-                          },
-                        ]}
-                      />,
-                    ];
-                  })}
+                <Stack direction="column" spacing={2} width="100%">
+                  {gembaQuestions
+                    .filter(({ area }) => area === formik.values.area)
+                    .map((item) => {
+                      const { id, area, question } = item;
+                      return (
+                        <Stack direction="column" spacing={2} width="100%">
+                          <Typography
+                            variant="h6"
+                            color={colors.grey[100]}
+                            fontWeight="600"
+                            sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                          >
+                            {question}
+                          </Typography>
+
+                          <ToggleButtonCheck
+                            style={{ gridColumn: "span 4" }}
+                            alignment={formik.values.questions[id]}
+                            onChange={(value) => {
+                              const temp = formik.values.questions;
+                              temp[id] = value;
+                              formik.setFieldValue("questions", temp);
+                            }}
+                            error={
+                              !!formik.touched.ballOrCard &&
+                              !!formik.errors.ballOrCard
+                            }
+                            options={[
+                              {
+                                label: "Pass",
+                              },
+                              {
+                                label: "Fail",
+                              },
+                            ]}
+                          />
+                          <Stack
+                            sx={{
+                              width: "100%",
+                              display:
+                                formik.values.questions[id] !== "Fail"
+                                  ? "none"
+                                  : undefined,
+                            }}
+                          >
+                            <GembaComment
+                              onChange={(values) => {
+                                const temp = formik.values.comments;
+                                temp[id] = values;
+                                formik.setFieldValue("comments", temp);
+                              }}
+                            />
+                          </Stack>
+                        </Stack>
+                      );
+                    })}
+                </Stack>
               </Box>
             </AccordionDetails>
           </Accordion>
