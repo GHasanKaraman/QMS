@@ -1,8 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
+const upload = require("../file");
 
 const gembaModel = require("../models/gembaModel");
+const imageModel = require("../models/imageModel");
 
 router.get("/gemba", async (req, res) => {
   try {
@@ -27,6 +29,14 @@ router.post("/gemba/get", async (req, res) => {
     const { id } = req.body;
     const gemba = await gembaModel.aggregate([
       { $match: { _id: new mongoose.Types.ObjectId(id) } },
+      {
+        $lookup: {
+          from: "images",
+          localField: "imageIDs",
+          foreignField: "_id",
+          as: "images",
+        },
+      },
     ]);
     if (gemba) {
       res.status(200).json({
@@ -42,8 +52,45 @@ router.post("/gemba/get", async (req, res) => {
   }
 });
 
-router.post("/gemba/add", async (req, res) => {
-  console.log(req);
+router.post("/gemba/add", upload, async (req, res) => {
+  try {
+    const imageDetails = req.savedImages;
+    const result = await imageModel.insertMany(imageDetails);
+
+    if (result) {
+      const formInformations = req.body;
+      var status = formInformations?.questions?.reduce((prev, curr) => {
+        if (prev.answer === "Fail" || curr.answer === "Fail") {
+          return false;
+        }
+        return true;
+      }, true)
+        ? "passed"
+        : "failed";
+
+      const imageIDs = result.map((info) => info._id);
+      const form = await gembaModel.create({
+        ...formInformations,
+        imageIDs,
+        username: req.username,
+        status,
+      });
+
+      if (form) {
+        console.log(req.username + " successfully created a gemba!");
+        res.status(200).json({ form });
+      } else {
+        console.log("Something went wrong while creating gemba form!");
+        res.sendStatus(500);
+      }
+    } else {
+      console.log("Image info has not been written in the database!");
+      res.sendStatus(500);
+    }
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(503);
+  }
 
   /*
   try {

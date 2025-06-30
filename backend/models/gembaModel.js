@@ -11,6 +11,8 @@ const gembaSchema = new mongoose.Schema(
     questions: [questionSchema],
     username: { type: String, required: true },
     status: { type: String, default: "failed" },
+    imageIDs: [{ type: mongoose.Types.ObjectId }],
+    comments: [{ type: String }],
   },
   { timestamps: true }
 );

@@ -2,7 +2,7 @@ import { Typography, Box, useTheme } from "@mui/material";
 import { tokens } from "../theme";
 import { IP } from "../env";
 
-const ImageLabel = ({ title, folderIndex, fileName }) => {
+const ImageLabel = ({ title, folderIndex, fileName, width }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   return (
@@ -15,6 +15,7 @@ const ImageLabel = ({ title, folderIndex, fileName }) => {
         target="_blank"
       >
         <img
+          width={width}
           src={
             "http://" +
             IP +

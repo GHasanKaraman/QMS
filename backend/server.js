@@ -69,12 +69,13 @@ db.once("open", function () {
 
   app.use("/", user);
   app.use("/", dashboard);
-  app.use("/", gemba);
+
   app.use("/", rundashboard);
   app.use("/", runsignoff);
   app.use("/", runsummary);
   app.use("/", signoff);
 
+  app.use("/", gemba);
   app.use("/", preOperationalForm);
   app.use("/", qualityControlForm);
   app.use("/", mixingQualityForm);

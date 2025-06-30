@@ -71,15 +71,14 @@ const AddGEMBAPage = (props) => {
 
     // Append comments object
     Object.entries(values.comments).forEach(([key, value]) => {
-      formData.append(`comments[${key}][comment]`, value.comment);
-      formData.append(`comments[${key}][picture]`, value.picture); // File or Blob
+      if (value.comment) {
+        formData.append(`comments[]`, value.comment);
+        formData.append(`pictures[${key}]`, value.picture); // File or Blob
+      }
     });
 
-    const res = await axios.post("/gemba/add", formData, {
-      headers: {
-        "content-type": "multipart/form-data;",
-      },
-    });
+    const res = await axios.post("/gemba/add", formData);
+    console.log(res.data);
     if (userAuth.control(res)) {
       if (res?.data) {
         enqueueSnackbar("You have successfully created the GEMBA checklist!", {

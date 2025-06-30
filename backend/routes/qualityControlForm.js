@@ -229,7 +229,6 @@ router.post("/qualitycontrol/add", upload, async (req, res) => {
       console.log("Image info has not been written in the database!");
       res.sendStatus(500);
     }
-    console.log(result);
   } catch (err) {
     console.log(err);
     res.sendStatus(503);

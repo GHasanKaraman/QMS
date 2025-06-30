@@ -29,6 +29,7 @@ import CommentAccordion from "../CommentAccordion";
 
 import "../formStatus.css";
 import RunLabel from "../RunLabel";
+import ImageLabel from "../ImageLabel";
 
 const GEMBAReportPage = (props) => {
   const params = useParams();
@@ -182,14 +183,38 @@ const GEMBAReportPage = (props) => {
             <StatusIndicator status={Boolean(data?.area)} />
           </Stack>
           <Divider />
-          {data?.questions.map((question) => {
-            return [
-              <Stack direction="row" justifyContent="space-between">
-                <Label title={question.question} subtitle={question?.answer} />
-                <StatusIndicator status={question?.answer === "Pass"} />
-              </Stack>,
-              <Divider />,
-            ];
+          {data?.questions.map((question, i) => {
+            if (question?.answer === "Fail") {
+              var comment = data?.comments.shift() ?? "";
+              var image = data?.images.shift() ?? "";
+            }
+            return (
+              <Stack key={i}>
+                <Stack direction="row" justifyContent="space-between">
+                  <Label
+                    title={question.question}
+                    subtitle={question?.answer}
+                  />
+                  <StatusIndicator status={question?.answer === "Pass"} />
+                </Stack>
+                {question?.answer === "Fail" ? (
+                  <Stack
+                    direction="row"
+                    justifyContent="space-around"
+                    textAlign="center"
+                    alignItems="center"
+                  >
+                    <Typography>{comment}</Typography>
+                    <ImageLabel
+                      width={100}
+                      folderIndex={image?.folderIndex}
+                      fileName={image?.fileName}
+                    />
+                  </Stack>
+                ) : undefined}
+                <Divider />
+              </Stack>
+            );
           })}
         </AccordionDetails>
       </Accordion>
