@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { Sidebar as ProSidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
+import {
+  Sidebar as ProSidebar,
+  Menu,
+  MenuItem,
+  SubMenu,
+} from "react-pro-sidebar";
 import {
   Box,
   IconButton,
@@ -26,7 +31,13 @@ import { userInformations } from "../atoms/userAtom";
 import { useRecoilState } from "recoil";
 
 import axios from "../api/axios";
-import { AddTask, Checklist, HeatPump, PrecisionManufacturing, ViewList } from "@mui/icons-material";
+import {
+  AddTask,
+  Checklist,
+  HeatPump,
+  PrecisionManufacturing,
+  ViewList,
+} from "@mui/icons-material";
 import { ReactComponent as NuclearIcon } from "../images/nuclearIcon.svg";
 import { ReactComponent as MixingIcon } from "../images/mixingIcon.svg";
 import { ReactComponent as RoastingIcon } from "../images/roastingIcon.svg";
@@ -34,7 +45,6 @@ import { ReactComponent as RoastingIcon } from "../images/roastingIcon.svg";
 const ItemGroup = ({ label, icon, items, selected }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-
 
   return (
     <SubMenu
@@ -51,7 +61,6 @@ const ItemGroup = ({ label, icon, items, selected }) => {
     </SubMenu>
   );
 };
-
 
 const Item = ({
   title,
@@ -99,7 +108,7 @@ const Sidebar = () => {
         return true;
       }
       return false;
-    })(),
+    })()
   );
   const [selected, setSelected] = useState("Dashboard");
   const [user, setUser] = useRecoilState(userInformations);
@@ -158,7 +167,7 @@ const Sidebar = () => {
             />
             {!isCollapsed ? (
               <Typography variant="h6" color={colors.grey[100]}>
-                v1.0.7
+                v1.0.8
               </Typography>
             ) : null}
           </div>
@@ -233,26 +242,25 @@ const Sidebar = () => {
               icon={<Checklist />}
               selected={selected}
               items={[
-
-              <Item 
-              sub
-              title="Add "
-              parentTitle="GEMBA"
-              to="/gemba/add"
-              icon={<AddTask />}
-              selected={selected}
-              setSelected={setSelected}
-            />,
-            <Item 
-              sub
-              title="View"
-              parentTitle="GEMBA"
-              to="/gemba/view"
-              icon={<ViewList />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-          ]}
+                <Item
+                  sub
+                  title="Add "
+                  parentTitle="GEMBA"
+                  to="/gemba/add"
+                  icon={<AddTask />}
+                  selected={selected}
+                  setSelected={setSelected}
+                />,
+                <Item
+                  sub
+                  title="View"
+                  parentTitle="GEMBA"
+                  to="/gemba/view"
+                  icon={<ViewList />}
+                  selected={selected}
+                  setSelected={setSelected}
+                />,
+              ]}
             />
 
             <Typography
