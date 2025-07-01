@@ -6,13 +6,42 @@ const upload = require("../file");
 const gembaModel = require("../models/gembaModel");
 const imageModel = require("../models/imageModel");
 
+const essentials = require("../utils/essentials");
+
 router.get("/gemba", async (req, res) => {
   try {
-    const gemba = await gembaModel.find({});
+    const { page, show, startDate, endDate, searchText } = req.query;
+    console.log(searchText);
+    var pipeline = {};
 
+    if (searchText && searchText.trim() !== "") {
+      const regex = { $regex: searchText, $options: "i" };
+      pipeline.$or = [{ area: regex }, { username: regex }];
+    }
+
+    if (startDate && endDate) {
+      pipeline.createdAt = {
+        $gte: startDate,
+        $lte: endDate,
+      };
+    } else if (show !== "all") {
+      var { start, end } = essentials.extractRange(show);
+      pipeline.createdAt = {
+        $gte: start,
+        $lte: end,
+      };
+    }
+    const gemba = await gembaModel
+      .find(pipeline)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * 18)
+      .limit(18);
+
+    const count = await gembaModel.countDocuments(pipeline);
     if (gemba) {
       res.status(200).json({
         gemba,
+        count,
       });
       console.log("Fetched all gemba data sheet results!");
     } else {
