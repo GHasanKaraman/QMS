@@ -184,7 +184,8 @@ const GEMBAReportPage = (props) => {
           </Stack>
           <Divider />
           {data?.questions.map((question, i) => {
-            if (question?.answer === "Fail" && question?.comments) {
+            console.log(data);
+            if (question?.answer === "Fail" && data?.comments) {
               var comment = data?.comments.shift() ?? "";
               var image = data?.images.shift() ?? "";
             }
@@ -197,7 +198,7 @@ const GEMBAReportPage = (props) => {
                   />
                   <StatusIndicator status={question?.answer === "Pass"} />
                 </Stack>
-                {question?.answer === "Fail" && question?.comments ? (
+                {question?.answer === "Fail" && data?.comments ? (
                   <Stack
                     direction="row"
                     justifyContent="space-around"
