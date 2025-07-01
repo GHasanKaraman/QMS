@@ -56,13 +56,17 @@ const handleUpload = [
       for (const file of req.files) {
         const folderPath = await ensureFolderWithSpace(1); // check one-by-one
         const fileName = uuid.v4() + path.extname(file.originalname);
-        const filePath = path.join(folderPath, fileName);
+        const filePath = path
+          .join(folderPath, fileName)
+          .replace(/\.[^/.]+$/, ".jpeg");
         const thumbnailName = `thumbnail-${fileName}`;
-        const thumbnailPath = path.join(folderPath, thumbnailName);
+        const thumbnailPath = path
+          .join(folderPath, thumbnailName)
+          .replace(/\.[^/.]+$/, ".jpeg");
 
         await sharp(file.buffer)
-          .resize(1920)
           .rotate()
+          .resize(1920)
           .toFormat("jpeg")
           .jpeg({ quality: 75 })
           .toFile(filePath);
