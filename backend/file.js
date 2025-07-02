@@ -80,7 +80,7 @@ const handleUpload = [
 
         savedPaths.push({
           folderIndex: path.basename(folderPath),
-          fileName: fileName,
+          fileName: fileName.replace(/\.[^/.]+$/, ".jpeg"),
         });
       }
 
