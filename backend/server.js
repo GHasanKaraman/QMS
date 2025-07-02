@@ -53,6 +53,37 @@ db.once("open", function () {
     }
   });
 
+  app.use("/imgs", (req, res, next) => {
+    const baseDir = path.join(__dirname, "imgs");
+    const requestedPath = path.join(baseDir, req.path);
+
+    // Serve the requested file if it exists
+    if (fs.existsSync(requestedPath)) {
+      return next(); // Let express.static handle it
+    }
+
+    // Try .jpeg if .jpg was requested
+    if (req.path.endsWith(".jpg")) {
+      const altPath = req.path.replace(/\.jpg$/, ".jpeg");
+      const altFullPath = path.join(baseDir, altPath);
+      if (fs.existsSync(altFullPath)) {
+        return res.sendFile(altFullPath);
+      }
+    }
+
+    // Try .jpg if .jpeg was requested
+    if (req.path.endsWith(".jpeg")) {
+      const altPath = req.path.replace(/\.jpeg$/, ".jpg");
+      const altFullPath = path.join(baseDir, altPath);
+      if (fs.existsSync(altFullPath)) {
+        return res.sendFile(altFullPath);
+      }
+    }
+
+    // Let Express handle 404 or other fallback
+    next();
+  });
+
   app.use("/imgs", express.static(__dirname + "/imgs"));
   app.use("/utils", express.static(__dirname + "/utils"));
 
