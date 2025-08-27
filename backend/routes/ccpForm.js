@@ -23,6 +23,7 @@ router.post("/ccp/get", async (req, res) => {
     if (ccpForm.length === 1) {
       var details = {
         part: ccpForm[0].product,
+        ip: req.ip,
       };
       var formBody = [];
       for (var property in details) {

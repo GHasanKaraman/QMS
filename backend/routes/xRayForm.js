@@ -24,6 +24,7 @@ router.post("/xray/get", async (req, res) => {
     if (xRayForm.length === 1) {
       var details = {
         part: xRayForm[0].product,
+        ip: req.ip,
       };
       var formBody = [];
       for (var property in details) {

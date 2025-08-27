@@ -20,6 +20,7 @@ router.post("/runsignoff/password", async (req, res) => {
     var details = {
       u: username,
       p: password,
+      ip: req.ip,
     };
 
     var formBody = [];
@@ -75,23 +76,28 @@ router.post("/runsignoff", async (req, res) => {
     ];
 
     const ratioForms = await ratioFormModel.aggregate(pipeline);
-    const qualityControlForms =
-      await qualityControlFormModel.aggregate(pipeline);
-    const pgQualityControlForms =
-      await pgQualityControlFormModel.aggregate(pipeline);
+    const qualityControlForms = await qualityControlFormModel.aggregate(
+      pipeline
+    );
+    const pgQualityControlForms = await pgQualityControlFormModel.aggregate(
+      pipeline
+    );
     const metalDetectorForms = await metalDetectorFormModel.aggregate(pipeline);
-    const labelInspectionForms =
-      await labelInspectionFormModel.aggregate(pipeline);
+    const labelInspectionForms = await labelInspectionFormModel.aggregate(
+      pipeline
+    );
     const xRayForms = await xRayFormModel.aggregate(pipeline);
-    const preOperationalForms =
-      await preOperationalFormModel.aggregate(pipeline);
+    const preOperationalForms = await preOperationalFormModel.aggregate(
+      pipeline
+    );
     const mixingQualityForms = await mixingQualityFormModel.aggregate(pipeline);
     const lotInspectionForms = await lotInspectionFormModel.aggregate(pipeline);
     const ccpForms = await ccpFormModel.aggregate(pipeline);
-    const roastingQualityForms =
-      await roastingQualityFormModel.aggregate(pipeline);
+    const roastingQualityForms = await roastingQualityFormModel.aggregate(
+      pipeline
+    );
 
-    var details = { part: [product] };
+    var details = { part: [product], ip: req.ip };
     var formBody = [];
     for (var property in details) {
       var encodedKey = encodeURIComponent(property);

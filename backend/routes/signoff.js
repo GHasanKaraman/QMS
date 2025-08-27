@@ -158,7 +158,7 @@ router.post("/signoff/dashboard", async (req, res) => {
 
     const products = Array.from(new Set(forms.map((form) => form.product)));
 
-    var details = { part: products };
+    var details = { part: products,ip: req.ip, };
     var formBody = [];
     for (var property in details) {
       var encodedKey = encodeURIComponent(property);

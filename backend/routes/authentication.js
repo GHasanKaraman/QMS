@@ -17,6 +17,7 @@ router.post("/login", async (req, res) => {
     var details = {
       u: username,
       p: password,
+      ip: req.ip,
     };
 
     var formBody = [];
@@ -47,14 +48,14 @@ router.post("/login", async (req, res) => {
         res.status(200).json({ token: token });
         console.log(
           "\x1b[32m%s\x1b[0m",
-          username + " has succesfully sign in!",
+          username + " has succesfully sign in!"
         );
       } else {
         res.sendStatus(500);
         console.log(
           "\x1b[31m%s",
           "Something went wrong while creating token!",
-          "\x1b[0m",
+          "\x1b[0m"
         );
       }
     } else {

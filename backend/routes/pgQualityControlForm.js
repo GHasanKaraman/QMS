@@ -36,6 +36,7 @@ router.post("/pgqualitycontrol/stationplan", async (req, res) => {
       station: station,
       runDate: new Date().toLocaleDateString(),
       runShift: shift,
+      ip: req.ip,
     };
 
     var formBody = [];
@@ -73,6 +74,7 @@ router.post("/pgqualitycontrol/getproduct", async (req, res) => {
     var details = {
       station: station,
       prod: product,
+      ip: req.ip,
     };
 
     var formBody = [];
@@ -126,6 +128,7 @@ router.post("/pgqualitycontrol/get", async (req, res) => {
     //if (qualityControlForm.length === 1) {
     var details = {
       part: qualityControlForm[0].product,
+      ip: req.ip,
     };
     var formBody = [];
     for (var property in details) {

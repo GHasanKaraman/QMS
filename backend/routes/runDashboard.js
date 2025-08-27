@@ -81,6 +81,7 @@ router.post("/rundashboard", async (req, res) => {
 
     var details = {
       part: Array.from(new Set(forms.flatMap((item) => item.product))),
+      ip: req.ip,
     };
 
     var formBody = [];

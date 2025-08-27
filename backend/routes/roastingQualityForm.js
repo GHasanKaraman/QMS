@@ -26,6 +26,7 @@ router.post("/roastingquality/get", async (req, res) => {
     // if (roastingQualityForm.length === 1) {
     var details = {
       part: roastingQualityForm[0].product,
+      ip: req.ip,
     };
     var formBody = [];
     for (var property in details) {

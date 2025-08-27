@@ -23,6 +23,7 @@ router.post("/ratio/get", async (req, res) => {
     // if (ratioForm.length === 1) {
     var details = {
       part: ratioForm[0].product,
+      ip: req.ip,
     };
     var formBody = [];
     for (var property in details) {
@@ -62,6 +63,7 @@ router.post("/ratio/recipe", async (req, res) => {
     const { product } = req.body;
     var details = {
       part: product,
+      ip: req.ip,
     };
     var formBody = [];
     for (var property in details) {
