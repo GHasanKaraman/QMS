@@ -42,7 +42,7 @@ router.post("/labelinspection/get", async (req, res) => {
     //if (labelInspectionForm.length === 1) {
     var details = {
       part: labelInspectionForm[0].product,
-      ip:req.ip
+      ip: req.ip,
     };
 
     const product = sendQAC("recipe", details);
@@ -86,6 +86,12 @@ router.use("/labelinspection/add", async (req, res) => {
       console.log(
         req.username + " successfully created a label inspection form!"
       );
+      sendQAC("formSubmit", {
+        formType: "labelInspection",
+        station: data.station,
+        product: data.product,
+        ip: req.ip,
+      });
       res.status(200).json({ form });
     } else {
       console.log("Something went wrong while creating label inspection form!");

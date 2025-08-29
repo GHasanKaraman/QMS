@@ -25,6 +25,8 @@ const roastingQualityForm = require("./routes/roastingQualityForm.js");
 const ccpForm = require("./routes/ccpForm.js");
 const comment = require("./routes/comment.js");
 
+const formOpen = require("./routes/formOpen.js");
+
 const path = require("path");
 const fs = require("fs-extra");
 
@@ -119,6 +121,7 @@ db.once("open", function () {
   app.use("/", lotInspectionForm);
   app.use("/", ratioForm);
   app.use("/", comment);
+  app.use("/", formOpen);
 
   var txt = encodeURIComponent(
     `

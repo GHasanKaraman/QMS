@@ -35,6 +35,7 @@ import ToggleButtonCheck from "../ToggleButtonCheck";
 import UploadMultipleImage from "../UploadMultipleImage";
 import UploadImage from "../UploadImage";
 import { Schedule } from "@mui/icons-material";
+import { sendFormOpen } from "../../utils/helpers";
 
 const MixingQualityControlPage = (props) => {
   const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png"];
@@ -61,8 +62,8 @@ const MixingQualityControlPage = (props) => {
     if (userAuth.control(res)) {
       setStations(
         res.data.stations.filter(
-          (item) => item.name.includes("MIX") && !item.name.includes("MIX-0"),
-        ),
+          (item) => item.name.includes("MIX") && !item.name.includes("MIX-0")
+        )
       );
     } else {
       navigate("/login");
@@ -81,6 +82,20 @@ const MixingQualityControlPage = (props) => {
     });
     if (userAuth.control(res)) {
       setProducts(res.data.products);
+    } else {
+      navigate("/login");
+      localStorage.removeItem("token");
+      localStorage.removeItem("username");
+      enqueueSnackbar("Please sign in again!", {
+        variant: "error",
+      });
+    }
+  };
+
+  const formOpen = async (formType, station, partNum) => {
+    const res = await sendFormOpen(formType, station, partNum);
+    if (userAuth.control(res)) {
+      console.log("Form opened!");
     } else {
       navigate("/login");
       localStorage.removeItem("token");
@@ -199,7 +214,7 @@ const MixingQualityControlPage = (props) => {
         "You can only upload JPG/JPEG/PNG files!",
         (value) => {
           return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-        },
+        }
       );
   };
 
@@ -243,7 +258,7 @@ const MixingQualityControlPage = (props) => {
               }
             }
             return false;
-          },
+          }
         ),
       lotCode: yup
         .string()
@@ -266,7 +281,7 @@ const MixingQualityControlPage = (props) => {
         .required("You must upload at leat one image!")
         .min(1, "You must upload at least one image!"),
       finishedProductPicture: uploadRequired(
-        "Please upload the finished product!",
+        "Please upload the finished product!"
       ),
 
       anyDeviations: yup.string().required(),
@@ -405,6 +420,7 @@ const MixingQualityControlPage = (props) => {
               formik.setFieldValue("product", value);
               if (value != null) {
                 const details = await loadDetails(station, value.partNum);
+                await formOpen("mixingQuality", station, value.partNum);
                 if (details) {
                   if (details?.allergens === "") {
                     formik.setFieldValue("areAllergensCorrect", "Yes");

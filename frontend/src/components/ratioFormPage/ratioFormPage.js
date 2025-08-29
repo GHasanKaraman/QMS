@@ -28,6 +28,7 @@ import axios from "../../api/axios";
 import userAuth from "../../utils/userAuth";
 import ToggleButtonCheck from "../ToggleButtonCheck";
 import { Schedule } from "@mui/icons-material";
+import { sendFormOpen } from "../../utils/helpers";
 
 const RatioFormPage = (props) => {
   const theme = useTheme();
@@ -69,6 +70,20 @@ const RatioFormPage = (props) => {
     });
     if (userAuth.control(res)) {
       setProducts(res.data.products);
+    } else {
+      navigate("/login");
+      localStorage.removeItem("token");
+      localStorage.removeItem("username");
+      enqueueSnackbar("Please sign in again!", {
+        variant: "error",
+      });
+    }
+  };
+
+  const formOpen = async (formType, station, partNum) => {
+    const res = await sendFormOpen(formType, station, partNum);
+    if (userAuth.control(res)) {
+      console.log("Form opened!");
     } else {
       navigate("/login");
       localStorage.removeItem("token");
@@ -138,7 +153,7 @@ const RatioFormPage = (props) => {
               }
             }
             return false;
-          },
+          }
         ),
       weights: yup
         .mixed()
@@ -175,7 +190,7 @@ const RatioFormPage = (props) => {
       if (res?.data) {
         setProductRecipe(res.data.recipe);
         const uniqueGroups = Array.from(
-          new Set(res.data.recipe.recipe.map(({ groupName }) => groupName)),
+          new Set(res.data.recipe.recipe.map(({ groupName }) => groupName))
         );
 
         const weights = {};
@@ -183,7 +198,7 @@ const RatioFormPage = (props) => {
         uniqueGroups
           .map((group) => {
             return res.data.recipe?.recipe?.filter(
-              ({ groupName }) => groupName === group,
+              ({ groupName }) => groupName === group
             );
           })
           .forEach((item) => {
@@ -356,6 +371,7 @@ const RatioFormPage = (props) => {
               formik.setFieldValue("product", value);
               if (value != null) {
                 await loadRecipe(value.partNum);
+                await formOpen("ratio", station, value.partNum);
               }
             }}
             value={formik.values.product}
@@ -415,7 +431,7 @@ const RatioFormPage = (props) => {
           <Divider />
           {uniqueGroups?.map((group, index) => {
             const details = productRecipe?.recipe?.filter(
-              ({ groupName }) => groupName === group,
+              ({ groupName }) => groupName === group
             );
 
             return (

@@ -107,6 +107,12 @@ router.post("/ratio/add", async (req, res) => {
 
     if (form) {
       console.log(req.username + " successfully created a Ratio Form!");
+      sendQAC("formSubmit", {
+        formType: "ratio",
+        station: data.station,
+        product: data.product,
+        ip: req.ip,
+      });
       res.status(200).json({ form });
     } else {
       console.log("Something went wrong while creating Ratio Form!");

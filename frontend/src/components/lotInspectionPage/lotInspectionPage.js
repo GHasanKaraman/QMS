@@ -31,6 +31,7 @@ import { Accordion, AccordionDetails, AccordionSummary } from "../Accordion";
 import UploadImage from "../UploadImage";
 import ToggleButtonCheck from "../ToggleButtonCheck";
 import { Schedule } from "@mui/icons-material";
+import { sendFormOpen } from "../../utils/helpers";
 
 const LotInspectionPage = (props) => {
   const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png"];
@@ -74,6 +75,20 @@ const LotInspectionPage = (props) => {
     });
     if (userAuth.control(res)) {
       setProducts(res.data.products);
+    } else {
+      navigate("/login");
+      localStorage.removeItem("token");
+      localStorage.removeItem("username");
+      enqueueSnackbar("Please sign in again!", {
+        variant: "error",
+      });
+    }
+  };
+
+  const formOpen = async (formType, station, partNum) => {
+    const res = await sendFormOpen(formType, station, partNum);
+    if (userAuth.control(res)) {
+      console.log("Form opened!");
     } else {
       navigate("/login");
       localStorage.removeItem("token");
@@ -221,7 +236,7 @@ const LotInspectionPage = (props) => {
               }
             }
             return false;
-          },
+          }
         ),
       salesOrderNumber: yup.string().required("Please enter the PO number!"),
       itemCode1: yup
@@ -242,7 +257,7 @@ const LotInspectionPage = (props) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          },
+          }
         ),
     }),
   });
@@ -310,7 +325,7 @@ const LotInspectionPage = (props) => {
             sx={{ gridColumn: "span 4" }}
             options={stations
               .filter(
-                ({ name }) => !name.includes("ROAST") && !name.includes("MIX"),
+                ({ name }) => !name.includes("ROAST") && !name.includes("MIX")
               )
               .map(({ name }) => name)}
             onBlur={formik.handleBlur}
@@ -373,6 +388,7 @@ const LotInspectionPage = (props) => {
               formik.setFieldValue("product", value);
               if (value != null) {
                 const details = await loadDetails(station, value.partNum);
+                await formOpen("lotInspection", station, value.partNum);
                 if (details) {
                   if (details?.soList?.length === 0) {
                     formik.setFieldValue("salesOrderNumber", "No");

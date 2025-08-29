@@ -36,6 +36,7 @@ import userAuth from "../../utils/userAuth";
 import UploadImage from "../UploadImage";
 import ToggleButtonCheck from "../ToggleButtonCheck";
 import { Accordion, AccordionDetails, AccordionSummary } from "../Accordion";
+import { sendFormOpen } from "../../utils/helpers";
 
 const PGQualityControlPage = (props) => {
   const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/png"];
@@ -64,6 +65,20 @@ const PGQualityControlPage = (props) => {
     });
     if (userAuth.control(res)) {
       setProducts(res.data.products);
+    } else {
+      navigate("/login");
+      localStorage.removeItem("token");
+      localStorage.removeItem("username");
+      enqueueSnackbar("Please sign in again!", {
+        variant: "error",
+      });
+    }
+  };
+
+  const formOpen = async (formType, station, partNum) => {
+    const res = await sendFormOpen(formType, station, partNum);
+    if (userAuth.control(res)) {
+      console.log("Form opened!");
     } else {
       navigate("/login");
       localStorage.removeItem("token");
@@ -213,7 +228,7 @@ const PGQualityControlPage = (props) => {
               }
             }
             return false;
-          },
+          }
         ),
       rawProduct: yup
         .mixed()
@@ -227,7 +242,7 @@ const PGQualityControlPage = (props) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          },
+          }
         ),
       pictureOfLabelInspectionPouch: yup
         .mixed()
@@ -241,13 +256,13 @@ const PGQualityControlPage = (props) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          },
+          }
         ),
       pictureOfExpiration: yup
         .mixed()
         .nullable()
         .required(
-          "Please upload the picture of the expiration date on the pouch!",
+          "Please upload the picture of the expiration date on the pouch!"
         )
         .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
           return !value || (value && value.size < 1024 * 1024 * 10);
@@ -257,7 +272,7 @@ const PGQualityControlPage = (props) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          },
+          }
         ),
       expirationDatePouch: yup
         .string()
@@ -291,7 +306,7 @@ const PGQualityControlPage = (props) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          },
+          }
         ),
       pictureOfPanningBatch: yup
         .mixed()
@@ -305,7 +320,7 @@ const PGQualityControlPage = (props) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          },
+          }
         ),
       pictureOfSugarShelledBatch: yup
         .mixed()
@@ -319,7 +334,7 @@ const PGQualityControlPage = (props) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          },
+          }
         ),
 
       pictureOfLabelInspectionFront: yup
@@ -334,7 +349,7 @@ const PGQualityControlPage = (props) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          },
+          }
         ),
       pictureOfLabelInspectionBack: yup
         .mixed()
@@ -348,7 +363,7 @@ const PGQualityControlPage = (props) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          },
+          }
         ),
       currentWeightBox: yup
         .string()
@@ -366,7 +381,7 @@ const PGQualityControlPage = (props) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          },
+          }
         ),
 
       pictureOfLabelInspectionCase: yup
@@ -381,7 +396,7 @@ const PGQualityControlPage = (props) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          },
+          }
         ),
       expirationDateCase: yup
         .string()
@@ -401,7 +416,7 @@ const PGQualityControlPage = (props) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          },
+          }
         ),
 
       pictureOfChep: yup
@@ -416,7 +431,7 @@ const PGQualityControlPage = (props) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          },
+          }
         ),
       anyDeviations: yup.string().required(),
       deviationID:
@@ -515,6 +530,7 @@ const PGQualityControlPage = (props) => {
               formik.setFieldValue("product", value);
               if (value != null) {
                 await loadDetails(formik.values.station, value.partNum);
+                await formOpen("p&g", station, value.partNum);
               }
             }}
             value={formik.values.product}
@@ -879,7 +895,7 @@ const PGQualityControlPage = (props) => {
                       onChange={(blob) => {
                         formik.setFieldValue(
                           "pictureOfLabelInspectionPouch",
-                          blob,
+                          blob
                         );
                       }}
                     />
@@ -980,7 +996,7 @@ const PGQualityControlPage = (props) => {
                       if (value != null) {
                         formik.setFieldValue(
                           "expirationDatePouch",
-                          value.format(),
+                          value.format()
                         );
                       } else {
                         formik.setFieldValue("expirationDatePouch", "");
@@ -1163,7 +1179,7 @@ const PGQualityControlPage = (props) => {
                   onChange={(blob) => {
                     formik.setFieldValue(
                       "pictureOfAllergenStatementPouch",
-                      blob,
+                      blob
                     );
                   }}
                 />
@@ -1270,7 +1286,7 @@ const PGQualityControlPage = (props) => {
                       onChange={(blob) => {
                         formik.setFieldValue(
                           "pictureOfLabelInspectionFront",
-                          blob,
+                          blob
                         );
                       }}
                       error={
@@ -1299,7 +1315,7 @@ const PGQualityControlPage = (props) => {
                       onChange={(blob) => {
                         formik.setFieldValue(
                           "pictureOfLabelInspectionBack",
-                          blob,
+                          blob
                         );
                       }}
                       error={
@@ -1547,7 +1563,7 @@ const PGQualityControlPage = (props) => {
                       if (value != null) {
                         formik.setFieldValue(
                           "expirationDateCase",
-                          value.format(),
+                          value.format()
                         );
                       } else {
                         formik.setFieldValue("expirationDateCase", "");

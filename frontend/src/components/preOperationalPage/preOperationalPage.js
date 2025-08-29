@@ -32,6 +32,7 @@ import userAuth from "../../utils/userAuth";
 import { Accordion, AccordionDetails, AccordionSummary } from "../Accordion";
 import ToggleButtonCheck from "../ToggleButtonCheck";
 import { Schedule } from "@mui/icons-material";
+import { sendFormOpen } from "../../utils/helpers";
 
 const PreOperationalPage = (props) => {
   const theme = useTheme();
@@ -71,6 +72,20 @@ const PreOperationalPage = (props) => {
     });
     if (userAuth.control(res)) {
       setProducts(res.data.products);
+    } else {
+      navigate("/login");
+      localStorage.removeItem("token");
+      localStorage.removeItem("username");
+      enqueueSnackbar("Please sign in again!", {
+        variant: "error",
+      });
+    }
+  };
+
+  const formOpen = async (formType, station, partNum) => {
+    const res = await sendFormOpen(formType, station, partNum);
+    if (userAuth.control(res)) {
+      console.log("Form opened!");
     } else {
       navigate("/login");
       localStorage.removeItem("token");
@@ -207,7 +222,7 @@ const PreOperationalPage = (props) => {
               }
             }
             return false;
-          },
+          }
         ),
       dumper: yup.string().required(),
       elevator: yup.string().required(),
@@ -356,6 +371,7 @@ const PreOperationalPage = (props) => {
               formik.setFieldValue("product", value);
               if (value != null) {
                 const details = await loadDetails(station, value.partNum);
+                await formOpen("preOperational", station, value.partNum);
                 if (details) {
                   if (details?.soList?.length === 0) {
                     formik.setFieldValue("salesOrderNumber", "No");

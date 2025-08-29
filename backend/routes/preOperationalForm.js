@@ -23,7 +23,7 @@ router.post("/preoperational/get", async (req, res) => {
     // if (preOperationalForm.length === 1) {
     var details = {
       part: preOperationalForm[0].product,
-      ip:req.ip
+      ip: req.ip,
     };
 
     const product = sendQAC("recipe", details);
@@ -86,6 +86,12 @@ router.post("/preoperational/add", async (req, res) => {
       console.log(
         req.username + " successfully created a Pre-Operational form!"
       );
+      sendQAC("formSubmit", {
+        formType: "preOperational",
+        station: data.station,
+        product: data.product,
+        ip: req.ip,
+      });
       res.status(200).json({ form });
     } else {
       console.log("Something went wrong while creating Pre-Operational form!");

@@ -30,6 +30,7 @@ import userAuth from "../../utils/userAuth";
 import { Accordion, AccordionDetails, AccordionSummary } from "../Accordion";
 import ToggleButtonCheck from "../ToggleButtonCheck";
 import { Schedule } from "@mui/icons-material";
+import { sendFormOpen } from "../../utils/helpers";
 
 const CCPPage = (props) => {
   const theme = useTheme();
@@ -57,6 +58,20 @@ const CCPPage = (props) => {
     });
     if (userAuth.control(res)) {
       setProducts(res.data.products);
+    } else {
+      navigate("/login");
+      localStorage.removeItem("token");
+      localStorage.removeItem("username");
+      enqueueSnackbar("Please sign in again!", {
+        variant: "error",
+      });
+    }
+  };
+
+  const formOpen = async (formType, station, partNum) => {
+    const res = await sendFormOpen(formType, station, partNum);
+    if (userAuth.control(res)) {
+      console.log("Form opened!");
     } else {
       navigate("/login");
       localStorage.removeItem("token");
@@ -195,7 +210,7 @@ const CCPPage = (props) => {
               }
             }
             return false;
-          },
+          }
         ),
       rawTemperature: yup.string().required("Please enter raw temperature!"),
       moistureContent: yup
@@ -389,6 +404,7 @@ const CCPPage = (props) => {
               formik.setFieldValue("product", value);
               if (value != null) {
                 await loadDetails(station, value.partNum);
+                await formOpen("ccp", station, value.partNum);
               }
             }}
             value={formik.values.product}

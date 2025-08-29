@@ -1,3 +1,6 @@
+import axios from "../api/axios";
+import userAuth from "./userAuth";
+
 export const toStringDate = (date, format) => {
   const newDate = new Date(date).toLocaleString("en-us", format);
   return newDate;
@@ -5,7 +8,7 @@ export const toStringDate = (date, format) => {
 
 export const extractUniqueProducts = (...forms) => {
   return Array.from(
-    new Set(forms.flatMap((item) => item.map((form) => form.product))),
+    new Set(forms.flatMap((item) => item.map((form) => form.product)))
   );
 };
 
@@ -81,4 +84,13 @@ export const extractInformations = (form) => {
     };
   }
   return info;
+};
+
+export const sendFormOpen = async (formType, station, partNum) => {
+  const res = await axios.post("/formOpen", {
+    formType: formType,
+    station: station,
+    partNum: partNum,
+  });
+  return res;
 };

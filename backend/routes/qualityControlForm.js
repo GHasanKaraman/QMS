@@ -10,7 +10,7 @@ const { sendQAC } = require("../qac");
 
 router.post("/qualitycontrol", async (req, res) => {
   try {
-    const data = sendQAC("stations", {ip:req.ip}, "GET", undefined);
+    const data = sendQAC("stations", { ip: req.ip }, "GET", undefined);
 
     if (data) {
       res.status(200).json({ stations: data });
@@ -174,6 +174,12 @@ router.post("/qualitycontrol/add", upload, async (req, res) => {
         console.log(
           req.username + " successfully created a quality control form!"
         );
+        sendQAC("formSubmit", {
+          formType: "qualityControl",
+          station: data.station,
+          product: data.product,
+          ip: req.ip,
+        });
         res.status(200).json({ form });
       } else {
         console.log(

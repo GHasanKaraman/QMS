@@ -30,6 +30,7 @@ import userAuth from "../../utils/userAuth";
 import ToggleButtonCheck from "../ToggleButtonCheck";
 import { Accordion, AccordionDetails, AccordionSummary } from "../Accordion";
 import { Schedule } from "@mui/icons-material";
+import { sendFormOpen } from "../../utils/helpers";
 
 const DirectObservationMetalDetectorPage = (props) => {
   const theme = useTheme();
@@ -85,6 +86,20 @@ const DirectObservationMetalDetectorPage = (props) => {
     });
     if (userAuth.control(res)) {
       setProducts(res.data.products);
+    } else {
+      navigate("/login");
+      localStorage.removeItem("token");
+      localStorage.removeItem("username");
+      enqueueSnackbar("Please sign in again!", {
+        variant: "error",
+      });
+    }
+  };
+
+  const formOpen = async (formType, station, partNum) => {
+    const res = await sendFormOpen(formType, station, partNum);
+    if (userAuth.control(res)) {
+      console.log("Form opened!");
     } else {
       navigate("/login");
       localStorage.removeItem("token");
@@ -198,7 +213,7 @@ const DirectObservationMetalDetectorPage = (props) => {
               }
             }
             return false;
-          },
+          }
         ),
       lotCode: yup
         .string()
@@ -335,6 +350,7 @@ const DirectObservationMetalDetectorPage = (props) => {
               formik.setFieldValue("product", value);
               if (value != null) {
                 const details = await loadDetails(station, value.partNum);
+                await formOpen("metalDetector", station, value.partNum);
                 if (details) {
                   if (details?.soList?.length === 0) {
                     formik.setFieldValue("salesOrderNumber", "No");

@@ -24,7 +24,7 @@ router.post("/metaldetector/get", async (req, res) => {
     // if (metalDetectorForm.length === 1) {
     var details = {
       part: metalDetectorForm[0].product,
-      ip:req.ip
+      ip: req.ip,
     };
     const product = sendQAC("recipe", details);
     if (product) {
@@ -65,6 +65,12 @@ router.use("/metaldetector/add", async (req, res) => {
       console.log(
         req.username + " successfully created a metal detector form!"
       );
+      sendQAC("formSubmit", {
+        formType: "metalDetector",
+        station: data.station,
+        product: data.product,
+        ip: req.ip,
+      });
       res.status(200).json({ form });
     } else {
       console.log("Something went wrong while creating metal detector form!");

@@ -27,7 +27,7 @@ router.post("/mixingquality/get", async (req, res) => {
     //   if (mixingQualityForm.length === 1) {
     var details = {
       part: mixingQualityForm[0].product,
-      ip:req.ip
+      ip: req.ip,
     };
 
     const product = sendQAC("recipe", details);
@@ -86,6 +86,12 @@ router.post("/mixingquality/add", upload, async (req, res) => {
         console.log(
           req.username + " successfully created a Mixing Quality form!"
         );
+        sendQAC("formSubmit", {
+          formType: "mixingQuality",
+          station: data.station,
+          product: data.product,
+          ip: req.ip,
+        });
         res.status(200).json({ form });
       } else {
         console.log("Something went wrong while creating Mixing Quality form!");

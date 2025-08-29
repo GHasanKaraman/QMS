@@ -34,6 +34,7 @@ import { Accordion, AccordionDetails, AccordionSummary } from "../Accordion";
 import ToggleButtonCheck from "../ToggleButtonCheck";
 import UploadImage from "../UploadImage";
 import { Schedule } from "@mui/icons-material";
+import { sendFormOpen } from "../../utils/helpers";
 
 const RoastingQualityControlPage = (props) => {
   const theme = useTheme();
@@ -64,8 +65,8 @@ const RoastingQualityControlPage = (props) => {
       setStations(
         res.data.stations.filter(
           (item) =>
-            item.name.includes("ROAST") && !item.name.includes("ROAST-0"),
-        ),
+            item.name.includes("ROAST") && !item.name.includes("ROAST-0")
+        )
       );
     } else {
       navigate("/login");
@@ -84,6 +85,20 @@ const RoastingQualityControlPage = (props) => {
     });
     if (userAuth.control(res)) {
       setProducts(res.data.products);
+    } else {
+      navigate("/login");
+      localStorage.removeItem("token");
+      localStorage.removeItem("username");
+      enqueueSnackbar("Please sign in again!", {
+        variant: "error",
+      });
+    }
+  };
+
+  const formOpen = async (formType, station, partNum) => {
+    const res = await sendFormOpen(formType, station, partNum);
+    if (userAuth.control(res)) {
+      console.log("Form opened!");
     } else {
       navigate("/login");
       localStorage.removeItem("token");
@@ -236,7 +251,7 @@ const RoastingQualityControlPage = (props) => {
         salinityOfProduct: yup
           .string()
           .required(
-            "Please enter the percentage of the salinity of finished product!",
+            "Please enter the percentage of the salinity of finished product!"
           ),
         colorOfFinishedProduct: yup.string().required(),
         finishedProductTemperature: yup
@@ -262,7 +277,7 @@ const RoastingQualityControlPage = (props) => {
         salinityOfProduct: yup
           .string()
           .required(
-            "Please enter the percentage of the salinity of finished product!",
+            "Please enter the percentage of the salinity of finished product!"
           ),
         temperature1: yup
           .string()
@@ -399,7 +414,7 @@ const RoastingQualityControlPage = (props) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          },
+          }
         ),
       rawMaterialPicture: yup
         .mixed()
@@ -413,7 +428,7 @@ const RoastingQualityControlPage = (props) => {
           "You can only upload JPG/JPEG/PNG files!",
           (value) => {
             return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          },
+          }
         ),
 
       station: yup.string().required("Please select the station!"),
@@ -431,7 +446,7 @@ const RoastingQualityControlPage = (props) => {
               }
             }
             return false;
-          },
+          }
         ),
       lotCode: yup
         .string()
@@ -573,6 +588,7 @@ const RoastingQualityControlPage = (props) => {
               formik.setFieldValue("product", value);
               if (value != null) {
                 await loadDetails(station, value.partNum);
+                await formOpen("roastingQuality", station, value.partNum);
               }
             }}
             value={formik.values.product}
@@ -600,8 +616,8 @@ const RoastingQualityControlPage = (props) => {
               formik.values.product == null
                 ? "none"
                 : formik.values.station === "ROAST-1"
-                  ? "block"
-                  : "none",
+                ? "block"
+                : "none",
           }}
         >
           <Accordion defaultExpanded>
@@ -1132,10 +1148,10 @@ const RoastingQualityControlPage = (props) => {
               formik.values.product == null
                 ? "none"
                 : formik.values.station === "ROAST-2" ||
-                    formik.values.station === "ROAST-3" ||
-                    formik.values.station === "ROAST-4"
-                  ? "block"
-                  : "none",
+                  formik.values.station === "ROAST-3" ||
+                  formik.values.station === "ROAST-4"
+                ? "block"
+                : "none",
           }}
         >
           <Accordion defaultExpanded>
@@ -2155,8 +2171,8 @@ const RoastingQualityControlPage = (props) => {
               formik.values.product == null
                 ? "none"
                 : formik.values.station === "ROAST-M5"
-                  ? "block"
-                  : "none",
+                ? "block"
+                : "none",
           }}
         >
           <Accordion defaultExpanded>

@@ -27,7 +27,7 @@ router.post("/lotinspection/get", async (req, res) => {
     //if (lotInspectionForm.length === 1) {
     var details = {
       part: lotInspectionForm[0].product,
-      ip:req.ip
+      ip: req.ip,
     };
 
     const product = sendQAC("recipe", details);
@@ -78,6 +78,12 @@ router.post("/lotinspection/add", upload, async (req, res) => {
         console.log(
           req.username + " successfully created a lot inspection form!"
         );
+        sendQAC("formSubmit", {
+          formType: "lotInspection",
+          station: data.station,
+          product: data.product,
+          ip: req.ip,
+        });
         res.status(200).json({ form });
       } else {
         console.log("Something went wrong while creating lot inspection form!");

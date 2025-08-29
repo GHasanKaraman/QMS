@@ -102,6 +102,12 @@ router.post("/roastingquality/add", upload, async (req, res) => {
         console.log(
           req.username + " successfully created a Roasting Quality form!"
         );
+        sendQAC("formSubmit", {
+          formType: "roastingQuality",
+          station: data.station,
+          product: data.product,
+          ip: req.ip,
+        });
         res.status(200).json({ form });
       } else {
         console.log(
