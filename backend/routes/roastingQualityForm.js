@@ -28,7 +28,7 @@ router.post("/roastingquality/get", async (req, res) => {
       ip: req.ip,
     };
 
-    const product = sendQAC("recipe", details);
+    const product = await sendQAC("recipe", details);
 
     const images = await imageModel.find({
       _id: { $in: roastingQualityForm[0].imageIDs },
@@ -102,7 +102,7 @@ router.post("/roastingquality/add", upload, async (req, res) => {
         console.log(
           req.username + " successfully created a Roasting Quality form!"
         );
-        sendQAC("formSubmit", {
+        await sendQAC("formSubmit", {
           formType: "roastingQuality",
           station: data.station,
           product: data.product,

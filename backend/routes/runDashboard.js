@@ -89,7 +89,7 @@ router.post("/rundashboard", async (req, res) => {
       ip: req.ip,
     };
 
-    const desc = sendQAC("desc", details);
+    const desc = await sendQAC("desc", details);
 
     if (
       ratioForms &&

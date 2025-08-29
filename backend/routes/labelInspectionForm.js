@@ -8,7 +8,7 @@ const { sendQAC } = require("../qac.js");
 
 router.post("/operators", async (req, res) => {
   try {
-    const data = sendQAC("qcNames", undefined, "POST", undefined);
+    const data = await sendQAC("qcNames", undefined, "POST", undefined);
 
     if (data) {
       res.status(200).json({
@@ -45,7 +45,7 @@ router.post("/labelinspection/get", async (req, res) => {
       ip: req.ip,
     };
 
-    const product = sendQAC("recipe", details);
+    const product = await sendQAC("recipe", details);
 
     if (product) {
       res.status(200).json({
@@ -86,7 +86,7 @@ router.use("/labelinspection/add", async (req, res) => {
       console.log(
         req.username + " successfully created a label inspection form!"
       );
-      sendQAC("formSubmit", {
+      await sendQAC("formSubmit", {
         formType: "labelInspection",
         station: data.station,
         product: data.product,

@@ -17,10 +17,10 @@ router.post("/login", async (req, res) => {
     var details = {
       u: username,
       p: password,
-      ip:req.ip
+      ip: req.ip,
     };
 
-    const data = sendQAC("login", details);
+    const data = await sendQAC("login", details);
 
     if (data.login === 1) {
       const token = await tokenModel.create({

@@ -30,7 +30,7 @@ router.post("/lotinspection/get", async (req, res) => {
       ip: req.ip,
     };
 
-    const product = sendQAC("recipe", details);
+    const product = await sendQAC("recipe", details);
 
     const images = await imageModel.find({
       _id: { $in: lotInspectionForm[0].imageIDs },
@@ -78,7 +78,7 @@ router.post("/lotinspection/add", upload, async (req, res) => {
         console.log(
           req.username + " successfully created a lot inspection form!"
         );
-        sendQAC("formSubmit", {
+        await sendQAC("formSubmit", {
           formType: "lotInspection",
           station: data.station,
           product: data.product,

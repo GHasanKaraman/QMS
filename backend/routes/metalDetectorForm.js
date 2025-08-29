@@ -26,7 +26,7 @@ router.post("/metaldetector/get", async (req, res) => {
       part: metalDetectorForm[0].product,
       ip: req.ip,
     };
-    const product = sendQAC("recipe", details);
+    const product = await sendQAC("recipe", details);
     if (product) {
       res.status(200).json({
         metalDetectorForm: metalDetectorForm[0],
@@ -65,7 +65,7 @@ router.use("/metaldetector/add", async (req, res) => {
       console.log(
         req.username + " successfully created a metal detector form!"
       );
-      sendQAC("formSubmit", {
+      await sendQAC("formSubmit", {
         formType: "metalDetector",
         station: data.station,
         product: data.product,

@@ -26,7 +26,7 @@ router.post("/ratio/get", async (req, res) => {
       ip: req.ip,
     };
 
-    const product = sendQAC("recipe", details);
+    const product = await sendQAC("recipe", details);
 
     if (product) {
       res.status(200).json({
@@ -53,7 +53,7 @@ router.post("/ratio/recipe", async (req, res) => {
       ip: req.ip,
     };
 
-    const recipe = sendQAC("recipe", details);
+    const recipe = await sendQAC("recipe", details);
 
     if (recipe) {
       res.status(200).json({
@@ -107,7 +107,7 @@ router.post("/ratio/add", async (req, res) => {
 
     if (form) {
       console.log(req.username + " successfully created a Ratio Form!");
-      sendQAC("formSubmit", {
+      await sendQAC("formSubmit", {
         formType: "ratio",
         station: data.station,
         product: data.product,

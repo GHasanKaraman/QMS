@@ -27,7 +27,7 @@ router.post("/xray/get", async (req, res) => {
         ip: req.ip,
       };
 
-      const product = sendQAC("recipe", details);
+      const product = await sendQAC("recipe", details);
 
       if (product) {
         res.status(200).json({
@@ -63,7 +63,7 @@ router.post("/xray/add", async (req, res) => {
 
     if (form) {
       console.log(req.username + " successfully created a X-Ray form!");
-      sendQAC("formSubmit", {
+      await sendQAC("formSubmit", {
         formType: "xray",
         station: data.station,
         product: data.product,

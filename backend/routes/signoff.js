@@ -41,7 +41,7 @@ router.post("/signoff", async (req, res) => {
 
 router.post("/signoff/dashboard/stations", async (req, res) => {
   try {
-    const data = sendQAC("stations", {ip:req.ip}, "GET", undefined);
+    const data = await sendQAC("stations", {ip:req.ip}, "GET", undefined);
 
     if (data) {
       res.status(200).json({ stations: data });
@@ -97,7 +97,7 @@ router.post("/signoff/dashboard", async (req, res) => {
       pipeline.push({ $match: filters });
     }
 
-    const data = sendQAC("stations", {ip:req.ip}, "GET", undefined);
+    const data = await sendQAC("stations", {ip:req.ip}, "GET", undefined);
 
     const ratioForms = await ratioFormModel.aggregate(pipeline);
     const qualityControlForms = await qualityControlFormModel.aggregate(
@@ -162,7 +162,7 @@ router.post("/signoff/dashboard", async (req, res) => {
 
     var details = { part: products, ip: req.ip };
 
-    const desc = sendQAC("desc", details);
+    const desc = await sendQAC("desc", details);
 
     if (
       data &&

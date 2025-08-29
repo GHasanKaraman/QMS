@@ -10,7 +10,7 @@ const { sendQAC } = require("../qac");
 
 router.post("/qualitycontrol", async (req, res) => {
   try {
-    const data = sendQAC("stations", { ip: req.ip }, "GET", undefined);
+    const data = await sendQAC("stations", { ip: req.ip }, "GET", undefined);
 
     if (data) {
       res.status(200).json({ stations: data });
@@ -35,7 +35,7 @@ router.post("/qualitycontrol/stationplan", async (req, res) => {
       ip: req.ip,
     };
 
-    const data = sendQAC("stationPlan", details);
+    const data = await sendQAC("stationPlan", details);
 
     if (data) {
       res.status(200).json({ products: data });
@@ -59,7 +59,7 @@ router.post("/qualitycontrol/getproduct", async (req, res) => {
       ip: req.ip,
     };
 
-    const data = sendQAC("getProduct", details);
+    const data = await sendQAC("getProduct", details);
 
     if (data) {
       res.status(200).json({ details: data });
@@ -99,7 +99,7 @@ router.post("/qualitycontrol/get", async (req, res) => {
       ip: req.ip,
     };
 
-    const product = sendQAC("recipe", details);
+    const product = await sendQAC("recipe", details);
 
     const images = await imageModel.find({
       _id: { $in: qualityControlForm[0].imageIDs },
@@ -174,7 +174,7 @@ router.post("/qualitycontrol/add", upload, async (req, res) => {
         console.log(
           req.username + " successfully created a quality control form!"
         );
-        sendQAC("formSubmit", {
+        await sendQAC("formSubmit", {
           formType: "qualityControl",
           station: data.station,
           product: data.product,

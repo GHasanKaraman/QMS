@@ -26,7 +26,7 @@ router.post("/preoperational/get", async (req, res) => {
       ip: req.ip,
     };
 
-    const product = sendQAC("recipe", details);
+    const product = await sendQAC("recipe", details);
 
     if (product) {
       res.status(200).json({
@@ -86,7 +86,7 @@ router.post("/preoperational/add", async (req, res) => {
       console.log(
         req.username + " successfully created a Pre-Operational form!"
       );
-      sendQAC("formSubmit", {
+      await sendQAC("formSubmit", {
         formType: "preOperational",
         station: data.station,
         product: data.product,

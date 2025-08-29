@@ -23,7 +23,7 @@ router.post("/runsignoff/password", async (req, res) => {
       ip: req.ip,
     };
 
-    const data = sendQAC("login", details);
+    const data = await sendQAC("login", details);
 
     if (data.login) {
       res.status(200).send({ status: data?.login ?? 0 });
@@ -85,7 +85,7 @@ router.post("/runsignoff", async (req, res) => {
 
     var details = { part: [product], ip: req.ip };
 
-    const desc = sendQAC("desc", details);
+    const desc = await sendQAC("desc", details);
 
     if (
       ratioForms &&

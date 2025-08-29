@@ -2,14 +2,14 @@ const fetch = require("node-fetch");
 
 const baseUrl = "http://10.12.0.15:81/qac.php?";
 
-const sendQAC = async ({
+const sendQAC = async (
   path,
   details,
   method = "POST",
   headers = {
     "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-  },
-}) => {
+  }
+) => {
   const reqUrl = baseUrl + path;
   var formBody = [];
   for (var property in details) {

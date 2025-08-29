@@ -24,7 +24,7 @@ router.use("/dashboard", async (req, res) => {
       now.getDate()
     );
 
-    const data = sendQAC("stations", { ip: req.ip }, "GET", undefined);
+    const data = await sendQAC("stations", { ip: req.ip }, "GET", undefined);
 
     const pipeline = [
       {

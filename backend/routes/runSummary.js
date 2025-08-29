@@ -64,7 +64,7 @@ router.post("/runsummary", async (req, res) => {
 
     var details = { part: [product], ip: req.ip };
 
-    const desc = sendQAC("desc", details);
+    const desc = await sendQAC("desc", details);
 
     if (
       ratioForms &&
