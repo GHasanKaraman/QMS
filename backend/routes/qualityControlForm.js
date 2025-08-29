@@ -10,7 +10,7 @@ const { sendQAC } = require("../qac");
 
 router.post("/qualitycontrol", async (req, res) => {
   try {
-    const data = await sendQAC("stations", { ip: req.ip }, "GET", undefined);
+    const data = await sendQAC("stations", undefined, "GET", undefined);
 
     if (data) {
       res.status(200).json({ stations: data });

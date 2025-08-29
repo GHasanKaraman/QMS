@@ -11,6 +11,7 @@ const sendQAC = async (
   }
 ) => {
   const reqUrl = baseUrl + path;
+
   var formBody = [];
   for (var property in details) {
     var encodedKey = encodeURIComponent(property);
@@ -21,7 +22,7 @@ const sendQAC = async (
 
   const resp = await fetch(reqUrl, {
     method: method,
-    body: formBody,
+    body: method === "GET" ? undefined : formBody,
     headers: headers,
   });
 
