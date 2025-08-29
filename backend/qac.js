@@ -25,10 +25,13 @@ const sendQAC = async (
     body: method === "GET" ? undefined : formBody,
     headers: headers,
   });
-
-  const data = await resp.json();
-
-  return data;
+  try {
+    const data = await resp.json();
+    return data;
+  } catch (error) {
+    console.log(error);
+    return undefined;
+  }
 };
 
 module.exports = { sendQAC };
