@@ -1,9 +1,9 @@
 const express = require("express");
-const fetch = require("node-fetch");
 const router = express.Router();
 const mongoose = require("mongoose");
 
 const preOperationalFormModel = require("../models/preOperationalFormModel.js");
+const { sendQAC } = require("../qac.js");
 
 router.post("/preoperational/get", async (req, res) => {
   try {
@@ -23,30 +23,18 @@ router.post("/preoperational/get", async (req, res) => {
     // if (preOperationalForm.length === 1) {
     var details = {
       part: preOperationalForm[0].product,
+      ip:req.ip
     };
-    var formBody = [];
-    for (var property in details) {
-      var encodedKey = encodeURIComponent(property);
-      var encodedValue = encodeURIComponent(details[property]);
-      formBody.push(encodedKey + "=" + encodedValue);
-    }
-    formBody = formBody.join("&");
 
-    const resp = await fetch("http://10.12.0.15:81/qac.php?recipe", {
-      method: "POST",
-      body: formBody,
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-      },
-    });
-    const product = await resp.json();
+    const product = sendQAC("recipe", details);
+
     if (product) {
       res.status(200).json({
         preOperationalForm: preOperationalForm[0],
         product: product,
       });
       console.log(
-        "Fetched " + id + " Pre-Operational inspection data sheet result!",
+        "Fetched " + id + " Pre-Operational inspection data sheet result!"
       );
     } else {
       res.sendStatus(404);
@@ -96,7 +84,7 @@ router.post("/preoperational/add", async (req, res) => {
 
     if (form) {
       console.log(
-        req.username + " successfully created a Pre-Operational form!",
+        req.username + " successfully created a Pre-Operational form!"
       );
       res.status(200).json({ form });
     } else {

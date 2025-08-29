@@ -1,5 +1,4 @@
 const express = require("express");
-const fetch = require("node-fetch");
 const router = express.Router();
 
 const ratioFormModel = require("../models/ratioFormModel");
@@ -13,6 +12,7 @@ const roastingQualityFormModel = require("../models/roastingQualityFormModel.js"
 const preOperationalFormModel = require("../models/preOperationalFormModel.js");
 const lotInspectionFormModel = require("../models/lotInspectionFormModel");
 const ccpFormModel = require("../models/ccpFormModel.js");
+const { sendQAC } = require("../qac.js");
 
 router.post("/rundashboard", async (req, res) => {
   try {
@@ -49,19 +49,24 @@ router.post("/rundashboard", async (req, res) => {
     ];
 
     const ratioForms = await ratioFormModel.aggregate(pipeline);
-    const qualityControlForms =
-      await qualityControlFormModel.aggregate(pipeline);
-    const pgQualityControlForms =
-      await pgQualityControlFormModel.aggregate(pipeline);
+    const qualityControlForms = await qualityControlFormModel.aggregate(
+      pipeline
+    );
+    const pgQualityControlForms = await pgQualityControlFormModel.aggregate(
+      pipeline
+    );
     const metalDetectorForms = await metalDetectorFormModel.aggregate(pipeline);
-    const labelInspectionForms =
-      await labelInspectionFormModel.aggregate(pipeline);
+    const labelInspectionForms = await labelInspectionFormModel.aggregate(
+      pipeline
+    );
     const xRayForms = await xRayFormModel.aggregate(pipeline);
-    const preOperationalForms =
-      await preOperationalFormModel.aggregate(pipeline);
+    const preOperationalForms = await preOperationalFormModel.aggregate(
+      pipeline
+    );
     const mixingQualityForms = await mixingQualityFormModel.aggregate(pipeline);
-    const roastingQualityForms =
-      await roastingQualityFormModel.aggregate(pipeline);
+    const roastingQualityForms = await roastingQualityFormModel.aggregate(
+      pipeline
+    );
     const lotInspectionForms = await lotInspectionFormModel.aggregate(pipeline);
     const ccpForms = await ccpFormModel.aggregate(pipeline);
 
@@ -84,22 +89,7 @@ router.post("/rundashboard", async (req, res) => {
       ip: req.ip,
     };
 
-    var formBody = [];
-    for (var property in details) {
-      var encodedKey = encodeURIComponent(property);
-      var encodedValue = encodeURIComponent(details[property]);
-      formBody.push(encodedKey + "=" + encodedValue);
-    }
-    formBody = formBody.join("&");
-
-    const resp = await fetch("http://10.12.0.15:81/qac.php?desc", {
-      method: "POST",
-      body: formBody,
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-      },
-    });
-    const desc = await resp.json();
+    const desc = sendQAC("desc", details);
 
     if (
       ratioForms &&

@@ -1,10 +1,10 @@
 const express = require("express");
-const fetch = require("node-fetch");
 const router = express.Router();
 
 const essentials = require("../utils/essentials");
 const xRayFormModel = require("../models/xRayFormModel.js");
 const mongoose = require("mongoose");
+const { sendQAC } = require("../qac.js");
 
 router.post("/xray/get", async (req, res) => {
   try {
@@ -26,22 +26,9 @@ router.post("/xray/get", async (req, res) => {
         part: xRayForm[0].product,
         ip: req.ip,
       };
-      var formBody = [];
-      for (var property in details) {
-        var encodedKey = encodeURIComponent(property);
-        var encodedValue = encodeURIComponent(details[property]);
-        formBody.push(encodedKey + "=" + encodedValue);
-      }
-      formBody = formBody.join("&");
 
-      const resp = await fetch("http://10.12.0.15:81/qac.php?recipe", {
-        method: "POST",
-        body: formBody,
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-        },
-      });
-      const product = await resp.json();
+      const product = sendQAC("recipe", details);
+
       if (product) {
         res.status(200).json({
           xRayForm: xRayForm[0],

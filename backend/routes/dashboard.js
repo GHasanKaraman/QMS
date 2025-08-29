@@ -1,5 +1,4 @@
 const express = require("express");
-const fetch = require("node-fetch");
 const router = express.Router();
 
 const ratioFormModel = require("../models/ratioFormModel");
@@ -14,19 +13,18 @@ const mixingQualityFormModel = require("../models/mixingQualityFormModel");
 const roastingQualityFormModel = require("../models/roastingQualityFormModel.js");
 const ccpFormModel = require("../models/ccpFormModel.js");
 
+const { sendQAC } = require("../qac.js");
+
 router.use("/dashboard", async (req, res) => {
   try {
-    const resp = await fetch("http://10.12.0.15:81/qac.php?stations", {
-      method: "GET",
-    });
     var now = new Date();
     var startOfToday = new Date(
       now.getFullYear(),
       now.getMonth(),
-      now.getDate(),
+      now.getDate()
     );
 
-    const data = await resp.json();
+    const data = sendQAC("stations", { ip: req.ip }, "GET", undefined);
 
     const pipeline = [
       {
@@ -49,19 +47,24 @@ router.use("/dashboard", async (req, res) => {
     ];
 
     const ratioForms = await ratioFormModel.aggregate(pipeline);
-    const qualityControlForms =
-      await qualityControlFormModel.aggregate(pipeline);
-    const pgQualityControlForms =
-      await pgQualityControlFormModel.aggregate(pipeline);
+    const qualityControlForms = await qualityControlFormModel.aggregate(
+      pipeline
+    );
+    const pgQualityControlForms = await pgQualityControlFormModel.aggregate(
+      pipeline
+    );
     const xRayForms = await xRayFormModel.aggregate(pipeline);
     const metalDetectorForms = await metalDetectorFormModel.aggregate(pipeline);
-    const labelInspectionForms =
-      await labelInspectionFormModel.aggregate(pipeline);
-    const preOperationalForms =
-      await preOperationalFormModel.aggregate(pipeline);
+    const labelInspectionForms = await labelInspectionFormModel.aggregate(
+      pipeline
+    );
+    const preOperationalForms = await preOperationalFormModel.aggregate(
+      pipeline
+    );
     const mixingQualityForms = await mixingQualityFormModel.aggregate(pipeline);
-    const roastingQualityForms =
-      await roastingQualityFormModel.aggregate(pipeline);
+    const roastingQualityForms = await roastingQualityFormModel.aggregate(
+      pipeline
+    );
     const lotInspectionForms = await lotInspectionFormModel.aggregate(pipeline);
     const ccpForms = await ccpFormModel.aggregate(pipeline);
     if (

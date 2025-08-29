@@ -1,10 +1,10 @@
 const express = require("express");
-const fetch = require("node-fetch");
 const uuid = require("uuid");
 
 const tokenModel = require("../models/tokenModel");
 
 const router = express.Router();
+const { sendQAC } = require("../qac.js");
 
 router.post("/login", async (req, res) => {
   const encoded = req.header("Authorization");
@@ -17,25 +17,11 @@ router.post("/login", async (req, res) => {
     var details = {
       u: username,
       p: password,
-      ip: req.ip,
+      ip:req.ip
     };
 
-    var formBody = [];
-    for (var property in details) {
-      var encodedKey = encodeURIComponent(property);
-      var encodedValue = encodeURIComponent(details[property]);
-      formBody.push(encodedKey + "=" + encodedValue);
-    }
-    formBody = formBody.join("&");
-    const resp = await fetch("http://10.12.0.15:81/qac.php?login", {
-      method: "POST",
-      body: formBody,
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-      },
-    });
+    const data = sendQAC("login", details);
 
-    const data = await resp.json();
     if (data.login === 1) {
       const token = await tokenModel.create({
         token: uuid.v4(),

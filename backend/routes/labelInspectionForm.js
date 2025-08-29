@@ -1,17 +1,15 @@
 const express = require("express");
-const fetch = require("node-fetch");
 const router = express.Router();
 
 const labelInspectionFormModel = require("../models/labelInspectionFormModel");
 const mongoose = require("mongoose");
 
+const { sendQAC } = require("../qac.js");
+
 router.post("/operators", async (req, res) => {
   try {
-    const resp = await fetch("http://10.12.0.15:81/qac.php?qcNames", {
-      method: "POST",
-    });
+    const data = sendQAC("qcNames", undefined, "POST", undefined);
 
-    const data = await resp.json();
     if (data) {
       res.status(200).json({
         operators: data,
@@ -44,23 +42,11 @@ router.post("/labelinspection/get", async (req, res) => {
     //if (labelInspectionForm.length === 1) {
     var details = {
       part: labelInspectionForm[0].product,
+      ip:req.ip
     };
-    var formBody = [];
-    for (var property in details) {
-      var encodedKey = encodeURIComponent(property);
-      var encodedValue = encodeURIComponent(details[property]);
-      formBody.push(encodedKey + "=" + encodedValue);
-    }
-    formBody = formBody.join("&");
 
-    const resp = await fetch("http://10.12.0.15:81/qac.php?recipe", {
-      method: "POST",
-      body: formBody,
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-      },
-    });
-    const product = await resp.json();
+    const product = sendQAC("recipe", details);
+
     if (product) {
       res.status(200).json({
         labelInspectionForm: labelInspectionForm[0],
@@ -98,7 +84,7 @@ router.use("/labelinspection/add", async (req, res) => {
 
     if (form) {
       console.log(
-        req.username + " successfully created a label inspection form!",
+        req.username + " successfully created a label inspection form!"
       );
       res.status(200).json({ form });
     } else {

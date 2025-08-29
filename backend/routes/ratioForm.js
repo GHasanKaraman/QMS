@@ -1,9 +1,9 @@
 const express = require("express");
-const fetch = require("node-fetch");
 const router = express.Router();
 
 const mongoose = require("mongoose");
 const ratioFormModel = require("../models/ratioFormModel");
+const { sendQAC } = require("../qac");
 
 router.post("/ratio/get", async (req, res) => {
   try {
@@ -25,22 +25,9 @@ router.post("/ratio/get", async (req, res) => {
       part: ratioForm[0].product,
       ip: req.ip,
     };
-    var formBody = [];
-    for (var property in details) {
-      var encodedKey = encodeURIComponent(property);
-      var encodedValue = encodeURIComponent(details[property]);
-      formBody.push(encodedKey + "=" + encodedValue);
-    }
-    formBody = formBody.join("&");
 
-    const resp = await fetch("http://10.12.0.15:81/qac.php?recipe", {
-      method: "POST",
-      body: formBody,
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-      },
-    });
-    const product = await resp.json();
+    const product = sendQAC("recipe", details);
+
     if (product) {
       res.status(200).json({
         ratioForm: ratioForm[0],
@@ -65,22 +52,9 @@ router.post("/ratio/recipe", async (req, res) => {
       part: product,
       ip: req.ip,
     };
-    var formBody = [];
-    for (var property in details) {
-      var encodedKey = encodeURIComponent(property);
-      var encodedValue = encodeURIComponent(details[property]);
-      formBody.push(encodedKey + "=" + encodedValue);
-    }
-    formBody = formBody.join("&");
 
-    const resp = await fetch("http://10.12.0.15:81/qac.php?recipe", {
-      method: "POST",
-      body: formBody,
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-      },
-    });
-    const recipe = await resp.json();
+    const recipe = sendQAC("recipe", details);
+
     if (recipe) {
       res.status(200).json({
         recipe: recipe,
@@ -102,7 +76,7 @@ router.post("/ratio/add", async (req, res) => {
 
     const totalWeight = Object.values(weights).reduce(
       (prev, curr) => prev + curr.weight * 1.0,
-      0,
+      0
     );
 
     Object.values(weights).forEach((weight) => {

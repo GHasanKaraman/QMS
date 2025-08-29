@@ -1,9 +1,10 @@
 const express = require("express");
-const fetch = require("node-fetch");
 const router = express.Router();
 const mongoose = require("mongoose");
 
 const metalDetectorFormModel = require("../models/metalDetectorFormModel");
+
+const { sendQAC } = require("../qac.js");
 
 router.post("/metaldetector/get", async (req, res) => {
   try {
@@ -23,30 +24,16 @@ router.post("/metaldetector/get", async (req, res) => {
     // if (metalDetectorForm.length === 1) {
     var details = {
       part: metalDetectorForm[0].product,
+      ip:req.ip
     };
-    var formBody = [];
-    for (var property in details) {
-      var encodedKey = encodeURIComponent(property);
-      var encodedValue = encodeURIComponent(details[property]);
-      formBody.push(encodedKey + "=" + encodedValue);
-    }
-    formBody = formBody.join("&");
-
-    const resp = await fetch("http://10.12.0.15:81/qac.php?recipe", {
-      method: "POST",
-      body: formBody,
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-      },
-    });
-    const product = await resp.json();
+    const product = sendQAC("recipe", details);
     if (product) {
       res.status(200).json({
         metalDetectorForm: metalDetectorForm[0],
         product: product,
       });
       console.log(
-        "Fetched " + id + " metal detector inspection data sheet result!",
+        "Fetched " + id + " metal detector inspection data sheet result!"
       );
     } else {
       res.sendStatus(404);
@@ -76,7 +63,7 @@ router.use("/metaldetector/add", async (req, res) => {
 
     if (form) {
       console.log(
-        req.username + " successfully created a metal detector form!",
+        req.username + " successfully created a metal detector form!"
       );
       res.status(200).json({ form });
     } else {

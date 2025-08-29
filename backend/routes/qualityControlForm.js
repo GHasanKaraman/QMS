@@ -1,6 +1,4 @@
 const express = require("express");
-const fetch = require("node-fetch");
-const sharp = require("sharp");
 const mongoose = require("mongoose");
 
 const router = express.Router();
@@ -8,14 +6,12 @@ const upload = require("../file");
 
 const imageModel = require("../models/imageModel");
 const qualityControlModel = require("../models/qualityControlFormModel");
+const { sendQAC } = require("../qac");
 
 router.post("/qualitycontrol", async (req, res) => {
   try {
-    const resp = await fetch("http://10.12.0.15:81/qac.php?stations", {
-      method: "GET",
-    });
+    const data = sendQAC("stations", {ip:req.ip}, "GET", undefined);
 
-    const data = await resp.json();
     if (data) {
       res.status(200).json({ stations: data });
       console.log("Fetched all locations from OC DB!");
@@ -39,23 +35,8 @@ router.post("/qualitycontrol/stationplan", async (req, res) => {
       ip: req.ip,
     };
 
-    var formBody = [];
-    for (var property in details) {
-      var encodedKey = encodeURIComponent(property);
-      var encodedValue = encodeURIComponent(details[property]);
-      formBody.push(encodedKey + "=" + encodedValue);
-    }
-    formBody = formBody.join("&");
+    const data = sendQAC("stationPlan", details);
 
-    const resp = await fetch("http://10.12.0.15:81/qac.php?stationPlan", {
-      method: "POST",
-      body: formBody,
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-      },
-    });
-    const data = await resp.json();
-    console.log(data);
     if (data) {
       res.status(200).json({ products: data });
       console.log("Fetched all products over " + station + " from OC DB!");
@@ -78,23 +59,8 @@ router.post("/qualitycontrol/getproduct", async (req, res) => {
       ip: req.ip,
     };
 
-    var formBody = [];
-    for (var property in details) {
-      var encodedKey = encodeURIComponent(property);
-      var encodedValue = encodeURIComponent(details[property]);
-      formBody.push(encodedKey + "=" + encodedValue);
-    }
-    formBody = formBody.join("&");
+    const data = sendQAC("getProduct", details);
 
-    const resp = await fetch("http://10.12.0.15:81/qac.php?getProduct", {
-      method: "POST",
-      body: formBody,
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-      },
-    });
-    const data = await resp.json();
-    console.log(data);
     if (data) {
       res.status(200).json({ details: data });
       console.log(
@@ -132,22 +98,9 @@ router.post("/qualitycontrol/get", async (req, res) => {
       part: qualityControlForm[0].product,
       ip: req.ip,
     };
-    var formBody = [];
-    for (var property in details) {
-      var encodedKey = encodeURIComponent(property);
-      var encodedValue = encodeURIComponent(details[property]);
-      formBody.push(encodedKey + "=" + encodedValue);
-    }
-    formBody = formBody.join("&");
 
-    const resp = await fetch("http://10.12.0.15:81/qac.php?recipe", {
-      method: "POST",
-      body: formBody,
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-      },
-    });
-    const product = await resp.json();
+    const product = sendQAC("recipe", details);
+
     const images = await imageModel.find({
       _id: { $in: qualityControlForm[0].imageIDs },
     });

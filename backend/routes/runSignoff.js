@@ -1,5 +1,4 @@
 const express = require("express");
-const fetch = require("node-fetch");
 const router = express.Router();
 
 const ratioFormModel = require("../models/ratioFormModel");
@@ -13,6 +12,7 @@ const roastingQualityFormModel = require("../models/roastingQualityFormModel.js"
 const preOperationalFormModel = require("../models/preOperationalFormModel.js");
 const lotInspectionFormModel = require("../models/lotInspectionFormModel");
 const ccpFormModel = require("../models/ccpFormModel.js");
+const { sendQAC } = require("../qac.js");
 
 router.post("/runsignoff/password", async (req, res) => {
   try {
@@ -23,22 +23,8 @@ router.post("/runsignoff/password", async (req, res) => {
       ip: req.ip,
     };
 
-    var formBody = [];
-    for (var property in details) {
-      var encodedKey = encodeURIComponent(property);
-      var encodedValue = encodeURIComponent(details[property]);
-      formBody.push(encodedKey + "=" + encodedValue);
-    }
-    formBody = formBody.join("&");
-    const resp = await fetch("http://10.12.0.15:81/qac.php?login", {
-      method: "POST",
-      body: formBody,
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-      },
-    });
+    const data = sendQAC("login", details);
 
-    const data = await resp.json();
     if (data.login) {
       res.status(200).send({ status: data?.login ?? 0 });
     } else {
@@ -98,23 +84,8 @@ router.post("/runsignoff", async (req, res) => {
     );
 
     var details = { part: [product], ip: req.ip };
-    var formBody = [];
-    for (var property in details) {
-      var encodedKey = encodeURIComponent(property);
-      var encodedValue = encodeURIComponent(details[property]);
-      formBody.push(encodedKey + "=" + encodedValue);
-    }
-    formBody = formBody.join("&");
 
-    const resp = await fetch("http://10.12.0.15:81/qac.php?desc", {
-      method: "POST",
-      body: formBody,
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-      },
-    });
-
-    const desc = await resp.json();
+    const desc = sendQAC("desc", details);
 
     if (
       ratioForms &&

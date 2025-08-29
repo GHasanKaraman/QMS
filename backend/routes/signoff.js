@@ -1,5 +1,4 @@
 const express = require("express");
-const fetch = require("node-fetch");
 const router = express.Router();
 const moment = require("moment");
 
@@ -15,6 +14,7 @@ const preOperationalFormModel = require("../models/preOperationalFormModel.js");
 const signOffModel = require("../models/signOffModel.js");
 const lotInspectionFormModel = require("../models/lotInspectionFormModel");
 const ccpFormModel = require("../models/ccpFormModel.js");
+const { sendQAC } = require("../qac.js");
 
 router.post("/signoff", async (req, res) => {
   try {
@@ -41,10 +41,8 @@ router.post("/signoff", async (req, res) => {
 
 router.post("/signoff/dashboard/stations", async (req, res) => {
   try {
-    const resp = await fetch("http://10.12.0.15:81/qac.php?stations", {
-      method: "GET",
-    });
-    const data = await resp.json();
+    const data = sendQAC("stations", {ip:req.ip}, "GET", undefined);
+
     if (data) {
       res.status(200).json({ stations: data });
     } else {
@@ -59,9 +57,7 @@ router.post("/signoff/dashboard/stations", async (req, res) => {
 router.post("/signoff/dashboard", async (req, res) => {
   try {
     const { page, station, before, after } = req.body;
-    const resp = await fetch("http://10.12.0.15:81/qac.php?stations", {
-      method: "GET",
-    });
+
     const limit = 4;
 
     const afterDays = after ? parseInt(after) : null;
@@ -101,21 +97,27 @@ router.post("/signoff/dashboard", async (req, res) => {
       pipeline.push({ $match: filters });
     }
 
-    const data = await resp.json();
+    const data = sendQAC("stations", {ip:req.ip}, "GET", undefined);
+
     const ratioForms = await ratioFormModel.aggregate(pipeline);
-    const qualityControlForms =
-      await qualityControlFormModel.aggregate(pipeline);
-    const pgQualityControlForms =
-      await pgQualityControlFormModel.aggregate(pipeline);
+    const qualityControlForms = await qualityControlFormModel.aggregate(
+      pipeline
+    );
+    const pgQualityControlForms = await pgQualityControlFormModel.aggregate(
+      pipeline
+    );
     const metalDetectorForms = await metalDetectorFormModel.aggregate(pipeline);
-    const labelInspectionForms =
-      await labelInspectionFormModel.aggregate(pipeline);
+    const labelInspectionForms = await labelInspectionFormModel.aggregate(
+      pipeline
+    );
     const xRayForms = await xRayFormModel.aggregate(pipeline);
-    const preOperationalForms =
-      await preOperationalFormModel.aggregate(pipeline);
+    const preOperationalForms = await preOperationalFormModel.aggregate(
+      pipeline
+    );
     const mixingQualityForms = await mixingQualityFormModel.aggregate(pipeline);
-    const roastingQualityForms =
-      await roastingQualityFormModel.aggregate(pipeline);
+    const roastingQualityForms = await roastingQualityFormModel.aggregate(
+      pipeline
+    );
     const lotInspectionForms = await lotInspectionFormModel.aggregate(pipeline);
     const ccpForms = await ccpFormModel.aggregate(pipeline);
 
@@ -153,29 +155,14 @@ router.post("/signoff/dashboard", async (req, res) => {
     const totalCount = groupedRecords.length;
     const totalPages = Math.ceil(totalCount / limit);
     const totalForms = forms.filter(
-      (form) => form.signoffs.length === 0,
+      (form) => form.signoffs.length === 0
     ).length;
 
     const products = Array.from(new Set(forms.map((form) => form.product)));
 
-    var details = { part: products,ip: req.ip, };
-    var formBody = [];
-    for (var property in details) {
-      var encodedKey = encodeURIComponent(property);
-      var encodedValue = encodeURIComponent(details[property]);
-      formBody.push(encodedKey + "=" + encodedValue);
-    }
-    formBody = formBody.join("&");
+    var details = { part: products, ip: req.ip };
 
-    const response = await fetch("http://10.12.0.15:81/qac.php?desc", {
-      method: "POST",
-      body: formBody,
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-      },
-    });
-
-    const desc = await response.json();
+    const desc = sendQAC("desc", details);
 
     if (
       data &&

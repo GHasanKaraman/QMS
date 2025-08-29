@@ -1,6 +1,4 @@
 const express = require("express");
-const fetch = require("node-fetch");
-const sharp = require("sharp");
 const mongoose = require("mongoose");
 const router = express.Router();
 
@@ -8,6 +6,8 @@ const essentials = require("../utils/essentials");
 const mixingQualityFormModel = require("../models/mixingQualityFormModel.js");
 const upload = require("../file");
 const imageModel = require("../models/imageModel");
+
+const { sendQAC } = require("../qac.js");
 
 router.post("/mixingquality/get", async (req, res) => {
   try {
@@ -27,23 +27,10 @@ router.post("/mixingquality/get", async (req, res) => {
     //   if (mixingQualityForm.length === 1) {
     var details = {
       part: mixingQualityForm[0].product,
+      ip:req.ip
     };
-    var formBody = [];
-    for (var property in details) {
-      var encodedKey = encodeURIComponent(property);
-      var encodedValue = encodeURIComponent(details[property]);
-      formBody.push(encodedKey + "=" + encodedValue);
-    }
-    formBody = formBody.join("&");
 
-    const resp = await fetch("http://10.12.0.15:81/qac.php?recipe", {
-      method: "POST",
-      body: formBody,
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-      },
-    });
-    const product = await resp.json();
+    const product = sendQAC("recipe", details);
     const images = await imageModel.find({
       _id: { $in: mixingQualityForm[0].imageIDs },
     });
