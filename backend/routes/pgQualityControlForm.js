@@ -159,8 +159,8 @@ router.post("/pgqualitycontrol/add", upload, async (req, res) => {
         );
         await sendQAC("formSubmit", {
           formType: "p&g",
-          station: data.station,
-          product: data.product,
+          station: formInformations.station,
+          product: formInformations.product,
           ip: req.ip,
         });
         res.status(200).json({ form });
