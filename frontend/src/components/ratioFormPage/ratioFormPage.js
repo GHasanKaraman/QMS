@@ -230,7 +230,14 @@ const RatioFormPage = (props) => {
               variant: "error",
             });
             break;
-
+          case 405:
+            enqueueSnackbar(
+              "Something went wrong while saving the form. Ploease try again!",
+              {
+                variant: "error",
+              }
+            );
+            break;
           default:
             enqueueSnackbar("Something went wrong with the server!", {
               variant: "error",

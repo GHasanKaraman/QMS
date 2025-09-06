@@ -95,28 +95,34 @@ router.post("/ratio/add", async (req, res) => {
     } else {
       status = undefined;
     }
-
-    const form = await ratioFormModel.create({
-      recipe: weights,
-      shift,
-      station,
-      product: product.partNum,
-      status,
-      username: req.username,
-    });
-
-    if (form) {
-      console.log(req.username + " successfully created a Ratio Form!");
-      await sendQAC("formSubmit", {
-        formType: "ratio",
-        station: station,
+    if (product) {
+      const form = await ratioFormModel.create({
+        recipe: weights,
+        shift,
+        station,
         product: product.partNum,
-        ip: req.ip,
+        status,
+        username: req.username,
       });
-      res.status(200).json({ form });
+
+      if (form) {
+        console.log(req.username + " successfully created a Ratio Form!");
+        await sendQAC("formSubmit", {
+          formType: "ratio",
+          station: station,
+          product: product.partNum,
+          ip: req.ip,
+          username: req.username,
+          formStatus: status,
+        });
+        res.status(200).json({ form });
+      } else {
+        console.log("Something went wrong while creating Ratio Form!");
+        res.sendStatus(500);
+      }
     } else {
-      console.log("Something went wrong while creating Ratio Form!");
-      res.sendStatus(500);
+      console.log("Something went wrong when saving the form!");
+      res.sendStatus(405);
     }
   } catch (err) {
     console.log(err);

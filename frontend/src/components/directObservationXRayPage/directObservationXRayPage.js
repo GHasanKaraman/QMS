@@ -168,6 +168,14 @@ const DirectObservationXRayPage = (props) => {
               variant: "error",
             });
             break;
+          case 405:
+            enqueueSnackbar(
+              "Something went wrong while saving the form. Ploease try again!",
+              {
+                variant: "error",
+              }
+            );
+            break;
           case 503:
             enqueueSnackbar("Something went wrong with the server!", {
               variant: "error",

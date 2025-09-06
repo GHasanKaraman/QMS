@@ -68,32 +68,40 @@ router.post("/lotinspection/add", upload, async (req, res) => {
         status = "passed";
       }
       const imageIDs = result.map((info) => info._id);
-      const form = await lotInspectionFormModel.create({
-        ...formInformations,
-        imageIDs,
-        username: req.username,
-        status,
-      });
-      if (form) {
-        console.log(
-          req.username + " successfully created a lot inspection form!"
-        );
-        await sendQAC("formSubmit", {
-          formType: "lotInspection",
-          station: formInformations.station,
-          product: formInformations.product,
-          ip: req.ip,
+      if (formInformations.product) {
+        const form = await lotInspectionFormModel.create({
+          ...formInformations,
+          imageIDs,
+          username: req.username,
+          status,
         });
-        res.status(200).json({ form });
+        if (form) {
+          console.log(
+            req.username + " successfully created a lot inspection form!"
+          );
+          await sendQAC("formSubmit", {
+            formType: "lotInspection",
+            station: formInformations.station,
+            product: formInformations.product,
+            ip: req.ip,
+            username: req.username,
+            formStatus: status,
+          });
+          res.status(200).json({ form });
+        } else {
+          console.log(
+            "Something went wrong while creating lot inspection form!"
+          );
+          res.sendStatus(500);
+        }
       } else {
-        console.log("Something went wrong while creating lot inspection form!");
+        console.log("Image info has not been written in the database!");
         res.sendStatus(500);
       }
     } else {
-      console.log("Image info has not been written in the database!");
-      res.sendStatus(500);
+      console.log("Something went wrong when saving the form!");
+      res.sendStatus(405);
     }
-    console.log(result);
   } catch (err) {
     console.log(err);
     res.sendStatus(503);

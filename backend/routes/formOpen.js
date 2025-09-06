@@ -5,7 +5,11 @@ const { sendQAC } = require("../qac.js");
 
 router.post("/formOpen", async (req, res) => {
   try {
-    await sendQAC("formOpen", { ...req.body, ip: req.ip });
+    await sendQAC("formOpen", {
+      ...req.body,
+      ip: req.ip,
+      username: req.username,
+    });
     res.status(200);
   } catch (err) {
     console.log(err);

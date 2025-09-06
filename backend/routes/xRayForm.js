@@ -54,25 +54,31 @@ router.post("/xray/add", async (req, res) => {
     if (data.lotCode && data.personBeingObserved) {
       status = "passed";
     }
-
-    const form = await xRayFormModel.create({
-      ...data,
-      status,
-      username: req.username,
-    });
-
-    if (form) {
-      console.log(req.username + " successfully created a X-Ray form!");
-      await sendQAC("formSubmit", {
-        formType: "xray",
-        station: data.station,
-        product: data.product,
-        ip: req.ip,
+    if (data.product) {
+      const form = await xRayFormModel.create({
+        ...data,
+        status,
+        username: req.username,
       });
-      res.status(200).json({ form });
+
+      if (form) {
+        console.log(req.username + " successfully created a X-Ray form!");
+        await sendQAC("formSubmit", {
+          formType: "xray",
+          station: data.station,
+          product: data.product,
+          ip: req.ip,
+          username: req.username,
+          formStatus: status,
+        });
+        res.status(200).json({ form });
+      } else {
+        console.log("Something went wrong while creating X-Ray form!");
+        res.sendStatus(500);
+      }
     } else {
-      console.log("Something went wrong while creating X-Ray form!");
-      res.sendStatus(500);
+      console.log("Something went wrong when saving the form!");
+      res.sendStatus(405);
     }
   } catch (err) {
     console.log(err);

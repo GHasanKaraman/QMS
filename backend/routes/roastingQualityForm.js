@@ -91,35 +91,41 @@ router.post("/roastingquality/add", upload, async (req, res) => {
       }
 
       const imageIDs = result.map((info) => info._id);
-      const form = await roastingQualityFormModel.create({
-        ...data,
-        imageIDs,
-        status,
-        username: req.username,
-      });
-
-      if (form) {
-        console.log(
-          req.username + " successfully created a Roasting Quality form!"
-        );
-        await sendQAC("formSubmit", {
-          formType: "roastingQuality",
-          station: data.station,
-          product: data.product,
-          ip: req.ip,
+      if (data.product) {
+        const form = await roastingQualityFormModel.create({
+          ...data,
+          imageIDs,
+          status,
+          username: req.username,
         });
-        res.status(200).json({ form });
+
+        if (form) {
+          console.log(
+            req.username + " successfully created a Roasting Quality form!"
+          );
+          await sendQAC("formSubmit", {
+            formType: "roastingQuality",
+            station: data.station,
+            product: data.product,
+            ip: req.ip,
+            username: req.username,
+            formStatus: status,
+          });
+          res.status(200).json({ form });
+        } else {
+          console.log(
+            "Something went wrong while creating Roasting Quality form!"
+          );
+          res.sendStatus(500);
+        }
       } else {
-        console.log(
-          "Something went wrong while creating Roasting Quality form!"
-        );
+        console.log("Image info has not been written in the database!");
         res.sendStatus(500);
       }
     } else {
-      console.log("Image info has not been written in the database!");
-      res.sendStatus(500);
+      console.log("Something went wrong when saving the form!");
+      res.sendStatus(405);
     }
-    console.log(result);
   } catch (err) {
     console.log(err);
     res.sendStatus(503);

@@ -84,24 +84,31 @@ router.post("/ccp/add", async (req, res) => {
       status = "passed";
     }
 
-    const form = await ccpFormModel.create({
-      ...data,
-      status,
-      username: req.username,
-    });
-
-    if (form) {
-      console.log(req.username + " successfully created a CCP-2 form!");
-      await sendQAC("formSubmit", {
-        formType: "ccp",
-        station: data.station,
-        product: data.product,
-        ip: req.ip,
+    if (data.product) {
+      const form = await ccpFormModel.create({
+        ...data,
+        status,
+        username: req.username,
       });
-      res.status(200).json({ form });
+
+      if (form) {
+        console.log(req.username + " successfully created a CCP-2 form!");
+        await sendQAC("formSubmit", {
+          formType: "ccp",
+          station: data.station,
+          product: data.product,
+          ip: req.ip,
+          username: req.username,
+          formStatus: status,
+        });
+        res.status(200).json({ form });
+      } else {
+        console.log("Something went wrong while creating CCP-2 form!");
+        res.sendStatus(500);
+      }
     } else {
-      console.log("Something went wrong while creating CCP-2 form!");
-      res.sendStatus(500);
+      console.log("Something went wrong when saving the form!");
+      res.sendStatus(405);
     }
   } catch (err) {
     console.log(err);

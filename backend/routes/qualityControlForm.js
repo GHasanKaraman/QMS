@@ -164,32 +164,40 @@ router.post("/qualitycontrol/add", upload, async (req, res) => {
         status = "passed";
       }
       const imageIDs = result.map((info) => info._id);
-      const form = await qualityControlModel.create({
-        ...formInformations,
-        imageIDs,
-        username: req.username,
-        status,
-      });
-      if (form) {
-        console.log(
-          req.username + " successfully created a quality control form!"
-        );
-        await sendQAC("formSubmit", {
-          formType: "qualityControl",
-          station: formInformations.station,
-          product: formInformations.product,
-          ip: req.ip,
+
+      if (formInformations.product) {
+        const form = await qualityControlModel.create({
+          ...formInformations,
+          imageIDs,
+          username: req.username,
+          status,
         });
-        res.status(200).json({ form });
+        if (form) {
+          console.log(
+            req.username + " successfully created a quality control form!"
+          );
+          await sendQAC("formSubmit", {
+            formType: "qualityControl",
+            station: formInformations.station,
+            product: formInformations.product,
+            ip: req.ip,
+            username: req.username,
+            formStatus: status,
+          });
+          res.status(200).json({ form });
+        } else {
+          console.log(
+            "Something went wrong while creating quality control form!"
+          );
+          res.sendStatus(500);
+        }
       } else {
-        console.log(
-          "Something went wrong while creating quality control form!"
-        );
+        console.log("Image info has not been written in the database!");
         res.sendStatus(500);
       }
     } else {
-      console.log("Image info has not been written in the database!");
-      res.sendStatus(500);
+      console.log("Something went wrong when saving the form!");
+      res.sendStatus(405);
     }
   } catch (err) {
     console.log(err);
