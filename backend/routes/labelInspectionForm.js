@@ -76,7 +76,7 @@ router.use("/labelinspection/add", async (req, res) => {
     ) {
       status = "passed";
     }
-    if (data.product) {
+    if (data.product && data.product !== "undefined") {
       const form = await labelInspectionFormModel.create({
         ...data,
         status,

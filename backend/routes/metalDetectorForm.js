@@ -55,7 +55,7 @@ router.use("/metaldetector/add", async (req, res) => {
       status = "passed";
     }
 
-    if (data.product) {
+    if (data.product && data.product !== "undefined") {
       const form = await metalDetectorFormModel.create({
         ...data,
         status,

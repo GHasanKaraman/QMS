@@ -54,7 +54,7 @@ router.post("/xray/add", async (req, res) => {
     if (data.lotCode && data.personBeingObserved) {
       status = "passed";
     }
-    if (data.product) {
+    if (data.product && data.product !== "undefined") {
       const form = await xRayFormModel.create({
         ...data,
         status,

@@ -147,7 +147,10 @@ router.post("/pgqualitycontrol/add", upload, async (req, res) => {
         status = "passed";
       }
       const imageIDs = result.map((info) => info._id);
-      if (formInformations.product) {
+      if (
+        formInformations.product &&
+        formInformations.product !== "undefined"
+      ) {
         const form = await pgQualityControlModel.create({
           ...formInformations,
           imageIDs,

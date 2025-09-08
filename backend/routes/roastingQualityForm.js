@@ -91,7 +91,7 @@ router.post("/roastingquality/add", upload, async (req, res) => {
       }
 
       const imageIDs = result.map((info) => info._id);
-      if (data.product) {
+      if (data.product && data.product !== "undefined") {
         const form = await roastingQualityFormModel.create({
           ...data,
           imageIDs,

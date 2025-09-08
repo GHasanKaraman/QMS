@@ -165,7 +165,10 @@ router.post("/qualitycontrol/add", upload, async (req, res) => {
       }
       const imageIDs = result.map((info) => info._id);
 
-      if (formInformations.product) {
+      if (
+        formInformations.product &&
+        formInformations.product !== "undefined"
+      ) {
         const form = await qualityControlModel.create({
           ...formInformations,
           imageIDs,
