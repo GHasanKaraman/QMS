@@ -152,7 +152,7 @@ const RatioAccordion = ({ id, expanded, isForm, onChange, value }) => {
           const ratio = recipe.weight / totalWeight;
 
           var tolerance = 5;
-          if (data?.station.contains("MIX")) {
+          if (data?.station.includes("MIX")) {
             tolerance = 3;
           }
           const lowerbound = recipe.ratio - tolerance;

@@ -208,7 +208,7 @@ const ViewRatioFormPage = (props) => {
         </AccordionSummary>
         <AccordionDetails>
           <div style={{ color: colors.yoggieRed[500] }}>
-            {data?.station.contains("MIX")
+            {data?.station.includes("MIX")
               ? "Form status is calculated by 3% static value!"
               : "Form status is calculated by 5% static value!"}
           </div>
@@ -235,7 +235,7 @@ const ViewRatioFormPage = (props) => {
             const groupName = group.includes("null") ? "?" : group;
             const ratio = recipe.weight / totalWeight;
             var tolerance = 5;
-            if (data?.station.contains("MIX")) {
+            if (data?.station.includes("MIX")) {
               tolerance = 3;
             }
             const lowerbound = recipe.ratio - tolerance;

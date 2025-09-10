@@ -82,7 +82,7 @@ router.post("/ratio/add", async (req, res) => {
     Object.values(weights).forEach((weight) => {
       var percentage = 5;
 
-      if (station.contains("MIX")) {
+      if (station.includes("MIX")) {
         percentage = 3;
       }
 
