@@ -449,7 +449,10 @@ const QualityControlPage = (props) => {
         ),
 
       unitsCase: yup.string().required(),
-      salesOrderNumber: yup.string().required(),
+      salesOrderNumber:
+        productDetails?.soList?.length == 0
+          ? undefined
+          : yup.string().required(),
       caseLabel: yup.string().required(),
       pictureOfBoxLabel:
         caseLabelState === "Yes"

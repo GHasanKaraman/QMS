@@ -912,18 +912,22 @@ const ViewQualityControlPage = (props) => {
             <StatusIndicator status={data?.unitsCase !== "No"} />
           </Stack>
           <Divider />
-          <Stack direction="row" justifyContent="space-between">
-            <Label
-              title="Sales Order Number"
-              subtitle={
-                data?.salesOrderNumber === "No"
-                  ? "Not Given"
-                  : data?.salesOrderNumber
-              }
-            />
-            <StatusIndicator status={Boolean(data?.salesOrderNumber)} />
-          </Stack>
-          <Divider />
+          {data?.salesOrderNumber && data?.salesOrderNumber !== "" ? (
+            <div>
+              <Stack direction="row" justifyContent="space-between">
+                <Label
+                  title="Sales Order Number"
+                  subtitle={
+                    data?.salesOrderNumber === "No"
+                      ? "Not Given"
+                      : data?.salesOrderNumber
+                  }
+                />
+                <StatusIndicator status={Boolean(data?.salesOrderNumber)} />
+              </Stack>
+              <Divider />
+            </div>
+          ) : undefined}
           <Stack direction="row" justifyContent="space-between">
             <Label
               title="Case Label"

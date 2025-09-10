@@ -735,17 +735,22 @@ const QualityControlAccordion = ({ id, expanded, isForm, onChange, value }) => {
           <StatusIndicator status={data?.unitsCase !== "No"} />
         </Stack>
         <Divider />
-        <Stack direction="row" justifyContent="space-between">
-          <Label
-            title="Sales Order Number"
-            subtitle={
-              data?.salesOrderNumber === "No"
-                ? "Not Given"
-                : data?.salesOrderNumber
-            }
-          />
-          <StatusIndicator status={Boolean(data?.salesOrderNumber)} />
-        </Stack>
+        {data?.salesOrderNumber && data?.salesOrderNumber !== "" ? (
+          <div>
+            <Stack direction="row" justifyContent="space-between">
+              <Label
+                title="Sales Order Number"
+                subtitle={
+                  data?.salesOrderNumber === "No"
+                    ? "Not Given"
+                    : data?.salesOrderNumber
+                }
+              />
+              <StatusIndicator status={Boolean(data?.salesOrderNumber)} />
+            </Stack>
+            <Divider />
+          </div>
+        ) : undefined}
         <Divider />
         <Stack direction="row" justifyContent="space-between">
           <Label
