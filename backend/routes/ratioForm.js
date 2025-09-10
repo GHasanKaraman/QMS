@@ -80,7 +80,12 @@ router.post("/ratio/add", async (req, res) => {
     );
 
     Object.values(weights).forEach((weight) => {
-      const percentage = 5;
+      var percentage = 5;
+
+      if (station.contains("MIX")) {
+        percentage = 3;
+      }
+
       const toleranceMin = weight.ratio - percentage;
       const toleranceMax = weight.ratio + percentage;
       const customQty = ((weight.weight * 1.0) / totalWeight) * 1.0;

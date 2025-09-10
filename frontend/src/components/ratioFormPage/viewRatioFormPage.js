@@ -50,8 +50,8 @@ const ViewRatioFormPage = (props) => {
       setTotalWeight(
         Object.values(res.data.ratioForm.recipe).reduce(
           (prev, curr) => prev + curr.weight * 1.0,
-          0,
-        ),
+          0
+        )
       );
       setProduct(res.data.product);
     } else {
@@ -208,7 +208,9 @@ const ViewRatioFormPage = (props) => {
         </AccordionSummary>
         <AccordionDetails>
           <div style={{ color: colors.yoggieRed[500] }}>
-            Form status is calculated by 5% static value!
+            {data?.station.contains("MIX")
+              ? "Form status is calculated by 3% static value!"
+              : "Form status is calculated by 5% static value!"}
           </div>
           <Divider />
           <Box
@@ -232,7 +234,10 @@ const ViewRatioFormPage = (props) => {
             const group = Object.keys(data.recipe)[index];
             const groupName = group.includes("null") ? "?" : group;
             const ratio = recipe.weight / totalWeight;
-            const tolerance = 5;
+            var tolerance = 5;
+            if (data?.station.contains("MIX")) {
+              tolerance = 3;
+            }
             const lowerbound = recipe.ratio - tolerance;
             const upperbound = recipe.ratio + tolerance;
             const passed = lowerbound <= ratio && ratio <= upperbound;
