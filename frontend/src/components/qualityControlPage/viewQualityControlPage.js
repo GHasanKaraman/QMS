@@ -247,6 +247,27 @@ const ViewQualityControlPage = (props) => {
             />
           </Stack>
           <Divider />
+
+          {data?.visualForeignMaterial && data?.visualForeignMaterial !== "" ? (
+            <div>
+              <Stack direction="row" justifyContent="space-between">
+                <Label
+                  title="Visual Foreign Material Inspection?"
+                  subtitle={
+                    <LabelResult
+                      text={data?.visualForeignMaterial}
+                      status={data?.visualForeignMaterial === "Yes"}
+                    />
+                  }
+                />
+                <StatusIndicator
+                  status={data?.visualForeignMaterial === "Yes"}
+                />
+              </Stack>
+              <Divider />
+            </div>
+          ) : undefined}
+
           {images.slice(1, mixCodeLength + 1).map((image, index) => {
             if (index !== images.length - 1) {
               return (
@@ -734,7 +755,7 @@ const ViewQualityControlPage = (props) => {
             <Typography fontWeight={600} fontSize={18}>
               LABEL INSPECTION (CCP)
             </Typography>
-            <Typography fontWeight={600}>9 Items</Typography>
+            <Typography fontWeight={600}>11 Items</Typography>
           </Stack>
         </AccordionSummary>
         <AccordionDetails>

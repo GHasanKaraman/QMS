@@ -8,6 +8,7 @@ const qualityControlFormSchema = new mongoose.Schema(
     username: { type: String, required: true },
     areIngredientsCorrect: { type: String, required: true },
     isTasteAcceptable: { type: String, required: true },
+    visualForeignMaterial: { type: String, required: true },
     lotCode: { type: String, required: true },
     expirationDate: { type: String, required: true },
     unitOfMeasure: { type: String, default: "oz" },
@@ -52,12 +53,12 @@ const qualityControlFormSchema = new mongoose.Schema(
     started: { type: Number, default: 0 },
     startDateTime: { type: Date },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 const qualityControlFormModel = mongoose.model(
   "qualityControlForms",
-  qualityControlFormSchema,
+  qualityControlFormSchema
 );
 
 module.exports = qualityControlFormModel;

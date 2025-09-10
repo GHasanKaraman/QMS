@@ -136,6 +136,7 @@ router.post("/qualitycontrol/add", upload, async (req, res) => {
       if (
         formInformations.areIngredientsCorrect !== "No" &&
         formInformations.isTasteAcceptable !== "Unacceptable" &&
+        formInformations.visualForeignMaterial === "Yes" &&
         formInformations.isSealCorrect === "Yes" &&
         formInformations.isNotchCorrect !== "No" &&
         formInformations.xrayFeDetected !== "No" &&

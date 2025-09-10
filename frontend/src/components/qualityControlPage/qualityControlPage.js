@@ -236,6 +236,7 @@ const QualityControlPage = (props) => {
       areIngredientsCorrect: null,
       pictureOfProduct: null,
       isTasteAcceptable: null,
+      visualForeignMaterial: null,
       pictureMixCode: [],
       lotCode: "",
       expirationDate: "",
@@ -321,6 +322,7 @@ const QualityControlPage = (props) => {
           }
         ),
       isTasteAcceptable: yup.string().required(),
+      visualForeignMaterial: yup.string().required(),
       pictureMixCode:
         mixCodeState === "Yes"
           ? yup
@@ -805,6 +807,51 @@ const QualityControlPage = (props) => {
                     },
                   ]}
                 />
+
+                <Typography
+                  variant="h6"
+                  color={colors.grey[100]}
+                  fontWeight="600"
+                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                >
+                  Visual Foreign Material Inspection?
+                </Typography>
+                <ToggleButtonCheck
+                  style={{ gridColumn: "span 4" }}
+                  alignment={formik.values.visualForeignMaterial}
+                  onChange={(value) => {
+                    formik.setFieldValue("visualForeignMaterial", value);
+                  }}
+                  error={
+                    !!formik.touched.visualForeignMaterial &&
+                    !!formik.errors.visualForeignMaterial
+                  }
+                  options={[
+                    {
+                      label: "Yes",
+                      icon: (
+                        <CheckBoxIcon
+                          sx={{
+                            fill: colors.ciboInnerGreen[500],
+                          }}
+                        />
+                      ),
+                    },
+                    {
+                      label: "No",
+                      icon: (
+                        <CloseIcon
+                          sx={{
+                            color: colors.yoggieRed[500],
+                            stroke: colors.yoggieRed[500],
+                            strokeWidth: "2",
+                          }}
+                        />
+                      ),
+                    },
+                  ]}
+                />
+
                 <Typography
                   variant="h6"
                   color={colors.grey[100]}

@@ -158,6 +158,23 @@ const QualityControlAccordion = ({ id, expanded, isForm, onChange, value }) => {
           />
         </Stack>
         <Divider />
+        {data?.visualForeignMaterial && data?.visualForeignMaterial !== "" ? (
+          <div>
+            <Stack direction="row" justifyContent="space-between">
+              <Label
+                title="Visual Foreign Material Inspection?"
+                subtitle={
+                  <LabelResult
+                    text={data?.visualForeignMaterial}
+                    status={data?.visualForeignMaterial === "Yes"}
+                  />
+                }
+              />
+              <StatusIndicator status={data?.visualForeignMaterial === "Yes"} />
+            </Stack>
+            <Divider />
+          </div>
+        ) : undefined}
         {images.slice(1, mixCodeLength + 1).map((image, index) => {
           if (index !== images.length - 1) {
             return (
