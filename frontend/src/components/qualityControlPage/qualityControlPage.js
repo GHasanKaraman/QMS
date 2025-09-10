@@ -817,7 +817,7 @@ const QualityControlPage = (props) => {
                   fontWeight="600"
                   sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
                 >
-                  Visual Foreign Material Inspection?
+                  Free of Foreign Material?
                 </Typography>
                 <ToggleButtonCheck
                   style={{ gridColumn: "span 4" }}
