@@ -97,8 +97,8 @@ const QualityControlPage = (props) => {
     }
   };
 
-  const formOpen = async (formType, station, partNum) => {
-    const res = await sendFormOpen(formType, station, partNum);
+  const formOpen = async (formType, station, partNum, planId) => {
+    const res = await sendFormOpen(formType, station, partNum, planId);
     if (userAuth.control(res)) {
       console.log("Form opened!");
     } else {
@@ -149,8 +149,9 @@ const QualityControlPage = (props) => {
     loadAllStations();
   }, []);
 
-  const handleSubmit = async (values, { resetForm }) => {
+  const handleSubmit = async (valuesX, { resetForm }) => {
     setOpen(true);
+    const values = { ...valuesX };
     values.product = values.product.partNum;
     values.started = Number(productDetails?.started);
     values.startDateTime = moment(productDetails?.startDateTime);
@@ -228,6 +229,195 @@ const QualityControlPage = (props) => {
       );
   };
 
+  const yupValidation = yup.object().shape({
+    station: yup.string().required("Please select the station!"),
+    shift: yup.string().required("Please select the shift!"),
+    product: yup
+      .mixed()
+      .nullable()
+      .test(
+        "PRODUCT_VALIDATION",
+        "Please select the running product!",
+        (value) => {
+          if (value) {
+            if (value?.partnum !== "") {
+              return true;
+            }
+          }
+          return false;
+        }
+      ),
+    areIngredientsCorrect: yup.string().required(),
+    pictureOfProduct: yup
+      .mixed()
+      .nullable()
+      .required("Please upload the image of the item!")
+      .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
+        return !value || (value && value.size < 1024 * 1024 * 10);
+      })
+      .test(
+        "FILE_FORMAT",
+        "You can only upload JPG/JPEG/PNG files!",
+        (value) => {
+          return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
+        }
+      ),
+    isTasteAcceptable: yup.string().required(),
+    visualForeignMaterial: yup.string().required(),
+    pictureMixCode:
+      mixCodeState === "Yes"
+        ? yup
+            .array()
+            .of(uploadRequired("Please upload pictures of raw materials!"))
+            .required("You must upload at leat one image!")
+            .min(1, "You must upload at least one image!")
+        : undefined,
+    lotCode: yup
+      .string()
+      .required("Please enter the lot code of the finished product!"),
+    expirationDate: yup.string().required("Please enter the expiration date!"),
+    unitOfMeasure: yup.string().required(),
+    currentWeight: yup
+      .string()
+      .required("Please enter the weight of the item!"),
+    isSealCorrect: yup.string().required(),
+    isNotchCorrect: yup.string().required(),
+
+    xrayRequired: yup.string().required(),
+    xrayFeDetected: xRayState === "Yes" ? yup.string().required() : undefined,
+    xrayNonFeDetected:
+      xRayState === "Yes" ? yup.string().required() : undefined,
+    xraySsDetected: xRayState === "Yes" ? yup.string().required() : undefined,
+    xrayGlass7Detected:
+      xRayState === "Yes" ? yup.string().required() : undefined,
+    xrayCeramic8Detected:
+      xRayState === "Yes" ? yup.string().required() : undefined,
+
+    metalCardRequired: yup.string().required(),
+    metalCardFeDetected:
+      metalCardState === "Yes" ? yup.string().required() : undefined,
+    metalCardNonFeDetected:
+      metalCardState === "Yes" ? yup.string().required() : undefined,
+    metalCardSsDetected:
+      metalCardState === "Yes" ? yup.string().required() : undefined,
+
+    metalBallSingleRequired: yup.string().required(),
+    metalBallSingleFeDetected:
+      metalBallStateSingle === "Yes" ? yup.string().required() : undefined,
+    metalBallSingleNonFeDetected:
+      metalBallStateSingle === "Yes" ? yup.string().required() : undefined,
+    metalBallSingleSsDetected:
+      metalBallStateSingle === "Yes" ? yup.string().required() : undefined,
+
+    metalBallMultipleRequired: yup.string().required(),
+    metalBallMultipleFeDetected:
+      metalBallStateMultiple === "Yes" ? yup.string().required() : undefined,
+    metalBallMultipleNonFeDetected:
+      metalBallStateMultiple === "Yes" ? yup.string().required() : undefined,
+    metalBallMultipleSsDetected:
+      metalBallStateMultiple === "Yes" ? yup.string().required() : undefined,
+
+    correctPackaging: yup.string().required(),
+    pictureLabelFront: yup
+      .mixed()
+      .nullable()
+      .required("Please upload the image of front side of the label!")
+      .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
+        return !value || (value && value.size < 1024 * 1024 * 10);
+      })
+      .test(
+        "FILE_FORMAT",
+        "You can only upload JPG/JPEG/PNG files!",
+        (value) => {
+          return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
+        }
+      ),
+    pictureLabelBack: yup
+      .mixed()
+      .nullable()
+      .required("Please upload the image of back side of the label!")
+      .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
+        return !value || (value && value.size < 1024 * 1024 * 10);
+      })
+      .test(
+        "FILE_FORMAT",
+        "You can only upload JPG/JPEG/PNG files!",
+        (value) => {
+          return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
+        }
+      ),
+    areAllergensCorrect: yup.string().required(),
+    treenuts: productDetails?.allergens?.includes("T")
+      ? yup
+          .mixed()
+          .nullable()
+          .required("Please select the treenuts!")
+          .test("SELECTION_CHECK", "Please select the treenuts!", (value) => {
+            return value.length > 0;
+          })
+      : undefined,
+    allergenStatement: yup.string().required(),
+    pictureOfAllergenStatement: yup
+      .mixed()
+      .nullable()
+      .required("Please upload the image of the allergen statement!")
+      .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
+        return !value || (value && value.size < 1024 * 1024 * 10);
+      })
+      .test(
+        "FILE_FORMAT",
+        "You can only upload JPG/JPEG/PNG files!",
+        (value) => {
+          return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
+        }
+      ),
+    labelPackageCorrect: yup.string().required(),
+    pictureOfBarcode: yup
+      .mixed()
+      .nullable()
+      .required("Please upload the image of the barcode")
+      .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
+        return !value || (value && value.size < 1024 * 1024 * 10);
+      })
+      .test(
+        "FILE_FORMAT",
+        "You can only upload JPG/JPEG/PNG files!",
+        (value) => {
+          return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
+        }
+      ),
+
+    unitsCase: yup.string().required(),
+    salesOrderNumber:
+      productDetails?.soList?.length == 0 ? undefined : yup.string().required(),
+    caseLabel: yup.string().required(),
+    pictureOfBoxLabel:
+      caseLabelState === "Yes"
+        ? yup
+            .mixed()
+            .nullable()
+            .required("Please upload the image of the box label!")
+            .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
+              return !value || (value && value.size < 1024 * 1024 * 10);
+            })
+            .test(
+              "FILE_FORMAT",
+              "You can only upload JPG/JPEG/PNG files!",
+              (value) => {
+                return (
+                  !value || (value && SUPPORTED_FORMATS.includes(value?.type))
+                );
+              }
+            )
+        : undefined,
+
+    anyDeviations: yup.string().required(),
+    deviationID:
+      deviationState === "Yes"
+        ? yup.string().required("You must enter deviation ID!")
+        : undefined,
+  });
+
   const formik = useFormik({
     initialValues: {
       station: null,
@@ -288,198 +478,7 @@ const QualityControlPage = (props) => {
       deviationID: "",
     },
     onSubmit: handleSubmit,
-    validationSchema: yup.object().shape({
-      station: yup.string().required("Please select the station!"),
-      shift: yup.string().required("Please select the shift!"),
-      product: yup
-        .mixed()
-        .nullable()
-        .test(
-          "PRODUCT_VALIDATION",
-          "Please select the running product!",
-          (value) => {
-            if (value) {
-              if (value?.partnum !== "") {
-                return true;
-              }
-            }
-            return false;
-          }
-        ),
-      areIngredientsCorrect: yup.string().required(),
-      pictureOfProduct: yup
-        .mixed()
-        .nullable()
-        .required("Please upload the image of the item!")
-        .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
-          return !value || (value && value.size < 1024 * 1024 * 10);
-        })
-        .test(
-          "FILE_FORMAT",
-          "You can only upload JPG/JPEG/PNG files!",
-          (value) => {
-            return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          }
-        ),
-      isTasteAcceptable: yup.string().required(),
-      visualForeignMaterial: yup.string().required(),
-      pictureMixCode:
-        mixCodeState === "Yes"
-          ? yup
-              .array()
-              .of(uploadRequired("Please upload pictures of raw materials!"))
-              .required("You must upload at leat one image!")
-              .min(1, "You must upload at least one image!")
-          : undefined,
-      lotCode: yup
-        .string()
-        .required("Please enter the lot code of the finished product!"),
-      expirationDate: yup
-        .string()
-        .required("Please enter the expiration date!"),
-      unitOfMeasure: yup.string().required(),
-      currentWeight: yup
-        .string()
-        .required("Please enter the weight of the item!"),
-      isSealCorrect: yup.string().required(),
-      isNotchCorrect: yup.string().required(),
-
-      xrayRequired: yup.string().required(),
-      xrayFeDetected: xRayState === "Yes" ? yup.string().required() : undefined,
-      xrayNonFeDetected:
-        xRayState === "Yes" ? yup.string().required() : undefined,
-      xraySsDetected: xRayState === "Yes" ? yup.string().required() : undefined,
-      xrayGlass7Detected:
-        xRayState === "Yes" ? yup.string().required() : undefined,
-      xrayCeramic8Detected:
-        xRayState === "Yes" ? yup.string().required() : undefined,
-
-      metalCardRequired: yup.string().required(),
-      metalCardFeDetected:
-        metalCardState === "Yes" ? yup.string().required() : undefined,
-      metalCardNonFeDetected:
-        metalCardState === "Yes" ? yup.string().required() : undefined,
-      metalCardSsDetected:
-        metalCardState === "Yes" ? yup.string().required() : undefined,
-
-      metalBallSingleRequired: yup.string().required(),
-      metalBallSingleFeDetected:
-        metalBallStateSingle === "Yes" ? yup.string().required() : undefined,
-      metalBallSingleNonFeDetected:
-        metalBallStateSingle === "Yes" ? yup.string().required() : undefined,
-      metalBallSingleSsDetected:
-        metalBallStateSingle === "Yes" ? yup.string().required() : undefined,
-
-      metalBallMultipleRequired: yup.string().required(),
-      metalBallMultipleFeDetected:
-        metalBallStateMultiple === "Yes" ? yup.string().required() : undefined,
-      metalBallMultipleNonFeDetected:
-        metalBallStateMultiple === "Yes" ? yup.string().required() : undefined,
-      metalBallMultipleSsDetected:
-        metalBallStateMultiple === "Yes" ? yup.string().required() : undefined,
-
-      correctPackaging: yup.string().required(),
-      pictureLabelFront: yup
-        .mixed()
-        .nullable()
-        .required("Please upload the image of front side of the label!")
-        .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
-          return !value || (value && value.size < 1024 * 1024 * 10);
-        })
-        .test(
-          "FILE_FORMAT",
-          "You can only upload JPG/JPEG/PNG files!",
-          (value) => {
-            return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          }
-        ),
-      pictureLabelBack: yup
-        .mixed()
-        .nullable()
-        .required("Please upload the image of back side of the label!")
-        .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
-          return !value || (value && value.size < 1024 * 1024 * 10);
-        })
-        .test(
-          "FILE_FORMAT",
-          "You can only upload JPG/JPEG/PNG files!",
-          (value) => {
-            return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          }
-        ),
-      areAllergensCorrect: yup.string().required(),
-      treenuts: productDetails?.allergens?.includes("T")
-        ? yup
-            .mixed()
-            .nullable()
-            .required("Please select the treenuts!")
-            .test("SELECTION_CHECK", "Please select the treenuts!", (value) => {
-              return value.length > 0;
-            })
-        : undefined,
-      allergenStatement: yup.string().required(),
-      pictureOfAllergenStatement: yup
-        .mixed()
-        .nullable()
-        .required("Please upload the image of the allergen statement!")
-        .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
-          return !value || (value && value.size < 1024 * 1024 * 10);
-        })
-        .test(
-          "FILE_FORMAT",
-          "You can only upload JPG/JPEG/PNG files!",
-          (value) => {
-            return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          }
-        ),
-      labelPackageCorrect: yup.string().required(),
-      pictureOfBarcode: yup
-        .mixed()
-        .nullable()
-        .required("Please upload the image of the barcode")
-        .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
-          return !value || (value && value.size < 1024 * 1024 * 10);
-        })
-        .test(
-          "FILE_FORMAT",
-          "You can only upload JPG/JPEG/PNG files!",
-          (value) => {
-            return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-          }
-        ),
-
-      unitsCase: yup.string().required(),
-      salesOrderNumber:
-        productDetails?.soList?.length == 0
-          ? undefined
-          : yup.string().required(),
-      caseLabel: yup.string().required(),
-      pictureOfBoxLabel:
-        caseLabelState === "Yes"
-          ? yup
-              .mixed()
-              .nullable()
-              .required("Please upload the image of the box label!")
-              .test("FILE_SIZE", "Image must smaller than 10MB!", (value) => {
-                return !value || (value && value.size < 1024 * 1024 * 10);
-              })
-              .test(
-                "FILE_FORMAT",
-                "You can only upload JPG/JPEG/PNG files!",
-                (value) => {
-                  return (
-                    !value || (value && SUPPORTED_FORMATS.includes(value?.type))
-                  );
-                }
-              )
-          : undefined,
-
-      anyDeviations: yup.string().required(),
-      deviationID:
-        deviationState === "Yes"
-          ? yup.string().required("You must enter deviation ID!")
-          : undefined,
-    }),
+    validationSchema: true ? undefined : yupValidation,
   });
   return (
     <Box
@@ -611,7 +610,12 @@ const QualityControlPage = (props) => {
               formik.setFieldValue("product", value);
               if (value != null) {
                 const details = await loadDetails(station, value.partNum);
-                await formOpen("qualityControl", station, value.partNum);
+                await formOpen(
+                  "qualitycontrol",
+                  station,
+                  value.partNum,
+                  value.planId
+                );
                 if (details) {
                   if (details?.soList?.length === 0) {
                     formik.setFieldValue("salesOrderNumber", "No");
@@ -625,6 +629,7 @@ const QualityControlPage = (props) => {
             value={formik.values.product}
             sx={{ marginBottom: "30px", gridColumn: "span 4" }}
             options={products}
+            getOptionKey={(item) => item?.planId}
             onBlur={formik.handleBlur}
             renderInput={(params) => (
               <TextField

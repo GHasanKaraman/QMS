@@ -75,8 +75,8 @@ const PGQualityControlPage = (props) => {
     }
   };
 
-  const formOpen = async (formType, station, partNum) => {
-    const res = await sendFormOpen(formType, station, partNum);
+  const formOpen = async (formType, station, partNum, planId) => {
+    const res = await sendFormOpen(formType, station, partNum, planId);
     if (userAuth.control(res)) {
       console.log("Form opened!");
     } else {
@@ -122,9 +122,9 @@ const PGQualityControlPage = (props) => {
     }
   };
 
-  const handleSubmit = async (values, { resetForm }) => {
+  const handleSubmit = async (valuesX, { resetForm }) => {
     setOpen(true);
-
+    const values = { ...valuesX };
     values.product = values.product.partNum;
     values.started = Number(productDetails?.started);
     values.startDateTime = moment(productDetails?.startDateTime);
@@ -538,12 +538,13 @@ const PGQualityControlPage = (props) => {
               formik.setFieldValue("product", value);
               if (value != null) {
                 await loadDetails(formik.values.station, value.partNum);
-                await formOpen("p&g", station, value.partNum);
+                await formOpen("p&g", station, value.partNum, value.planId);
               }
             }}
             value={formik.values.product}
             sx={{ marginBottom: "30px", gridColumn: "span 2" }}
             options={products}
+            getOptionKey={(item) => item?.planId}
             onBlur={formik.handleBlur}
             renderInput={(params) => (
               <TextField

@@ -80,8 +80,8 @@ const RatioFormPage = (props) => {
     }
   };
 
-  const formOpen = async (formType, station, partNum) => {
-    const res = await sendFormOpen(formType, station, partNum);
+  const formOpen = async (formType, station, partNum, planId) => {
+    const res = await sendFormOpen(formType, station, partNum, planId);
     if (userAuth.control(res)) {
       console.log("Form opened!");
     } else {
@@ -378,12 +378,13 @@ const RatioFormPage = (props) => {
               formik.setFieldValue("product", value);
               if (value != null) {
                 await loadRecipe(value.partNum);
-                await formOpen("ratio", station, value.partNum);
+                await formOpen("ratio", station, value.partNum, value.planId);
               }
             }}
             value={formik.values.product}
             sx={{ marginBottom: "30px", gridColumn: "span 4" }}
             options={products}
+            getOptionKey={(item) => item?.planId}
             onBlur={formik.handleBlur}
             renderInput={(params) => (
               <TextField

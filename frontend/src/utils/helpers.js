@@ -86,11 +86,12 @@ export const extractInformations = (form) => {
   return info;
 };
 
-export const sendFormOpen = async (formType, station, partNum) => {
+export const sendFormOpen = async (formType, station, partNum, planId) => {
   const res = await axios.post("/formOpen", {
     formType: formType,
     station: station,
     partNum: partNum,
+    planId: planId,
   });
   return res;
 };

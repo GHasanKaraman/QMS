@@ -82,8 +82,8 @@ const PreOperationalPage = (props) => {
     }
   };
 
-  const formOpen = async (formType, station, partNum) => {
-    const res = await sendFormOpen(formType, station, partNum);
+  const formOpen = async (formType, station, partNum, planId) => {
+    const res = await sendFormOpen(formType, station, partNum, planId);
     if (userAuth.control(res)) {
       console.log("Form opened!");
     } else {
@@ -142,9 +142,9 @@ const PreOperationalPage = (props) => {
     loadAllStations();
   }, []);
 
-  const handleSubmit = async (values, { resetForm }) => {
+  const handleSubmit = async (valuesX, { resetForm }) => {
     setOpen(true);
-
+    const values = { ...valuesX };
     values.product = values.product.partNum;
     values.started = Number(productDetails?.started);
     values.startDateTime = moment(productDetails?.startDateTime);
@@ -378,7 +378,12 @@ const PreOperationalPage = (props) => {
               formik.setFieldValue("product", value);
               if (value != null) {
                 const details = await loadDetails(station, value.partNum);
-                await formOpen("preOperational", station, value.partNum);
+                await formOpen(
+                  "preOperational",
+                  station,
+                  value.partNum,
+                  value.planId
+                );
                 if (details) {
                   if (details?.soList?.length === 0) {
                     formik.setFieldValue("salesOrderNumber", "No");
@@ -392,6 +397,7 @@ const PreOperationalPage = (props) => {
             value={formik.values.product}
             sx={{ marginBottom: "30px", gridColumn: "span 4" }}
             options={products}
+            getOptionKey={(item) => item?.planId}
             onBlur={formik.handleBlur}
             renderInput={(params) => (
               <TextField
