@@ -10,7 +10,7 @@ router.post("/formOpen", async (req, res) => {
       ip: req.ip,
       username: req.username,
     });
-    res.status(200);
+    res.sendStatus(200);
   } catch (err) {
     console.log(err);
     res.sendStatus(503);
