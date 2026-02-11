@@ -68,7 +68,7 @@ router.post("/qualitycontrol/getproduct", async (req, res) => {
           station +
           " and " +
           product +
-          " from OC DB!"
+          " from OC DB!",
       );
     } else {
       res.sendStatus(404);
@@ -111,7 +111,7 @@ router.post("/qualitycontrol/get", async (req, res) => {
         product: product,
       });
       console.log(
-        "Fetched " + id + " quality control inspection data sheet result!"
+        "Fetched " + id + " quality control inspection data sheet result!",
       );
     } else {
       res.sendStatus(404);
@@ -137,6 +137,7 @@ router.post("/qualitycontrol/add", upload, async (req, res) => {
         formInformations.areIngredientsCorrect !== "No" &&
         formInformations.isTasteAcceptable !== "Unacceptable" &&
         formInformations.visualForeignMaterial === "Yes" &&
+        formInformations.vacuumWorking !== "No" &&
         formInformations.isSealCorrect === "Yes" &&
         formInformations.isNotchCorrect !== "No" &&
         formInformations.xrayFeDetected !== "No" &&
@@ -178,7 +179,7 @@ router.post("/qualitycontrol/add", upload, async (req, res) => {
         });
         if (form) {
           console.log(
-            req.username + " successfully created a quality control form!"
+            req.username + " successfully created a quality control form!",
           );
           await sendQAC("formSubmit", {
             formType: "qualityControl",
@@ -191,7 +192,7 @@ router.post("/qualitycontrol/add", upload, async (req, res) => {
           res.status(200).json({ form });
         } else {
           console.log(
-            "Something went wrong while creating quality control form!"
+            "Something went wrong while creating quality control form!",
           );
           res.sendStatus(500);
         }

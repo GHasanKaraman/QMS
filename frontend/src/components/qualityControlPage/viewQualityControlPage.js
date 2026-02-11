@@ -315,6 +315,21 @@ const ViewQualityControlPage = (props) => {
             <StatusIndicator status={Boolean(data?.currentWeight)} />
           </Stack>
           <Divider />
+          {data?.vacuumWorking && data?.vacuumWorking !== "" ? (
+            <Stack direction="row" justifyContent="space-between">
+              <Label
+                title="Vacuum system properly working?"
+                subtitle={
+                  <LabelResult
+                    text={data?.vacuumWorking}
+                    status={data?.vacuumWorking !== "No"}
+                  />
+                }
+              />
+              <StatusIndicator status={data?.vacuumWorking !== "No"} />
+            </Stack>
+          ) : undefined}
+          <Divider />
           <Stack direction="row" justifyContent="space-between">
             <Label
               title="Is the seal correct?"

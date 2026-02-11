@@ -191,7 +191,7 @@ const QualityControlPage = (props) => {
               "Something went wrong while saving the form. Ploease try again!",
               {
                 variant: "error",
-              }
+              },
             );
             break;
           default:
@@ -225,7 +225,7 @@ const QualityControlPage = (props) => {
         "You can only upload JPG/JPEG/PNG files!",
         (value) => {
           return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-        }
+        },
       );
   };
 
@@ -245,7 +245,7 @@ const QualityControlPage = (props) => {
             }
           }
           return false;
-        }
+        },
       ),
     areIngredientsCorrect: yup.string().required(),
     pictureOfProduct: yup
@@ -260,7 +260,7 @@ const QualityControlPage = (props) => {
         "You can only upload JPG/JPEG/PNG files!",
         (value) => {
           return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-        }
+        },
       ),
     isTasteAcceptable: yup.string().required(),
     visualForeignMaterial: yup.string().required(),
@@ -280,6 +280,7 @@ const QualityControlPage = (props) => {
     currentWeight: yup
       .string()
       .required("Please enter the weight of the item!"),
+    vacuumWorking: yup.string().required(),
     isSealCorrect: yup.string().required(),
     isNotchCorrect: yup.string().required(),
 
@@ -330,7 +331,7 @@ const QualityControlPage = (props) => {
         "You can only upload JPG/JPEG/PNG files!",
         (value) => {
           return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-        }
+        },
       ),
     pictureLabelBack: yup
       .mixed()
@@ -344,7 +345,7 @@ const QualityControlPage = (props) => {
         "You can only upload JPG/JPEG/PNG files!",
         (value) => {
           return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-        }
+        },
       ),
     areAllergensCorrect: yup.string().required(),
     treenuts: productDetails?.allergens?.includes("T")
@@ -369,7 +370,7 @@ const QualityControlPage = (props) => {
         "You can only upload JPG/JPEG/PNG files!",
         (value) => {
           return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-        }
+        },
       ),
     labelPackageCorrect: yup.string().required(),
     pictureOfBarcode: yup
@@ -384,7 +385,7 @@ const QualityControlPage = (props) => {
         "You can only upload JPG/JPEG/PNG files!",
         (value) => {
           return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
-        }
+        },
       ),
 
     unitsCase: yup.string().required(),
@@ -407,7 +408,7 @@ const QualityControlPage = (props) => {
                 return (
                   !value || (value && SUPPORTED_FORMATS.includes(value?.type))
                 );
-              }
+              },
             )
         : undefined,
 
@@ -431,6 +432,7 @@ const QualityControlPage = (props) => {
       lotCode: "",
       expirationDate: "",
       currentWeight: "",
+      vacuumWorking: null,
       unitOfMeasure: "oz",
       isSealCorrect: null,
       isNotchCorrect: null,
@@ -547,7 +549,7 @@ const QualityControlPage = (props) => {
             sx={{ gridColumn: "span 4" }}
             options={stations
               .filter(
-                ({ name }) => !name.includes("ROAST") && !name.includes("MIX")
+                ({ name }) => !name.includes("ROAST") && !name.includes("MIX"),
               )
               .map(({ name }) => name)}
             onBlur={formik.handleBlur}
@@ -614,7 +616,7 @@ const QualityControlPage = (props) => {
                   "qualitycontrol",
                   station,
                   value.partNum,
-                  value.planId
+                  value.planId,
                 );
                 if (details) {
                   if (details?.soList?.length === 0) {
@@ -1041,6 +1043,59 @@ const QualityControlPage = (props) => {
                   InputProps={{
                     inputProps: { inputMode: "decimal", min: 0, step: 0.01 },
                   }}
+                />
+                <Typography
+                  variant="h6"
+                  color={colors.grey[100]}
+                  fontWeight="600"
+                  sx={{ m: "0 0 -20px 0", minWidth: "250px" }}
+                >
+                  Vacuum system properly working?
+                </Typography>
+                <ToggleButtonCheck
+                  style={{ gridColumn: "span 4" }}
+                  alignment={formik.values.vacuumWorking}
+                  onChange={(value) => {
+                    formik.setFieldValue("vacuumWorking", value);
+                  }}
+                  error={
+                    !!formik.touched.vacuumWorking &&
+                    !!formik.errors.vacuumWorking
+                  }
+                  options={[
+                    {
+                      label: "Yes",
+                      icon: (
+                        <CheckBoxIcon
+                          sx={{
+                            fill: colors.ciboInnerGreen[500],
+                          }}
+                        />
+                      ),
+                    },
+                    {
+                      label: "No",
+                      icon: (
+                        <CloseIcon
+                          sx={{
+                            color: colors.yoggieRed[500],
+                            stroke: colors.yoggieRed[500],
+                            strokeWidth: "2",
+                          }}
+                        />
+                      ),
+                    },
+                    {
+                      label: "N/A",
+                      icon: (
+                        <CheckBoxIcon
+                          sx={{
+                            fill: colors.ciboInnerGreen[500],
+                          }}
+                        />
+                      ),
+                    },
+                  ]}
                 />
                 <Typography
                   variant="h6"
@@ -1767,7 +1822,7 @@ const QualityControlPage = (props) => {
                     onChange={(value) => {
                       formik.setFieldValue(
                         "metalBallSingleNonFeDetected",
-                        value
+                        value,
                       );
                     }}
                     error={
@@ -1934,7 +1989,7 @@ const QualityControlPage = (props) => {
                     onChange={(value) => {
                       formik.setFieldValue(
                         "metalBallMultipleFeDetected",
-                        value
+                        value,
                       );
                     }}
                     error={
@@ -1980,7 +2035,7 @@ const QualityControlPage = (props) => {
                     onChange={(value) => {
                       formik.setFieldValue(
                         "metalBallMultipleNonFeDetected",
-                        value
+                        value,
                       );
                     }}
                     error={
@@ -2026,7 +2081,7 @@ const QualityControlPage = (props) => {
                     onChange={(value) => {
                       formik.setFieldValue(
                         "metalBallMultipleSsDetected",
-                        value
+                        value,
                       );
                     }}
                     error={
