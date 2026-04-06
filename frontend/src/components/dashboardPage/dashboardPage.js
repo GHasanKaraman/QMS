@@ -80,6 +80,8 @@ const DashboardPage = (props) => {
     if (userAuth.control(res)) {
       setLocations(res.data.locations);
       setDataSource(res.data.locations);
+      console.log(res.data.locations);
+
       setForms(
         res.data.forms.sort(
           (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
@@ -378,90 +380,90 @@ const DashboardPage = (props) => {
         </IconButton>
       </Stack>
       <List>
-        {dataSource
-          .filter((loc) => loc.type)
-          .map((location, i) => {
-            return [
-              <ListItem
-                key={location}
-                secondaryAction={
-                  <IconButton
-                    sx={{ padding: "0 0px" }}
-                    onClick={() => {
-                      setSelectedLocation(location);
-                      setOpen(true);
-                    }}
-                  >
-                    <MenuIcon />
-                  </IconButton>
-                }
-              >
-                <Stack spacing={1} sx={{ width: "100%", display: "grid" }}>
-                  <div
-                    style={{
-                      fontSize: "18px",
-                      fontWeight: "bold",
-                      color:
-                        location?.running === true
-                          ? colors.contrast[100]
-                          : colors.grey[500],
-                    }}
-                  >
-                    {location.name + " " + location.type?.toUpperCase()}
-                  </div>
-                  <div style={{ fontSize: "12px", color: colors.grey[200] }}>
-                    {(function () {
-                      if (location.shift) {
-                        if (location.shift === 1) {
-                          return "1st Shift • ";
-                        } else {
-                          return "2nd Shift • ";
-                        }
+        {dataSource.map((location, i) => {
+          return [
+            <ListItem
+              key={location}
+              secondaryAction={
+                <IconButton
+                  sx={{ padding: "0 0px" }}
+                  onClick={() => {
+                    setSelectedLocation(location);
+                    setOpen(true);
+                  }}
+                >
+                  <MenuIcon />
+                </IconButton>
+              }
+            >
+              <Stack spacing={1} sx={{ width: "100%", display: "grid" }}>
+                <div
+                  style={{
+                    fontSize: "18px",
+                    fontWeight: "bold",
+                    color:
+                      location?.running === true
+                        ? colors.contrast[100]
+                        : colors.grey[500],
+                  }}
+                >
+                  {location.name +
+                    " " +
+                    (location.type ? location.type.toUpperCase() : "")}
+                </div>
+                <div style={{ fontSize: "12px", color: colors.grey[200] }}>
+                  {(function () {
+                    if (location.shift) {
+                      if (location.shift === 1) {
+                        return "1st Shift • ";
+                      } else {
+                        return "2nd Shift • ";
                       }
-                    })()}
-                    {(function () {
-                      if (location.startTime) {
-                        const time = toStringDate(location.startTime, {
-                          hour: "numeric",
-                          minute: "numeric",
-                        });
-                        return "Started at " + time + "  •  ";
-                      }
-                    })()}
-                    {(function () {
-                      const length = forms.filter(
-                        (form) => form.station === location.name,
-                      ).length;
-                      if (length === 0) {
-                        return "No";
-                      }
-                      return length;
-                    })() + " Completed Data Sheets"}
-                  </div>
-                  <Stack
-                    direction="row"
-                    spacing={1}
-                    sx={{
-                      overflowX: "auto",
-                      overflowY: "hidden",
-                      "& .MuiPaper-root.MuiCard-root": {
-                        overflow: "visible !important",
-                      },
-                      display: "webkit-flex !important",
-                      padding: "10px 0",
-                    }}
-                  >
-                    {forms
-                      .filter((form) => form.station === location.name)
-                      .map((form) => {
-                        return <FormCard key={form._id} form={form} />;
-                      })}
-                  </Stack>
+                    }
+                  })()}
+                  {(function () {
+                    if (location.startTime) {
+                      const time = toStringDate(location.startTime, {
+                        hour: "numeric",
+                        minute: "numeric",
+                      });
+                      return "Started at " + time + "  •  ";
+                    }
+                  })()}
+                  {(function () {
+                    const length = forms.filter(
+                      (form) => form.station === location.name,
+                    ).length;
+                    if (length === 0) {
+                      return "No";
+                    }
+                    return length;
+                  })() + " Completed Data Sheets"}
+                </div>
+                <Stack
+                  direction="row"
+                  spacing={1}
+                  sx={{
+                    overflowX: "auto",
+                    overflowY: "hidden",
+                    "& .MuiPaper-root.MuiCard-root": {
+                      overflow: "visible !important",
+                    },
+                    display: "webkit-flex !important",
+                    padding: "10px 0",
+                  }}
+                >
+                  {forms
+                    .filter((form) => form.station === location.name)
+                    .map((form) => {
+                      return <FormCard key={form._id} form={form} />;
+                    })}
                 </Stack>
-              </ListItem>,
-              <Divider key={location + i} />,
-            ];
-          })}
+              </Stack>
+            </ListItem>,
+            <Divider key={location + i} />,
+          ];
+        })}
       </List>
     </Box>
   );
