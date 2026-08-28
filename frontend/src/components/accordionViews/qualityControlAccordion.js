@@ -279,11 +279,11 @@ const QualityControlAccordion = ({ id, expanded, isForm, onChange, value }) => {
                 subtitle={
                   <LabelResult
                     text={data?.xrayFeDetected}
-                    status={data?.xrayFeDetected === "Yes"}
+                    status={data?.xrayFeDetected !== "No"}
                   />
                 }
               />
-              <StatusIndicator status={data?.xrayFeDetected === "Yes"} />
+              <StatusIndicator status={data?.xrayFeDetected !== "No"} />
             </Stack>
             <Divider />
             <Stack direction="row" justifyContent="space-between">
@@ -292,11 +292,11 @@ const QualityControlAccordion = ({ id, expanded, isForm, onChange, value }) => {
                 subtitle={
                   <LabelResult
                     text={data?.xrayNonFeDetected}
-                    status={data?.xrayNonFeDetected === "Yes"}
+                    status={data?.xrayNonFeDetected !== "No"}
                   />
                 }
               />
-              <StatusIndicator status={data?.xrayNonFeDetected === "Yes"} />
+              <StatusIndicator status={data?.xrayNonFeDetected !== "No"} />
             </Stack>
             <Divider />
             <Stack direction="row" justifyContent="space-between">
@@ -305,11 +305,11 @@ const QualityControlAccordion = ({ id, expanded, isForm, onChange, value }) => {
                 subtitle={
                   <LabelResult
                     text={data?.xraySsDetected}
-                    status={data?.xraySsDetected === "Yes"}
+                    status={data?.xraySsDetected !== "No"}
                   />
                 }
               />
-              <StatusIndicator status={data?.xraySsDetected === "Yes"} />
+              <StatusIndicator status={data?.xraySsDetected !== "No"} />
             </Stack>
             {data?.xrayGlassDetected !== "" ? (
               <div>
@@ -320,11 +320,11 @@ const QualityControlAccordion = ({ id, expanded, isForm, onChange, value }) => {
                     subtitle={
                       <LabelResult
                         text={data?.xrayGlassDetected}
-                        status={data?.xrayGlassDetected === "Yes"}
+                        status={data?.xrayGlassDetected !== "No"}
                       />
                     }
                   />
-                  <StatusIndicator status={data?.xrayGlassDetected === "Yes"} />
+                  <StatusIndicator status={data?.xrayGlassDetected !== "No"} />
                 </Stack>
               </div>
             ) : undefined}
@@ -337,12 +337,12 @@ const QualityControlAccordion = ({ id, expanded, isForm, onChange, value }) => {
                     subtitle={
                       <LabelResult
                         text={data?.xrayCeramicDetected}
-                        status={data?.xrayCeramicDetected === "Yes"}
+                        status={data?.xrayCeramicDetected !== "No"}
                       />
                     }
                   />
                   <StatusIndicator
-                    status={data?.xrayCeramicDetected === "Yes"}
+                    status={data?.xrayCeramicDetected !== "No"}
                   />
                 </Stack>
               </div>
@@ -358,12 +358,12 @@ const QualityControlAccordion = ({ id, expanded, isForm, onChange, value }) => {
                     subtitle={
                       <LabelResult
                         text={data?.xrayGlass10Detected}
-                        status={data?.xrayGlass10Detected === "Yes"}
+                        status={data?.xrayGlass10Detected !== "No"}
                       />
                     }
                   />
                   <StatusIndicator
-                    status={data?.xrayGlass10Detected === "Yes"}
+                    status={data?.xrayGlass10Detected !== "No"}
                   />
                 </Stack>
               </div>
@@ -379,12 +379,12 @@ const QualityControlAccordion = ({ id, expanded, isForm, onChange, value }) => {
                     subtitle={
                       <LabelResult
                         text={data?.xrayCeramic10Detected}
-                        status={data?.xrayCeramic10Detected === "Yes"}
+                        status={data?.xrayCeramic10Detected !== "No"}
                       />
                     }
                   />
                   <StatusIndicator
-                    status={data?.xrayCeramic10Detected === "Yes"}
+                    status={data?.xrayCeramic10Detected !== "No"}
                   />
                 </Stack>
               </div>
@@ -398,12 +398,12 @@ const QualityControlAccordion = ({ id, expanded, isForm, onChange, value }) => {
                     subtitle={
                       <LabelResult
                         text={data?.xrayGlass7Detected}
-                        status={data?.xrayGlass7Detected === "Yes"}
+                        status={data?.xrayGlass7Detected !== "No"}
                       />
                     }
                   />
                   <StatusIndicator
-                    status={data?.xrayGlass7Detected === "Yes"}
+                    status={data?.xrayGlass7Detected !== "No"}
                   />
                 </Stack>
               </div>
@@ -417,12 +417,12 @@ const QualityControlAccordion = ({ id, expanded, isForm, onChange, value }) => {
                     subtitle={
                       <LabelResult
                         text={data?.xrayCeramic8Detected}
-                        status={data?.xrayCeramic8Detected === "Yes"}
+                        status={data?.xrayCeramic8Detected !== "No"}
                       />
                     }
                   />
                   <StatusIndicator
-                    status={data?.xrayCeramic8Detected === "Yes"}
+                    status={data?.xrayCeramic8Detected !== "No"}
                   />
                 </Stack>
               </div>
@@ -451,11 +451,11 @@ const QualityControlAccordion = ({ id, expanded, isForm, onChange, value }) => {
                 subtitle={
                   <LabelResult
                     text={data?.metalCardFeDetected}
-                    status={data?.metalCardFeDetected === "Yes"}
+                    status={data?.metalCardFeDetected !== "No"}
                   />
                 }
               />
-              <StatusIndicator status={data?.metalCardFeDetected === "Yes"} />
+              <StatusIndicator status={data?.metalCardFeDetected !== "No"} />
             </Stack>
             <Divider />
             <Stack direction="row" justifyContent="space-between">
@@ -464,12 +464,12 @@ const QualityControlAccordion = ({ id, expanded, isForm, onChange, value }) => {
                 subtitle={
                   <LabelResult
                     text={data?.metalCardNonFeDetected}
-                    status={data?.metalCardNonFeDetected === "Yes"}
+                    status={data?.metalCardNonFeDetected !== "No"}
                   />
                 }
               />
               <StatusIndicator
-                status={data?.metalCardNonFeDetected === "Yes"}
+                status={data?.metalCardNonFeDetected !== "No"}
               />
             </Stack>
             <Divider />
@@ -479,11 +479,11 @@ const QualityControlAccordion = ({ id, expanded, isForm, onChange, value }) => {
                 subtitle={
                   <LabelResult
                     text={data?.metalCardSsDetected}
-                    status={data?.metalCardSsDetected === "Yes"}
+                    status={data?.metalCardSsDetected !== "No"}
                   />
                 }
               />
-              <StatusIndicator status={data?.metalCardSsDetected === "Yes"} />
+              <StatusIndicator status={data?.metalCardSsDetected !== "No"} />
             </Stack>
           </div>
         ) : undefined}
@@ -494,7 +494,7 @@ const QualityControlAccordion = ({ id, expanded, isForm, onChange, value }) => {
             subtitle={
               <LabelResult
                 text={data?.metalBallSingleRequired}
-                status={data?.metalBallSingleRequired === "Yes"}
+                status={data?.metalBallSingleRequired !== "No"}
               />
             }
           />
@@ -509,12 +509,12 @@ const QualityControlAccordion = ({ id, expanded, isForm, onChange, value }) => {
                 subtitle={
                   <LabelResult
                     text={data?.metalBallSingleFeDetected}
-                    status={data?.metalBallSingleFeDetected === "Yes"}
+                    status={data?.metalBallSingleFeDetected !== "No"}
                   />
                 }
               />
               <StatusIndicator
-                status={data?.metalBallSingleFeDetected === "Yes"}
+                status={data?.metalBallSingleFeDetected !== "No"}
               />
             </Stack>
             <Divider />
@@ -524,12 +524,12 @@ const QualityControlAccordion = ({ id, expanded, isForm, onChange, value }) => {
                 subtitle={
                   <LabelResult
                     text={data?.metalBallSingleNonFeDetected}
-                    status={data?.metalBallSingleNonFeDetected === "Yes"}
+                    status={data?.metalBallSingleNonFeDetected !== "No"}
                   />
                 }
               />
               <StatusIndicator
-                status={data?.metalBallSingleNonFeDetected === "Yes"}
+                status={data?.metalBallSingleNonFeDetected !== "No"}
               />
             </Stack>
             <Divider />
@@ -539,12 +539,12 @@ const QualityControlAccordion = ({ id, expanded, isForm, onChange, value }) => {
                 subtitle={
                   <LabelResult
                     text={data?.metalBallSingleSsDetected}
-                    status={data?.metalBallSingleSsDetected === "Yes"}
+                    status={data?.metalBallSingleSsDetected !== "No"}
                   />
                 }
               />
               <StatusIndicator
-                status={data?.metalBallSingleSsDetected === "Yes"}
+                status={data?.metalBallSingleSsDetected !== "No"}
               />
             </Stack>
           </div>
@@ -571,12 +571,12 @@ const QualityControlAccordion = ({ id, expanded, isForm, onChange, value }) => {
                 subtitle={
                   <LabelResult
                     text={data?.metalBallMultipleFeDetected}
-                    status={data?.metalBallMultipleFeDetected === "Yes"}
+                    status={data?.metalBallMultipleFeDetected !== "No"}
                   />
                 }
               />
               <StatusIndicator
-                status={data?.metalBallMultipleFeDetected === "Yes"}
+                status={data?.metalBallMultipleFeDetected !== "No"}
               />
             </Stack>
             <Divider />
@@ -586,12 +586,12 @@ const QualityControlAccordion = ({ id, expanded, isForm, onChange, value }) => {
                 subtitle={
                   <LabelResult
                     text={data?.metalBallMultipleNonFeDetected}
-                    status={data?.metalBallMultipleNonFeDetected === "Yes"}
+                    status={data?.metalBallMultipleNonFeDetected !== "No"}
                   />
                 }
               />
               <StatusIndicator
-                status={data?.metalBallMultipleNonFeDetected === "Yes"}
+                status={data?.metalBallMultipleNonFeDetected !== "No"}
               />
             </Stack>
             <Divider />
@@ -601,12 +601,12 @@ const QualityControlAccordion = ({ id, expanded, isForm, onChange, value }) => {
                 subtitle={
                   <LabelResult
                     text={data?.metalBallMultipleSsDetected}
-                    status={data?.metalBallMultipleSsDetected === "Yes"}
+                    status={data?.metalBallMultipleSsDetected !== "No"}
                   />
                 }
               />
               <StatusIndicator
-                status={data?.metalBallMultipleSsDetected === "Yes"}
+                status={data?.metalBallMultipleSsDetected !== "No"}
               />
             </Stack>
           </div>

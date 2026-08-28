@@ -1308,6 +1308,16 @@ const QualityControlPage = (props) => {
                           />
                         ),
                       },
+                      {
+                        label: "Other",
+                        icon: (
+                          <CheckBoxIcon
+                            sx={{
+                              fill: colors.ciboInnerGreen[500],
+                            }}
+                          />
+                        ),
+                      },
                     ]}
                   />
                   <Typography
@@ -1347,6 +1357,15 @@ const QualityControlPage = (props) => {
                               color: colors.yoggieRed[500],
                               stroke: colors.yoggieRed[500],
                               strokeWidth: "2",
+                            }}
+                          />
+                        ),
+                      },{
+                        label: "Other",
+                        icon: (
+                          <CheckBoxIcon
+                            sx={{
+                              fill: colors.ciboInnerGreen[500],
                             }}
                           />
                         ),
@@ -1393,6 +1412,15 @@ const QualityControlPage = (props) => {
                             }}
                           />
                         ),
+                      },{
+                        label: "Other",
+                        icon: (
+                          <CheckBoxIcon
+                            sx={{
+                              fill: colors.ciboInnerGreen[500],
+                            }}
+                          />
+                        ),
                       },
                     ]}
                   />
@@ -1436,6 +1464,15 @@ const QualityControlPage = (props) => {
                             }}
                           />
                         ),
+                      },{
+                        label: "Other",
+                        icon: (
+                          <CheckBoxIcon
+                            sx={{
+                              fill: colors.ciboInnerGreen[500],
+                            }}
+                          />
+                        ),
                       },
                     ]}
                   />
@@ -1476,6 +1513,15 @@ const QualityControlPage = (props) => {
                               color: colors.yoggieRed[500],
                               stroke: colors.yoggieRed[500],
                               strokeWidth: "2",
+                            }}
+                          />
+                        ),
+                      },{
+                        label: "Other",
+                        icon: (
+                          <CheckBoxIcon
+                            sx={{
+                              fill: colors.ciboInnerGreen[500],
                             }}
                           />
                         ),
@@ -1599,6 +1645,15 @@ const QualityControlPage = (props) => {
                             }}
                           />
                         ),
+                      },{
+                        label: "Other",
+                        icon: (
+                          <CheckBoxIcon
+                            sx={{
+                              fill: colors.ciboInnerGreen[500],
+                            }}
+                          />
+                        ),
                       },
                     ]}
                   />
@@ -1642,6 +1697,15 @@ const QualityControlPage = (props) => {
                             }}
                           />
                         ),
+                      },{
+                        label: "Other",
+                        icon: (
+                          <CheckBoxIcon
+                            sx={{
+                              fill: colors.ciboInnerGreen[500],
+                            }}
+                          />
+                        ),
                       },
                     ]}
                   />
@@ -1682,6 +1746,15 @@ const QualityControlPage = (props) => {
                               color: colors.yoggieRed[500],
                               stroke: colors.yoggieRed[500],
                               strokeWidth: "2",
+                            }}
+                          />
+                        ),
+                      },{
+                        label: "Other",
+                        icon: (
+                          <CheckBoxIcon
+                            sx={{
+                              fill: colors.ciboInnerGreen[500],
                             }}
                           />
                         ),
@@ -1805,6 +1878,15 @@ const QualityControlPage = (props) => {
                             }}
                           />
                         ),
+                      },{
+                        label: "Other",
+                        icon: (
+                          <CheckBoxIcon
+                            sx={{
+                              fill: colors.ciboInnerGreen[500],
+                            }}
+                          />
+                        ),
                       },
                     ]}
                   />
@@ -1851,6 +1933,15 @@ const QualityControlPage = (props) => {
                             }}
                           />
                         ),
+                      },{
+                        label: "Other",
+                        icon: (
+                          <CheckBoxIcon
+                            sx={{
+                              fill: colors.ciboInnerGreen[500],
+                            }}
+                          />
+                        ),
                       },
                     ]}
                   />
@@ -1891,6 +1982,15 @@ const QualityControlPage = (props) => {
                               color: colors.yoggieRed[500],
                               stroke: colors.yoggieRed[500],
                               strokeWidth: "2",
+                            }}
+                          />
+                        ),
+                      },{
+                        label: "Other",
+                        icon: (
+                          <CheckBoxIcon
+                            sx={{
+                              fill: colors.ciboInnerGreen[500],
                             }}
                           />
                         ),
@@ -2018,6 +2118,15 @@ const QualityControlPage = (props) => {
                             }}
                           />
                         ),
+                      },{
+                        label: "Other",
+                        icon: (
+                          <CheckBoxIcon
+                            sx={{
+                              fill: colors.ciboInnerGreen[500],
+                            }}
+                          />
+                        ),
                       },
                     ]}
                   />
@@ -2064,6 +2173,15 @@ const QualityControlPage = (props) => {
                             }}
                           />
                         ),
+                      },{
+                        label: "Other",
+                        icon: (
+                          <CheckBoxIcon
+                            sx={{
+                              fill: colors.ciboInnerGreen[500],
+                            }}
+                          />
+                        ),
                       },
                     ]}
                   />
@@ -2107,6 +2225,15 @@ const QualityControlPage = (props) => {
                               color: colors.yoggieRed[500],
                               stroke: colors.yoggieRed[500],
                               strokeWidth: "2",
+                            }}
+                          />
+                        ),
+                      },{
+                        label: "Other",
+                        icon: (
+                          <CheckBoxIcon
+                            sx={{
+                              fill: colors.ciboInnerGreen[500],
                             }}
                           />
                         ),
