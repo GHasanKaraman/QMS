@@ -80,7 +80,7 @@ const DashboardPage = (props) => {
     if (userAuth.control(res)) {
       setLocations(res.data.locations);
       setDataSource(res.data.locations);
-      console.log(res.data.locations);
+      //console.log(res.data.locations);
 
       setForms(
         res.data.forms.sort(

@@ -10,7 +10,11 @@ import {
   Box,
   Stack,
 } from "@mui/material";
-import { extractInformations, toStringDate } from "../../utils/helpers";
+import {
+  extractInformations,
+  getTimeRange,
+  toStringDate,
+} from "../../utils/helpers";
 
 import whiteLogo from "../../images/whitelogo.png";
 import moment from "moment-timezone";
@@ -23,7 +27,7 @@ const SummaryPDF = forwardRef((props, ref) => {
   const [description, _d] = useState(props.description);
   const [station, _s] = useState(props.station);
   const [type, _t] = useState(props.type);
-
+  const [timeRange, _tr] = useState(getTimeRange(props.forms));
   return (
     <Box
       ref={ref}
@@ -88,7 +92,7 @@ const SummaryPDF = forwardRef((props, ref) => {
           <TableRow>
             <TableCell variant="head">Start Date</TableCell>
             <TableCell>
-              {toStringDate(forms[0]?.createdAt, {
+              {toStringDate(timeRange?.start, {
                 month: "short",
                 year: "numeric",
                 day: "numeric",
@@ -101,7 +105,7 @@ const SummaryPDF = forwardRef((props, ref) => {
           <TableRow>
             <TableCell variant="head">End Date</TableCell>
             <TableCell>
-              {toStringDate(forms[forms.length - 1]?.createdAt, {
+              {toStringDate(timeRange?.end, {
                 month: "short",
                 year: "numeric",
                 day: "numeric",

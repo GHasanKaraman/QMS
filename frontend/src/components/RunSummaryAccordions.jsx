@@ -22,6 +22,7 @@ const RunSummaryAccordions = ({
   values = {},
   expand = false,
   showExpand = true,
+  title = "All Results",
 }) => {
   const [expanded, setExpanded] = useState(false);
 
@@ -39,7 +40,7 @@ const RunSummaryAccordions = ({
       >
         <AccordionSummary sx={{ fontWeight: 600 }}>
           <Stack direction="row" width="100%" justifyContent="space-between">
-            <div>All Results</div>
+            <div>{title}</div>
             {isForm ? (
               <div>
                 {Object.values(values).filter((value) => value === true)

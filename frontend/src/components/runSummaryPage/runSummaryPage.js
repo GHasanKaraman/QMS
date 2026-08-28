@@ -6,15 +6,21 @@ import {
   Divider,
   Skeleton,
   Stack,
+  Switch,
   Typography,
   useTheme,
 } from "@mui/material";
+import confetti from "canvas-confetti";
 
 import PrintIcon from "@mui/icons-material/Print";
 
 import { ReactComponent as Signature } from "../../images/signature.svg";
 import { tokens } from "../../theme";
-import { toStringDate } from "../../utils/helpers";
+import {
+  extractInformations,
+  getTimeRange,
+  toStringDate,
+} from "../../utils/helpers";
 
 import axios from "../../api/axios";
 import { useSnackbar } from "notistack";
@@ -46,13 +52,21 @@ const RunSummaryPage = (props) => {
   const station = new URLSearchParams(loc.search).get("station");
   const type = new URLSearchParams(loc.search).get("type");
 
+  const [switchStatus, setSwitchStatus] = useState(false);
+
   const [forms, setForms] = useState([]);
+  const [forms1, setForms1] = useState([]);
+  const [forms2, setForms2] = useState([]);
+  const [forms3, setForms3] = useState([]);
+
   const [signedoffForms, setSignedoffForms] = useState([]);
   const [description, setDescription] = useState();
 
   const [loading, setLoading] = useState(true);
 
   const ref = useRef();
+
+  const [dateRange, setDateRange] = useState();
 
   const loadRunSummaryPage = async () => {
     const res = await axios.post("/runsummary", {
@@ -65,7 +79,11 @@ const RunSummaryPage = (props) => {
       const forms = res.data.forms.sort(
         (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
       );
+
+      setDateRange(getTimeRange(forms));
+
       setForms(forms);
+      loadBatchForms(forms);
       setSignedoffForms(forms.filter((form) => form.signoffs.length > 0));
       setDescription(res.data.desc[0]);
       setLoading(false);
@@ -77,6 +95,33 @@ const RunSummaryPage = (props) => {
         variant: "error",
       });
     }
+  };
+
+  function groupByShiftFirstType(forms) {
+    const result = { 1: [], 2: [], 3: [] };
+    const seen = { 1: new Set(), 2: new Set(), 3: new Set() };
+
+    for (const form of forms) {
+      const { shift, type } = form;
+      if (!seen[shift].has(type)) {
+        seen[shift].add(type);
+        result[shift].push(form);
+      }
+    }
+
+    return result;
+  }
+
+  const loadBatchForms = (forms) => {
+    forms.forEach((form) => {
+      const { type } = extractInformations(form);
+      form.type = type;
+    });
+
+    const result = groupByShiftFirstType(forms);
+    setForms1(result[1]);
+    setForms2(result[2]);
+    setForms3(result[3]);
   };
 
   useEffect(() => {
@@ -102,7 +147,11 @@ const RunSummaryPage = (props) => {
         description={description}
         ref={ref}
       />
-      <Header title="Quality Run Summary" />
+      <Header
+        title={
+          !switchStatus ? "Quality Run Summary" : "Batch Record Run Summary"
+        }
+      />
       <Accordion expanded={true}>
         <AccordionSummary
           disableIcon
@@ -170,7 +219,7 @@ const RunSummaryPage = (props) => {
                 " " +
                 type +
                 " • " +
-                toStringDate(forms[forms.length - 1]?.createdAt, {
+                toStringDate(dateRange?.start, {
                   month: "short",
                   year: "numeric",
                   day: "numeric",
@@ -178,7 +227,7 @@ const RunSummaryPage = (props) => {
                   minute: "numeric",
                 }) +
                 " - " +
-                toStringDate(forms[0]?.createdAt, {
+                toStringDate(dateRange?.end, {
                   month: "short",
                   year: "numeric",
                   day: "numeric",
@@ -193,41 +242,62 @@ const RunSummaryPage = (props) => {
               justifyContent="space-between"
               alignItems="center"
             >
-              <Stack spacing={0.2} direction="row" width="100%">
-                {forms.map((form) => {
-                  return (
-                    <div
-                      key={form._id}
-                      style={{
-                        minWidth: "8%",
-                        height: "20px",
-                        background:
-                          form.status === "passed"
-                            ? colors.ciboInnerGreen[500]
-                            : colors.yoggieRed[500],
+              <Stack direction="row" alignContent="space-between" width="100%">
+                <Stack spacing={0.2} direction="row" width="100%">
+                  {forms.map((form) => {
+                    return (
+                      <div
+                        key={form._id}
+                        style={{
+                          minWidth:
+                            forms.length > 25
+                              ? "3%"
+                              : forms.length > 20
+                                ? "4%"
+                                : forms.length > 15
+                                  ? "5%"
+                                  : "7%",
+                          height: "20px",
+                          background:
+                            form.status === "passed"
+                              ? colors.ciboInnerGreen[500]
+                              : colors.yoggieRed[500],
+                        }}
+                      />
+                    );
+                  })}
+                </Stack>
+                <Stack direction="row" spacing={2} alignItems="center">
+                  <Stack direction="row" spacing={0.2}>
+                    <Switch
+                      color="secondary"
+                      onChange={() => {
+                        setSwitchStatus(!switchStatus);
+                        if (switchStatus === false) confetti();
                       }}
                     />
-                  );
-                })}
-              </Stack>
-              <Stack direction="row" spacing={2}>
-                <div
-                  style={{
-                    width: "25px",
-                    height: "25px",
-                    borderRadius: "15px",
-                    background: forms.every((form) => form.status === "passed")
-                      ? colors.ciboInnerGreen[500]
-                      : colors.yoggieRed[500],
-                  }}
-                />
-                <Signature
-                  width={25}
-                  style={{ marginRight: 10 }}
-                  stroke={getSignatureState(forms)}
-                  fill={getSignatureState(forms)}
-                  strokeWidth="10px"
-                />
+                  </Stack>
+
+                  <div
+                    style={{
+                      width: "25px",
+                      height: "25px",
+                      borderRadius: "15px",
+                      background: forms.every(
+                        (form) => form.status === "passed",
+                      )
+                        ? colors.ciboInnerGreen[500]
+                        : colors.yoggieRed[500],
+                    }}
+                  />
+                  <Signature
+                    width={25}
+                    style={{ marginRight: 10 }}
+                    stroke={getSignatureState(forms)}
+                    fill={getSignatureState(forms)}
+                    strokeWidth="10px"
+                  />
+                </Stack>
               </Stack>
             </Stack>
           </Stack>
@@ -273,7 +343,15 @@ const RunSummaryPage = (props) => {
           </Stack>
         </AccordionDetails>
       </Accordion>
-      <RunSummaryAccordions isForm={false} forms={forms} />
+      {!switchStatus ? (
+        <RunSummaryAccordions isForm={false} forms={forms} />
+      ) : (
+        <Stack>
+          <RunSummaryAccordions isForm={false} forms={forms1} title="Shift 1" />
+          <RunSummaryAccordions isForm={false} forms={forms2} title="Shift 2" />
+          <RunSummaryAccordions isForm={false} forms={forms3} title="Shift 3" />
+        </Stack>
+      )}
     </Box>
   ) : (
     <Stack alignItems="center" width="100%">

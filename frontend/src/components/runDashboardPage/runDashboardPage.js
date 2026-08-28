@@ -26,7 +26,11 @@ import Header from "../Header";
 import axios from "../../api/axios";
 import { tokens } from "../../theme";
 import userAuth from "../../utils/userAuth";
-import { extractUniqueProducts, toStringDate } from "../../utils/helpers";
+import {
+  extractUniqueProducts,
+  getTimeRange,
+  toStringDate,
+} from "../../utils/helpers";
 import FormCard from "../FormCard";
 
 import { ReactComponent as Signature } from "../../images/signature.svg";
@@ -60,6 +64,7 @@ const RunDashboardPage = (props) => {
   const [selectedProduct, setSelectedProduct] = useState();
   const [selectedStart, setSelectedStart] = useState();
   const [selectedEnd, setSelectedEnd] = useState();
+  const [timeRange, setTimeRange] = useState();
 
   const getDates = () => {
     const _days = [];
@@ -81,14 +86,14 @@ const RunDashboardPage = (props) => {
       setForms(_forms);
       setCurrentRun(_forms[0]?.product);
       setDescriptions(res.data.desc[0]);
-      setCurrentForms(
-        _forms.filter(
-          (form) =>
-            form.product === _forms[0].product &&
-            moment(form.createdAt).format("YYYY-MM-DD") ===
-              moment().format("YYYY-MM-DD"),
-        ),
+      const tempCurrForms = _forms.filter(
+        (form) =>
+          form.product === _forms[0].product &&
+          moment(form.createdAt).format("YYYY-MM-DD") ===
+            moment().format("YYYY-MM-DD"),
       );
+      setCurrentForms(tempCurrForms);
+      setTimeRange(getTimeRange(tempCurrForms));
       setProducts(extractUniqueProducts(_forms));
       getDates();
     } else {
@@ -351,18 +356,15 @@ const RunDashboardPage = (props) => {
                   />
                 </Stack>
                 <Typography>
-                  {toStringDate(
-                    currentForms[currentForms.length - 1]?.createdAt,
-                    {
-                      month: "short",
-                      year: "numeric",
-                      day: "numeric",
-                      hour: "numeric",
-                      minute: "numeric",
-                    },
-                  ) +
+                  {toStringDate(timeRange?.start, {
+                    month: "short",
+                    year: "numeric",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "numeric",
+                  }) +
                     " - " +
-                    toStringDate(currentForms[0]?.createdAt, {
+                    toStringDate(timeRange?.end, {
                       month: "short",
                       year: "numeric",
                       day: "numeric",
@@ -441,6 +443,7 @@ const RunDashboardPage = (props) => {
                       moment(i.createdAt).format("YYYY-MM-DD") === day,
                   );
                   if (_forms.length > 0) {
+                    const _timeRange = getTimeRange(_forms);
                     return (
                       <Stack key={day + product}>
                         <Stack
@@ -461,7 +464,7 @@ const RunDashboardPage = (props) => {
                         </Stack>
 
                         <Typography>
-                          {toStringDate(_forms[_forms.length - 1]?.createdAt, {
+                          {toStringDate(_timeRange?.start, {
                             month: "short",
                             year: "numeric",
                             day: "numeric",
@@ -469,7 +472,7 @@ const RunDashboardPage = (props) => {
                             minute: "numeric",
                           }) +
                             " - " +
-                            toStringDate(_forms[0]?.createdAt, {
+                            toStringDate(_timeRange?.end, {
                               month: "short",
                               year: "numeric",
                               day: "numeric",

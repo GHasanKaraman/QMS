@@ -13,6 +13,7 @@ import {
   Pagination,
   Skeleton,
   Stack,
+  Switch,
   TextField,
   Typography,
 } from "@mui/material";
@@ -27,16 +28,23 @@ import Header from "../Header";
 import { ReactComponent as Signature } from "../../images/signature.svg";
 import axios from "../../api/axios";
 import userAuth from "../../utils/userAuth";
-import { extractUniqueProducts, toStringDate } from "../../utils/helpers";
+import {
+  extractUniqueProducts,
+  getTimeRange,
+  toStringDate,
+} from "../../utils/helpers";
 import moment from "moment-timezone";
+import DateRangePicker, { useRangePicker } from "../DateRangePicker.jsx";
 
 const SignoffDashboard = (props) => {
+  const [getter, setter] = useRangePicker();
   const params = useParams();
   const loc = useLocation();
   const { id } = params;
 
   const page = new URLSearchParams(loc.search).get("page");
   const station = new URLSearchParams(loc.search).get("station");
+  const itemCode = new URLSearchParams(loc.search).get("itemCode");
   const before = new URLSearchParams(loc.search).get("before");
   const after = new URLSearchParams(loc.search).get("after");
 
@@ -48,11 +56,14 @@ const SignoffDashboard = (props) => {
   const [openInfo, setOpenInfo] = useState(false);
   const [openFilters, setOpenFilters] = useState(false);
 
+  const [switchStatus, setSwitchStatus] = useState(false);
+
   const [stations, setStations] = useState([]);
   const [forms, setForms] = useState([]);
   const [description, setDescription] = useState();
 
   const [formStation, setStation] = useState(station || null);
+  const [formItemCode, setItemCode] = useState(itemCode || "");
   const [formAfter, setAfter] = useState(after || "");
   const [formBefore, setBefore] = useState(before || "");
 
@@ -69,6 +80,7 @@ const SignoffDashboard = (props) => {
     const res = await axios.post("/signoff/dashboard", {
       page: currentPage,
       station,
+      itemCode,
       before,
       after,
     });
@@ -120,6 +132,9 @@ const SignoffDashboard = (props) => {
 
     if (station && station !== null) {
       path += "&station=" + station;
+    }
+    if (itemCode && itemCode?.trim() !== "") {
+      path += "&itemCode=" + itemCode;
     }
     if (after && after?.trim() !== "") {
       path += "&after=" + after;
@@ -192,19 +207,43 @@ const SignoffDashboard = (props) => {
             </Typography>
             <IconButton
               onClick={() => {
-                var path = "/signoff/filters?page=1";
+                if (
+                  formStation === null &&
+                  formItemCode === "" &&
+                  getter.startDate === "" &&
+                  getter.endDate === "" &&
+                  formAfter?.trim() === "" &&
+                  formBefore?.trim() === ""
+                ) {
+                } else {
+                  var path = "/signoff/filters?page=1";
 
-                if (formStation && formStation !== null) {
-                  path += "&station=" + formStation;
+                  if (formStation && formStation !== null) {
+                    path += "&station=" + formStation;
+                  }
+                  if (formItemCode && formItemCode?.trim() !== "") {
+                    path += "&itemCode=" + formItemCode;
+                  }
+                  if (switchStatus) {
+                    const { startDate, endDate } = getter;
+                    const tempAfter =
+                      moment(startDate).diff(moment(), "days") * -1;
+                    const tempBefore =
+                      moment(endDate).diff(moment(), "days") * -1;
+                    path += "&after=" + tempAfter;
+                    path += "&before=" + tempBefore;
+                  } else {
+                    if (formAfter && formAfter?.trim() !== "") {
+                      path += "&after=" + formAfter;
+                    }
+                    if (formBefore && formBefore?.trim() !== "") {
+                      path += "&before=" + formBefore;
+                    }
+                  }
+
+                  navigate(path, { replace: true });
+                  navigate(0);
                 }
-                if (formAfter && formAfter?.trim() !== "") {
-                  path += "&after=" + formAfter;
-                }
-                if (formBefore && formBefore?.trim() !== "") {
-                  path += "&before=" + formBefore;
-                }
-                navigate(path, { replace: true });
-                navigate(0);
               }}
             >
               <PlayArrow
@@ -233,31 +272,56 @@ const SignoffDashboard = (props) => {
                 />
               )}
             />
+            <TextField
+              fullWidth={true}
+              placeholder="Item Code"
+              value={formItemCode}
+              onChange={(e) => {
+                setItemCode(e.target.value);
+              }}
+              variant="outlined"
+              InputProps={{ sx: { fontSize: 16 } }}
+            />
           </Stack>
           <Stack spacing={1} pt={2}>
-            <Typography variant="h3" pl={2} fontWeight={700}>
-              DATE PARAMETERS
-            </Typography>
-            <TextField
-              fullWidth={true}
-              placeholder="Run Started After (# Days Ago)"
-              value={formAfter}
-              onChange={(e) => {
-                setAfter(e.target.value);
-              }}
-              variant="outlined"
-              InputProps={{ sx: { fontSize: 16 } }}
-            />
-            <TextField
-              fullWidth={true}
-              placeholder="Run Started Before (# Days Ago)"
-              value={formBefore}
-              onChange={(e) => {
-                setBefore(e.target.value);
-              }}
-              variant="outlined"
-              InputProps={{ sx: { fontSize: 16 } }}
-            />
+            <Stack direction="row" justifyContent="space-between">
+              <Typography variant="h3" pl={2} fontWeight={700}>
+                DATE PARAMETERS
+              </Typography>
+              <Switch
+                color="secondary"
+                onChange={(e) => {
+                  setSwitchStatus(!switchStatus);
+                }}
+              />
+            </Stack>
+            {switchStatus ? (
+              <DateRangePicker getter={getter} setter={setter} />
+            ) : undefined}
+            {!switchStatus ? (
+              <Stack spacing={1}>
+                <TextField
+                  fullWidth={true}
+                  placeholder="Run Started After (# Days Ago)"
+                  value={formAfter}
+                  onChange={(e) => {
+                    setAfter(e.target.value);
+                  }}
+                  variant="outlined"
+                  InputProps={{ sx: { fontSize: 16 } }}
+                />
+                <TextField
+                  fullWidth={true}
+                  placeholder="Run Started Before (# Days Ago)"
+                  value={formBefore}
+                  onChange={(e) => {
+                    setBefore(e.target.value);
+                  }}
+                  variant="outlined"
+                  InputProps={{ sx: { fontSize: 16 } }}
+                />
+              </Stack>
+            ) : undefined}
           </Stack>
         </DialogContent>
       </Dialog>
@@ -482,6 +546,8 @@ const SignoffDashboard = (props) => {
                       moment(group[0].createdAt).format("YYYY-MM-DD")
                   ] = true;
 
+                  const currentRange = getTimeRange(currentRun);
+
                   return (
                     <Box
                       width="100%"
@@ -505,11 +571,9 @@ const SignoffDashboard = (props) => {
                               "/runsignoff/" +
                                 encodeURIComponent(product) +
                                 "?dateStart=" +
-                                moment(currentRun[0]?.createdAt).format() +
+                                moment(currentRange?.start).format() +
                                 "&dateEnd=" +
-                                moment(
-                                  currentRun[currentRun.length - 1]?.createdAt,
-                                ).format() +
+                                moment(currentRange?.end).format() +
                                 "&type=" +
                                 "" +
                                 "&station=" +
@@ -531,7 +595,7 @@ const SignoffDashboard = (props) => {
                                 <Typography>
                                   {station +
                                     " • " +
-                                    toStringDate(currentRun[0]?.createdAt, {
+                                    toStringDate(currentRange?.start, {
                                       month: "short",
                                       year: "numeric",
                                       day: "numeric",
@@ -539,17 +603,13 @@ const SignoffDashboard = (props) => {
                                       minute: "numeric",
                                     }) +
                                     " - " +
-                                    toStringDate(
-                                      currentRun[currentRun.length - 1]
-                                        ?.createdAt,
-                                      {
-                                        month: "short",
-                                        year: "numeric",
-                                        day: "numeric",
-                                        hour: "numeric",
-                                        minute: "numeric",
-                                      },
-                                    )}
+                                    toStringDate(currentRange?.end, {
+                                      month: "short",
+                                      year: "numeric",
+                                      day: "numeric",
+                                      hour: "numeric",
+                                      minute: "numeric",
+                                    })}
                                 </Typography>
                               </Stack>
                               <Stack

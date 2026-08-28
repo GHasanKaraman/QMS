@@ -108,7 +108,7 @@ const Sidebar = () => {
         return true;
       }
       return false;
-    })()
+    })(),
   );
   const [selected, setSelected] = useState("Dashboard");
   const [user, setUser] = useRecoilState(userInformations);
@@ -167,7 +167,7 @@ const Sidebar = () => {
             />
             {!isCollapsed ? (
               <Typography variant="h6" color={colors.grey[100]}>
-                v1.0.9
+                v1.0.10
               </Typography>
             ) : null}
           </div>

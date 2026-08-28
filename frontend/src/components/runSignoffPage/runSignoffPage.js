@@ -21,7 +21,7 @@ import {
 
 import { ReactComponent as Signature } from "../../images/signature.svg";
 import { tokens } from "../../theme";
-import { toStringDate } from "../../utils/helpers";
+import { getTimeRange, toStringDate } from "../../utils/helpers";
 
 import { Accordion as CustomAccordion } from "../Accordion";
 
@@ -81,7 +81,7 @@ const RunSignoffPage = (props) => {
   const [clicked, setClicked] = useState(false);
 
   const [user] = useRecoilState(userInformations);
-
+  const [timeRange, setTimeRange] = useState();
   const initiateChecks = (forms) => {
     const temp = {};
     forms
@@ -104,6 +104,7 @@ const RunSignoffPage = (props) => {
         (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
       );
       setForms(forms);
+      setTimeRange(getTimeRange(forms));
       setDescription(res.data.desc[0]);
       setSignedoffForms(forms.filter((form) => form.signoffs.length > 0));
       initiateChecks(forms);
@@ -432,7 +433,7 @@ const RunSignoffPage = (props) => {
                     " " +
                     type +
                     " • " +
-                    toStringDate(forms[0]?.createdAt, {
+                    toStringDate(timeRange?.start, {
                       month: "short",
                       year: "numeric",
                       day: "numeric",
@@ -440,7 +441,7 @@ const RunSignoffPage = (props) => {
                       minute: "numeric",
                     }) +
                     " - " +
-                    toStringDate(forms[forms.length - 1]?.createdAt, {
+                    toStringDate(timeRange?.end, {
                       month: "short",
                       year: "numeric",
                       day: "numeric",

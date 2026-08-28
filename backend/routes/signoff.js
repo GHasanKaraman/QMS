@@ -56,7 +56,7 @@ router.post("/signoff/dashboard/stations", async (req, res) => {
 
 router.post("/signoff/dashboard", async (req, res) => {
   try {
-    const { page, station, before, after } = req.body;
+    const { page, station, itemCode, before, after } = req.body;
 
     const limit = 4;
 
@@ -82,6 +82,10 @@ router.post("/signoff/dashboard", async (req, res) => {
       filters.station = station;
     }
 
+    if (itemCode !== null) {
+      filters.product = { $regex: itemCode, $options: "i" };
+    }
+
     const pipeline = [
       {
         $lookup: {
@@ -100,24 +104,19 @@ router.post("/signoff/dashboard", async (req, res) => {
     const data = await sendQAC("stations", undefined, "GET", undefined);
 
     const ratioForms = await ratioFormModel.aggregate(pipeline);
-    const qualityControlForms = await qualityControlFormModel.aggregate(
-      pipeline
-    );
-    const pgQualityControlForms = await pgQualityControlFormModel.aggregate(
-      pipeline
-    );
+    const qualityControlForms =
+      await qualityControlFormModel.aggregate(pipeline);
+    const pgQualityControlForms =
+      await pgQualityControlFormModel.aggregate(pipeline);
     const metalDetectorForms = await metalDetectorFormModel.aggregate(pipeline);
-    const labelInspectionForms = await labelInspectionFormModel.aggregate(
-      pipeline
-    );
+    const labelInspectionForms =
+      await labelInspectionFormModel.aggregate(pipeline);
     const xRayForms = await xRayFormModel.aggregate(pipeline);
-    const preOperationalForms = await preOperationalFormModel.aggregate(
-      pipeline
-    );
+    const preOperationalForms =
+      await preOperationalFormModel.aggregate(pipeline);
     const mixingQualityForms = await mixingQualityFormModel.aggregate(pipeline);
-    const roastingQualityForms = await roastingQualityFormModel.aggregate(
-      pipeline
-    );
+    const roastingQualityForms =
+      await roastingQualityFormModel.aggregate(pipeline);
     const lotInspectionForms = await lotInspectionFormModel.aggregate(pipeline);
     const ccpForms = await ccpFormModel.aggregate(pipeline);
 
@@ -155,7 +154,7 @@ router.post("/signoff/dashboard", async (req, res) => {
     const totalCount = groupedRecords.length;
     const totalPages = Math.ceil(totalCount / limit);
     const totalForms = forms.filter(
-      (form) => form.signoffs.length === 0
+      (form) => form.signoffs.length === 0,
     ).length;
 
     const products = Array.from(new Set(forms.map((form) => form.product)));

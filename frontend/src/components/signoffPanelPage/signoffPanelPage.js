@@ -10,6 +10,7 @@ import {
   DialogTitle,
   DialogContent,
   Typography,
+  Switch,
 } from "@mui/material";
 import { useTheme } from "@emotion/react";
 import { useSnackbar } from "notistack";
@@ -22,8 +23,12 @@ import userAuth from "../../utils/userAuth";
 
 import { ReactComponent as Signature } from "../../images/signature.svg";
 import { FilterList, InfoRounded, PlayArrow } from "@mui/icons-material";
+import DateRangePicker, { useRangePicker } from "../DateRangePicker";
+import moment from "moment-timezone";
 
 const SignOffPanelPage = (props) => {
+  const [getter, setter] = useRangePicker();
+
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
@@ -32,7 +37,10 @@ const SignOffPanelPage = (props) => {
   const [openInfo, setOpenInfo] = useState(false);
   const [openFilters, setOpenFilters] = useState(false);
 
+  const [switchStatus, setSwitchStatus] = useState(false);
+
   const [station, setStation] = useState(null);
+  const [itemCode, setItemCode] = useState("");
   const [after, setAfter] = useState("");
   const [before, setBefore] = useState("");
 
@@ -110,18 +118,41 @@ const SignOffPanelPage = (props) => {
             </Typography>
             <IconButton
               onClick={() => {
-                var path = "/signoff/filters?page=1";
+                if (
+                  station === null &&
+                  itemCode === "" &&
+                  getter.startDate === "" &&
+                  getter.endDate === "" &&
+                  after?.trim() === "" &&
+                  before?.trim() === ""
+                ) {
+                } else {
+                  var path = "/signoff/filters?page=1";
 
-                if (station && station !== null) {
-                  path += "&station=" + station;
+                  if (station && station !== null) {
+                    path += "&station=" + station;
+                  }
+                  if (itemCode && itemCode?.trim() !== "") {
+                    path += "&itemCode=" + itemCode;
+                  }
+                  if (switchStatus) {
+                    const { startDate, endDate } = getter;
+                    const tempAfter =
+                      moment(startDate).diff(moment(), "days") * -1;
+                    const tempBefore =
+                      moment(endDate).diff(moment(), "days") * -1;
+                    path += "&after=" + tempAfter;
+                    path += "&before=" + tempBefore;
+                  } else {
+                    if (after && after?.trim() !== "") {
+                      path += "&after=" + after;
+                    }
+                    if (before && before?.trim() !== "") {
+                      path += "&before=" + before;
+                    }
+                  }
+                  navigate(path);
                 }
-                if (after && after?.trim() !== "") {
-                  path += "&after=" + after;
-                }
-                if (before && before?.trim() !== "") {
-                  path += "&before=" + before;
-                }
-                navigate(path);
               }}
             >
               <PlayArrow
@@ -150,31 +181,56 @@ const SignOffPanelPage = (props) => {
                 />
               )}
             />
+            <TextField
+              fullWidth={true}
+              placeholder="Item Code"
+              value={itemCode}
+              onChange={(e) => {
+                setItemCode(e.target.value);
+              }}
+              variant="outlined"
+              InputProps={{ sx: { fontSize: 16 } }}
+            />
           </Stack>
           <Stack spacing={1} pt={2}>
-            <Typography variant="h3" pl={2} fontWeight={700}>
-              DATE PARAMETERS
-            </Typography>
-            <TextField
-              fullWidth={true}
-              placeholder="Run Started After (# Days Ago)"
-              value={after}
-              onChange={(e) => {
-                setAfter(e.target.value);
-              }}
-              variant="outlined"
-              InputProps={{ sx: { fontSize: 16 } }}
-            />
-            <TextField
-              fullWidth={true}
-              placeholder="Run Started Before (# Days Ago)"
-              value={before}
-              onChange={(e) => {
-                setBefore(e.target.value);
-              }}
-              variant="outlined"
-              InputProps={{ sx: { fontSize: 16 } }}
-            />
+            <Stack direction="row" justifyContent="space-between">
+              <Typography variant="h3" pl={2} fontWeight={700}>
+                DATE PARAMETERS
+              </Typography>
+              <Switch
+                color="secondary"
+                onChange={(e) => {
+                  setSwitchStatus(!switchStatus);
+                }}
+              />
+            </Stack>
+            {switchStatus ? (
+              <DateRangePicker getter={getter} setter={setter} />
+            ) : undefined}
+            {!switchStatus ? (
+              <Stack spacing={1}>
+                <TextField
+                  fullWidth={true}
+                  placeholder="Run Started After (# Days Ago)"
+                  value={after}
+                  onChange={(e) => {
+                    setAfter(e.target.value);
+                  }}
+                  variant="outlined"
+                  InputProps={{ sx: { fontSize: 16 } }}
+                />
+                <TextField
+                  fullWidth={true}
+                  placeholder="Run Started Before (# Days Ago)"
+                  value={before}
+                  onChange={(e) => {
+                    setBefore(e.target.value);
+                  }}
+                  variant="outlined"
+                  InputProps={{ sx: { fontSize: 16 } }}
+                />
+              </Stack>
+            ) : undefined}
           </Stack>
         </DialogContent>
       </Dialog>

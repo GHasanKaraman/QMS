@@ -8,9 +8,24 @@ export const toStringDate = (date, format) => {
 
 export const extractUniqueProducts = (...forms) => {
   return Array.from(
-    new Set(forms.flatMap((item) => item.map((form) => form.product)))
+    new Set(forms.flatMap((item) => item.map((form) => form.product))),
   );
 };
+
+export function getTimeRange(forms) {
+  if (!forms.length) return { start: null, end: null };
+
+  let minForm = forms[0];
+  let maxForm = forms[0];
+  console.log(forms);
+  for (const form of forms) {
+    const t = new Date(form.createdAt).getTime();
+    if (t < new Date(minForm.createdAt).getTime()) minForm = form;
+    if (t > new Date(maxForm.createdAt).getTime()) maxForm = form;
+  }
+
+  return { start: minForm.createdAt, end: maxForm.createdAt };
+}
 
 export const extractInformations = (form) => {
   let info = undefined;
