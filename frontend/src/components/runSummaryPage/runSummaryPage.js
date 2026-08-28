@@ -250,11 +250,11 @@ const RunSummaryPage = (props) => {
                         key={form._id}
                         style={{
                           minWidth:
-                            forms.length > 25
+                            forms.length >= 25
                               ? "3%"
-                              : forms.length > 20
+                              : forms.length >= 20
                                 ? "4%"
-                                : forms.length > 15
+                                : forms.length >= 15
                                   ? "5%"
                                   : "7%",
                           height: "20px",
