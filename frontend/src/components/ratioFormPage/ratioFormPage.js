@@ -39,6 +39,7 @@ const RatioFormPage = (props) => {
 
   const [stations, setStations] = useState([]);
   const [products, setProducts] = useState([]);
+  const [mixes, setMixes] = useState([]);
 
   const [productRecipe, setProductRecipe] = useState(null);
   const [uniqueGroups, setUniqueGroups] = useState(null);
@@ -135,6 +136,7 @@ const RatioFormPage = (props) => {
       station: null,
       shift: null,
       product: null,
+      mix: null,
       weights: {},
     },
     onSubmit: handleSubmit,
@@ -153,8 +155,19 @@ const RatioFormPage = (props) => {
               }
             }
             return false;
-          }
+          },
         ),
+      mix: yup
+        .mixed()
+        .nullable()
+        .test("MIX_VALIDATION", "Please select the mix!", (value) => {
+          if (value) {
+            if (value?.part != "") {
+              return true;
+            }
+          }
+          return false;
+        }),
       weights: yup
         .mixed()
         .nullable()
@@ -182,6 +195,30 @@ const RatioFormPage = (props) => {
     }),
   });
 
+  const loadMixes = async (product) => {
+    const res = await axios.post("/ratio/recipe", {
+      product,
+    });
+    if (userAuth.control(res)) {
+      if (res?.data) {
+        setMixes(res.data.recipe.mixes);
+      } else {
+        switch (res.response?.status) {
+          case 404:
+            enqueueSnackbar("Product is wrong!", {
+              variant: "error",
+            });
+            break;
+          default:
+            enqueueSnackbar("Something went wrong with the server!", {
+              variant: "error",
+            });
+            break;
+        }
+      }
+    }
+  };
+
   const loadRecipe = async (product) => {
     const res = await axios.post("/ratio/recipe", {
       product,
@@ -190,7 +227,7 @@ const RatioFormPage = (props) => {
       if (res?.data) {
         setProductRecipe(res.data.recipe);
         const uniqueGroups = Array.from(
-          new Set(res.data.recipe.recipe.map(({ groupName }) => groupName))
+          new Set(res.data.recipe.recipe.map(({ groupName }) => groupName)),
         );
 
         const weights = {};
@@ -198,7 +235,7 @@ const RatioFormPage = (props) => {
         uniqueGroups
           .map((group) => {
             return res.data.recipe?.recipe?.filter(
-              ({ groupName }) => groupName === group
+              ({ groupName }) => groupName === group,
             );
           })
           .forEach((item) => {
@@ -235,7 +272,7 @@ const RatioFormPage = (props) => {
               "Something went wrong while saving the form. Ploease try again!",
               {
                 variant: "error",
-              }
+              },
             );
             break;
           default:
@@ -376,9 +413,10 @@ const RatioFormPage = (props) => {
               formik.setFieldValue("station", station);
               formik.setFieldValue("shift", shift);
               formik.setFieldValue("product", value);
-              if (value != null) {
+              formik.setFieldValue("mix", null);
+              if (value !== null) {
                 await loadRecipe(value.partNum);
-                await formOpen("ratio", station, value.partNum, value.planId);
+                await loadMixes(value.partNum);
               }
             }}
             value={formik.values.product}
@@ -394,6 +432,40 @@ const RatioFormPage = (props) => {
                 name="product"
                 error={!!formik.touched.product && !!formik.errors.product}
                 helperText={formik.touched.product && formik.errors.product}
+              />
+            )}
+          />
+          <Autocomplete
+            getOptionLabel={({ part, desc }) => part + " - " + desc}
+            defaultValue={mixes[0]}
+            disabled={mixes?.length === 0}
+            onChange={async (_, value) => {
+              const station = formik.values.station;
+              const shift = formik.values.shift;
+              const product = formik.values.product;
+              formik.resetForm();
+              formik.setFieldValue("station", station);
+              formik.setFieldValue("shift", shift);
+              formik.setFieldValue("product", product);
+              formik.setFieldValue("mix", value);
+              if (value != null) {
+                await loadRecipe(value.part);
+                await formOpen("ratio", station, value.partNum, value.planId);
+              }
+            }}
+            value={formik.values.mix}
+            sx={{ marginBottom: "30px", gridColumn: "span 4" }}
+            options={mixes}
+            getOptionKey={(item) => item?.part}
+            onBlur={formik.handleBlur}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                variant="filled"
+                label="Mix"
+                name="mix"
+                error={!!formik.touched.mix && !!formik.errors.mix}
+                helperText={formik.touched.mix && formik.errors.mix}
               />
             )}
           />
@@ -439,7 +511,7 @@ const RatioFormPage = (props) => {
           <Divider />
           {uniqueGroups?.map((group, index) => {
             const details = productRecipe?.recipe?.filter(
-              ({ groupName }) => groupName === group
+              ({ groupName }) => groupName === group,
             );
 
             return (

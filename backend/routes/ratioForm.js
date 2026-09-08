@@ -71,19 +71,19 @@ router.post("/ratio/recipe", async (req, res) => {
 
 router.post("/ratio/add", async (req, res) => {
   try {
-    const { station, product, weights, shift } = req.body;
+    const { station, product, weights, shift, mix } = req.body;
     var status = true;
 
     const totalWeight = Object.values(weights).reduce(
       (prev, curr) => prev + curr.weight * 1.0,
-      0
+      0,
     );
 
     Object.values(weights).forEach((weight) => {
-      var percentage = 5;
+      var percentage = 0.05;
 
       if (station.includes("MIX")) {
-        percentage = 3;
+        percentage = 0.03;
       }
 
       const toleranceMin = weight.ratio - percentage;
@@ -104,6 +104,7 @@ router.post("/ratio/add", async (req, res) => {
       const form = await ratioFormModel.create({
         recipe: weights,
         shift,
+        mix: mix.part,
         station,
         product: product.partNum,
         status,
@@ -115,6 +116,7 @@ router.post("/ratio/add", async (req, res) => {
         await sendQAC("formSubmit", {
           formType: "ratio",
           station: station,
+          mix: mix.part,
           product: product.partNum,
           ip: req.ip,
           username: req.username,

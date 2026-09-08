@@ -38,8 +38,8 @@ const RatioAccordion = ({ id, expanded, isForm, onChange, value }) => {
       setTotalWeight(
         Object.values(res.data.ratioForm.recipe).reduce(
           (prev, curr) => prev + curr.weight * 1.0,
-          0
-        )
+          0,
+        ),
       );
     } else {
       navigate("/login");
@@ -128,7 +128,10 @@ const RatioAccordion = ({ id, expanded, isForm, onChange, value }) => {
           <Label title="QC" subtitle={data?.username} />
         </Stack>
         <Divider />
-
+        <Typography fontWeight={600} fontSize={20}>
+          {data?.mix}
+        </Typography>
+        <Divider />
         <Box
           mt="10px"
           display="grid"
@@ -151,9 +154,9 @@ const RatioAccordion = ({ id, expanded, isForm, onChange, value }) => {
           const groupName = group.includes("null") ? "?" : group;
           const ratio = recipe.weight / totalWeight;
 
-          var tolerance = 5;
+          var tolerance = 0.05;
           if (data?.station.includes("MIX")) {
-            tolerance = 3;
+            tolerance = 0.03;
           }
           const lowerbound = recipe.ratio - tolerance;
           const upperbound = recipe.ratio + tolerance;
