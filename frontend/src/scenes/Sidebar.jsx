@@ -167,7 +167,7 @@ const Sidebar = () => {
             />
             {!isCollapsed ? (
               <Typography variant="h6" color={colors.grey[100]}>
-                v1.0.10
+                v1.0.11
               </Typography>
             ) : null}
           </div>
