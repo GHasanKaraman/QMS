@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const ratioFormSchema = new mongoose.Schema(
   {
     station: { type: String, required: true },
-    mix: { type: String, required: true },
+    mix: { type: String, default: "" },
     shift: { type: String, required: true },
     product: { type: String, required: true },
     username: { type: String, required: true },

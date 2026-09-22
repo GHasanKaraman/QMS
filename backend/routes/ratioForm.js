@@ -104,7 +104,7 @@ router.post("/ratio/add", async (req, res) => {
       const form = await ratioFormModel.create({
         recipe: weights,
         shift,
-        mix: mix.part,
+        mix: mix?.part,
         station,
         product: product.partNum,
         status,
@@ -116,7 +116,7 @@ router.post("/ratio/add", async (req, res) => {
         await sendQAC("formSubmit", {
           formType: "ratio",
           station: station,
-          mix: mix.part,
+          mix: mix?.part,
           product: product.partNum,
           ip: req.ip,
           username: req.username,

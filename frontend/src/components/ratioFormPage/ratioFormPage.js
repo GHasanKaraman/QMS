@@ -166,6 +166,9 @@ const RatioFormPage = (props) => {
               return true;
             }
           }
+          if (formik.values.station && formik.values.station.includes("MIX")) {
+            return true;
+          }
           return false;
         }),
       weights: yup
@@ -487,7 +490,10 @@ const RatioFormPage = (props) => {
               productRecipe === null ||
               productRecipe?.recipe?.length === 0 ||
               productRecipe?.err ||
-              formik.values.product == null
+              formik.values.product == null ||
+              (formik.values.mix == null &&
+                formik.values.station &&
+                !formik.values.station.includes("MIX"))
                 ? "none"
                 : "block",
           }}
