@@ -491,9 +491,7 @@ const RatioFormPage = (props) => {
               productRecipe?.recipe?.length === 0 ||
               productRecipe?.err ||
               formik.values.product == null ||
-              (formik.values.mix == null &&
-                formik.values.station &&
-                !formik.values.station.includes("MIX"))
+              mixes == null 
                 ? "none"
                 : "block",
           }}
