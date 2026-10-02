@@ -166,7 +166,7 @@ const RatioFormPage = (props) => {
               return true;
             }
           }
-          if (formik.values.station && formik.values.station.includes("MIX")) {
+          if (formik.values.station && mixes !== null) {
             return true;
           }
           return false;
@@ -491,7 +491,7 @@ const RatioFormPage = (props) => {
               productRecipe?.recipe?.length === 0 ||
               productRecipe?.err ||
               formik.values.product == null ||
-              mixes == null 
+              mixes == null
                 ? "none"
                 : "block",
           }}
