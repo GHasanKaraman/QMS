@@ -67,6 +67,18 @@ export const extractInformations = (form) => {
       link: "/ratio/" + form._id,
       title: " Mixing Ratio Form",
     };
+  } else if (form.leakLeftBeginning) {
+    info = {
+      type: "leaktest",
+      link: "/leaktest/" + form._id,
+      title: "Leak Test",
+    };
+  } else if (form.nitrogenLeftBeginning) {
+    info = {
+      type: "nitrogentest",
+      link: "/nitrogentest/" + form._id,
+      title: "Nitrogen Test",
+    };
   } else if (form.itemCode1) {
     info = {
       type: "lotinspection",

@@ -35,6 +35,10 @@ import SignoffSteps from "../components/signoffPanelPage/signoffSteps.js";
 import CCPPage from "../components/ccpPage/ccpPage.js";
 import ViewCCPPage from "../components/ccpPage/viewCcpPage.js";
 import ViewRatioFormPage from "../components/ratioFormPage/viewRatioFormPage.js";
+import LeakTestPage from "../components/leakTestPage/leakTestPage.js";
+import ViewLeakTestPage from "../components/leakTestPage/viewLeakTestPage.js";
+import NitrogenTestPage from "../components/nitrogenTestPage/nitrogenTestPage.js";
+import ViewNitrogenTestPage from "../components/nitrogenTestPage/viewNitrogenTestPage.js";
 import AddGEMBAPage from "../components/gembaPage/addGembaPage.js";
 import ViewGEMBAPage from "../components/gembaPage/viewGembaPage.js";
 import GEMBAReportPage from "../components/gembaPage/gembaReport.js";
@@ -294,6 +298,28 @@ const Router = () => {
           exact
           path="/ratio/:id"
           element={<ViewRatioFormPage title="CiboQA | Data Sheet Results" />}
+        />
+
+        <Route
+          exact
+          path="/leaktest"
+          element={<LeakTestPage title="CiboQA | Leak Test" />}
+        />
+        <Route
+          exact
+          path="/leaktest/:id"
+          element={<ViewLeakTestPage title="CiboQA | Data Sheet Results" />}
+        />
+
+        <Route
+          exact
+          path="/nitrogentest"
+          element={<NitrogenTestPage title="CiboQA | Nitrogen Test" />}
+        />
+        <Route
+          exact
+          path="/nitrogentest/:id"
+          element={<ViewNitrogenTestPage title="CiboQA | Data Sheet Results" />}
         />
 
         <Route path="*" element={<Navigate to="/" />} />

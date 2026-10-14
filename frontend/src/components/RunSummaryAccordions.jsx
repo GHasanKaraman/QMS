@@ -13,6 +13,8 @@ import RoastingQualityAccordion from "./accordionViews/roastingQualityAccordion"
 import CCPAccordion from "./accordionViews/ccpAccordion";
 import RatioAccordion from "./accordionViews/ratioAccordion";
 import PreOperationalAccordion from "./accordionViews/preOperationalAccordion";
+import LeakTestAccordion from "./accordionViews/leakTestAccordion";
+import NitrogenTestAccordion from "./accordionViews/nitrogenTestAccordion";
 
 const RunSummaryAccordions = ({
   forms,
@@ -162,6 +164,28 @@ const RunSummaryAccordions = ({
             case "xray":
               return (
                 <XRAYInspectionAccordion
+                  isForm={isForm}
+                  onChange={onChange}
+                  key={form._id}
+                  id={form._id}
+                  expanded={expanded}
+                  value={values[form._id]}
+                />
+              );
+            case "leaktest":
+              return (
+                <LeakTestAccordion
+                  isForm={isForm}
+                  onChange={onChange}
+                  key={form._id}
+                  id={form._id}
+                  expanded={expanded}
+                  value={values[form._id]}
+                />
+              );
+            case "nitrogentest":
+              return (
+                <NitrogenTestAccordion
                   isForm={isForm}
                   onChange={onChange}
                   key={form._id}

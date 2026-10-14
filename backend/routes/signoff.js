@@ -14,6 +14,8 @@ const preOperationalFormModel = require("../models/preOperationalFormModel.js");
 const signOffModel = require("../models/signOffModel.js");
 const lotInspectionFormModel = require("../models/lotInspectionFormModel");
 const ccpFormModel = require("../models/ccpFormModel.js");
+const leakTestFormModel = require("../models/leakTestFormModel.js");
+const nitrogenTestFormModel = require("../models/nitrogenTestFormModel.js");
 const { sendQAC } = require("../qac.js");
 
 router.post("/signoff", async (req, res) => {
@@ -119,6 +121,8 @@ router.post("/signoff/dashboard", async (req, res) => {
       await roastingQualityFormModel.aggregate(pipeline);
     const lotInspectionForms = await lotInspectionFormModel.aggregate(pipeline);
     const ccpForms = await ccpFormModel.aggregate(pipeline);
+    const leakTestForms = await leakTestFormModel.aggregate(pipeline);
+    const nitrogenTestForms = await nitrogenTestFormModel.aggregate(pipeline);
 
     const forms = [
       ...ratioForms,
@@ -132,6 +136,8 @@ router.post("/signoff/dashboard", async (req, res) => {
       ...lotInspectionForms,
       ...pgQualityControlForms,
       ...ccpForms,
+      ...leakTestForms,
+      ...nitrogenTestForms,
     ];
 
     forms.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));

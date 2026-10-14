@@ -12,6 +12,8 @@ const roastingQualityFormModel = require("../models/roastingQualityFormModel.js"
 const preOperationalFormModel = require("../models/preOperationalFormModel.js");
 const lotInspectionFormModel = require("../models/lotInspectionFormModel");
 const ccpFormModel = require("../models/ccpFormModel.js");
+const leakTestFormModel = require("../models/leakTestFormModel.js");
+const nitrogenTestFormModel = require("../models/nitrogenTestFormModel.js");
 const { sendQAC } = require("../qac.js");
 
 router.post("/runsummary", async (req, res) => {
@@ -61,6 +63,8 @@ router.post("/runsummary", async (req, res) => {
     );
     const lotInspectionForms = await lotInspectionFormModel.aggregate(pipeline);
     const ccpForms = await ccpFormModel.aggregate(pipeline);
+    const leakTestForms = await leakTestFormModel.aggregate(pipeline);
+    const nitrogenTestForms = await nitrogenTestFormModel.aggregate(pipeline);
 
     var details = { part: [product], ip: req.ip };
 
@@ -92,6 +96,8 @@ router.post("/runsummary", async (req, res) => {
           ...lotInspectionForms,
           ...pgQualityControlForms,
           ...ccpForms,
+          ...leakTestForms,
+          ...nitrogenTestForms,
         ],
       });
       console.log("Fetched all locations from OC DB!");

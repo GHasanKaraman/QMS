@@ -23,6 +23,8 @@ const preOperationalForm = require("./routes/preOperationalForm.js");
 const mixingQualityForm = require("./routes/mixingQualityForm.js");
 const roastingQualityForm = require("./routes/roastingQualityForm.js");
 const ccpForm = require("./routes/ccpForm.js");
+const leakTestForm = require("./routes/leakTestForm.js");
+const nitrogenTestForm = require("./routes/nitrogenTestForm.js");
 const comment = require("./routes/comment.js");
 
 const formOpen = require("./routes/formOpen.js");
@@ -120,6 +122,8 @@ db.once("open", function () {
   app.use("/", labelInspectionForm);
   app.use("/", lotInspectionForm);
   app.use("/", ratioForm);
+  app.use("/", leakTestForm);
+  app.use("/", nitrogenTestForm);
   app.use("/", comment);
   app.use("/", formOpen);
 

@@ -41,6 +41,8 @@ import {
 import { ReactComponent as NuclearIcon } from "../images/nuclearIcon.svg";
 import { ReactComponent as MixingIcon } from "../images/mixingIcon.svg";
 import { ReactComponent as RoastingIcon } from "../images/roastingIcon.svg";
+import { ReactComponent as LeakIcon } from "../images/leakIcon.svg";
+import { ReactComponent as NitrogenIcon } from "../images/nitrogenIcon.svg";
 
 const ItemGroup = ({ label, icon, items, selected }) => {
   const theme = useTheme();
@@ -167,7 +169,7 @@ const Sidebar = () => {
             />
             {!isCollapsed ? (
               <Typography variant="h6" color={colors.grey[100]}>
-                v1.0.11
+                v1.0.12
               </Typography>
             ) : null}
           </div>
@@ -340,6 +342,20 @@ const Sidebar = () => {
               title="Ratio Form"
               to="/ratio"
               icon={<BlenderIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Leak Test"
+              to="/leaktest"
+              icon={<LeakIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+            <Item
+              title="Nitrogen Test"
+              to="/nitrogentest"
+              icon={<SvgIcon inheritViewBox component={NitrogenIcon} />}
               selected={selected}
               setSelected={setSelected}
             />
