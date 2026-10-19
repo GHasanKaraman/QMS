@@ -6,6 +6,7 @@ const leakTestFormSchema = new mongoose.Schema(
     shift: { type: String, required: true },
     product: { type: String, required: true },
     username: { type: String, required: true },
+    lotCode: { type: String, required: true },
     leakLeftBeginning: { type: String, required: true },
     leakLeftMiddle: { type: String, required: true },
     leakLeftEnd: { type: String, required: true },

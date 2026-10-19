@@ -6,6 +6,7 @@ const nitrogenTestFormSchema = new mongoose.Schema(
     shift: { type: String, required: true },
     product: { type: String, required: true },
     username: { type: String, required: true },
+    lotCode: { type: String, required: true },
     nitrogenLeftBeginning: { type: String, required: true },
     nitrogenLeftMiddle: { type: String, required: true },
     nitrogenLeftEnd: { type: String, required: true },

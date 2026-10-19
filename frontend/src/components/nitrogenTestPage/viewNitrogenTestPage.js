@@ -238,6 +238,23 @@ const ViewNitrogenTestPage = (props) => {
         shift={data?.shift}
       />
 
+      <Accordion defaultExpanded>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Stack direction="row" justifyContent="space-between" width="100%">
+            <Typography fontWeight={600} fontSize={18}>
+              LOT NUMBER
+            </Typography>
+            <Typography fontWeight={600}>1 Item</Typography>
+          </Stack>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Stack direction="row" justifyContent="space-between">
+            <Label title="Lot Number" subtitle={data?.lotCode} />
+            <StatusIndicator status={Boolean(data?.lotCode)} />
+          </Stack>
+        </AccordionDetails>
+      </Accordion>
+
       {renderSide("LEFT SIDE", "Left", images[0])}
       {renderSide("RIGHT SIDE", "Right", images[1])}
 

@@ -55,7 +55,10 @@ router.post("/leaktest/add", async (req, res) => {
   try {
     const data = req.body;
     var status = "failed";
-    if (SAMPLE_FIELDS.every((field) => data[field] === "Pass")) {
+    if (
+      data.lotCode &&
+      SAMPLE_FIELDS.every((field) => data[field] === "Pass")
+    ) {
       status = "passed";
     }
     if (data.product && data.product !== "undefined") {

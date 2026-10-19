@@ -75,7 +75,10 @@ router.post("/nitrogentest/add", upload, async (req, res) => {
       const result = await imageModel.insertMany(imageDetails);
       if (result) {
         var status = "failed";
-        if (SAMPLE_FIELDS.every((field) => formInformations[field] === "Pass")) {
+        if (
+          formInformations.lotCode &&
+          SAMPLE_FIELDS.every((field) => formInformations[field] === "Pass")
+        ) {
           status = "passed";
         }
         const imageIDs = result.map((info) => info._id);

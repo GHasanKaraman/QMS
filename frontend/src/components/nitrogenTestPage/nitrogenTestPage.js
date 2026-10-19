@@ -200,6 +200,7 @@ const NitrogenTestPage = (props) => {
       station: null,
       shift: null,
       product: null,
+      lotCode: "",
       nitrogenLeftBeginning: null,
       nitrogenLeftMiddle: null,
       nitrogenLeftEnd: null,
@@ -221,6 +222,7 @@ const NitrogenTestPage = (props) => {
           "Please select the running product!",
           (value) => Boolean(value && value?.partNum !== "")
         ),
+      lotCode: yup.string().required("Please enter the lot number!"),
       nitrogenLeftBeginning: passFail,
       nitrogenLeftMiddle: passFail,
       nitrogenLeftEnd: passFail,
@@ -462,6 +464,34 @@ const NitrogenTestPage = (props) => {
                 : "block",
           }}
         >
+          <Accordion defaultExpanded>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                width="100%"
+              >
+                <Typography fontWeight={600} fontSize={18}>
+                  LOT NUMBER
+                </Typography>
+                <Typography fontWeight={600}>1 Item</Typography>
+              </Stack>
+            </AccordionSummary>
+            <AccordionDetails>
+              <TextField
+                variant="filled"
+                type="text"
+                label="Lot Number"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                value={formik.values.lotCode}
+                name="lotCode"
+                error={!!formik.touched.lotCode && !!formik.errors.lotCode}
+                helperText={formik.touched.lotCode && formik.errors.lotCode}
+                fullWidth
+              />
+            </AccordionDetails>
+          </Accordion>
           {renderSide("LEFT SIDE", "Left")}
           {renderSide("RIGHT SIDE", "Right")}
 

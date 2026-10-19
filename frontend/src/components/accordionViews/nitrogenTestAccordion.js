@@ -148,6 +148,11 @@ const NitrogenTestAccordion = ({ id, expanded, isForm, onChange, value }) => {
           <Label title="QC" subtitle={data?.username} />
         </Stack>
         <Divider />
+        <Stack direction="row" justifyContent="space-between">
+          <Label title="Lot Number" subtitle={data?.lotCode} />
+          <StatusIndicator status={Boolean(data?.lotCode)} />
+        </Stack>
+        <Divider />
         {renderSide("Left Side", "Left", images[0])}
         {renderSide("Right Side", "Right", images[1])}
       </AccordionDetails>
