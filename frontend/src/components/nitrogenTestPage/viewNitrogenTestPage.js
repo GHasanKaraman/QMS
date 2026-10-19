@@ -256,7 +256,23 @@ const ViewNitrogenTestPage = (props) => {
       </Accordion>
 
       {renderSide("LEFT SIDE", "Left", images[0])}
-      {renderSide("RIGHT SIDE", "Right", images[1])}
+      {data?.hasRightSide === "No" ? (
+        <Accordion defaultExpanded>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography fontWeight={600} fontSize={18}>
+              RIGHT SIDE
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Label
+              title="Right Side"
+              subtitle="Not applicable (single-sided machine)"
+            />
+          </AccordionDetails>
+        </Accordion>
+      ) : (
+        renderSide("RIGHT SIDE", "Right", images[1])
+      )}
 
       <CommentAccordion formID={id} form="nitrogentest" />
     </Box>

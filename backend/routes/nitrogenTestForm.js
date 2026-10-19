@@ -7,10 +7,12 @@ const nitrogenTestFormModel = require("../models/nitrogenTestFormModel.js");
 const mongoose = require("mongoose");
 const { sendQAC } = require("../qac.js");
 
-const SAMPLE_FIELDS = [
+const LEFT_FIELDS = [
   "nitrogenLeftBeginning",
   "nitrogenLeftMiddle",
   "nitrogenLeftEnd",
+];
+const RIGHT_FIELDS = [
   "nitrogenRightBeginning",
   "nitrogenRightMiddle",
   "nitrogenRightEnd",
@@ -65,9 +67,18 @@ router.post("/nitrogentest/add", upload, async (req, res) => {
   try {
     const imageDetails = req.savedImages;
     const formInformations = req.body;
+    const hasRightSide = formInformations.hasRightSide !== "No";
+    if (!hasRightSide) {
+      RIGHT_FIELDS.forEach((field) => {
+        delete formInformations[field];
+      });
+    }
+    const SAMPLE_FIELDS = hasRightSide
+      ? [...LEFT_FIELDS, ...RIGHT_FIELDS]
+      : LEFT_FIELDS;
 
-    if (imageDetails.length !== 2) {
-      console.log("Nitrogen test form requires left and right screen photos!");
+    if (imageDetails.length !== (hasRightSide ? 2 : 1)) {
+      console.log("Nitrogen test form is missing a nitrogen screen photo!");
       return res.sendStatus(405);
     }
 

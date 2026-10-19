@@ -154,7 +154,14 @@ const NitrogenTestAccordion = ({ id, expanded, isForm, onChange, value }) => {
         </Stack>
         <Divider />
         {renderSide("Left Side", "Left", images[0])}
-        {renderSide("Right Side", "Right", images[1])}
+        {data?.hasRightSide === "No" ? (
+          <Label
+            title="Right Side"
+            subtitle="Not applicable (single-sided machine)"
+          />
+        ) : (
+          renderSide("Right Side", "Right", images[1])
+        )}
       </AccordionDetails>
     </Accordion>
   );

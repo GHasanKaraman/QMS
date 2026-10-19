@@ -5,14 +5,8 @@ const leakTestFormModel = require("../models/leakTestFormModel.js");
 const mongoose = require("mongoose");
 const { sendQAC } = require("../qac.js");
 
-const SAMPLE_FIELDS = [
-  "leakLeftBeginning",
-  "leakLeftMiddle",
-  "leakLeftEnd",
-  "leakRightBeginning",
-  "leakRightMiddle",
-  "leakRightEnd",
-];
+const LEFT_FIELDS = ["leakLeftBeginning", "leakLeftMiddle", "leakLeftEnd"];
+const RIGHT_FIELDS = ["leakRightBeginning", "leakRightMiddle", "leakRightEnd"];
 
 router.post("/leaktest/get", async (req, res) => {
   try {
@@ -54,6 +48,15 @@ router.post("/leaktest/get", async (req, res) => {
 router.post("/leaktest/add", async (req, res) => {
   try {
     const data = req.body;
+    const hasRightSide = data.hasRightSide !== "No";
+    if (!hasRightSide) {
+      [...RIGHT_FIELDS, "leakRightDefects"].forEach((field) => {
+        delete data[field];
+      });
+    }
+    const SAMPLE_FIELDS = hasRightSide
+      ? [...LEFT_FIELDS, ...RIGHT_FIELDS]
+      : LEFT_FIELDS;
     var status = "failed";
     if (
       data.lotCode &&

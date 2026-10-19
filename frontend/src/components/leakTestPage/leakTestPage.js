@@ -129,6 +129,12 @@ const LeakTestPage = (props) => {
     values.product = values.product.partNum;
     values.started = Number(productDetails?.started);
     values.startDateTime = moment(productDetails?.startDateTime);
+    if (values.hasRightSide === "No") {
+      delete values.leakRightBeginning;
+      delete values.leakRightMiddle;
+      delete values.leakRightEnd;
+      delete values.leakRightDefects;
+    }
 
     const res = await axios.post("/leaktest/add", values);
     if (userAuth.control(res)) {
@@ -150,7 +156,7 @@ const LeakTestPage = (props) => {
               "Something went wrong while saving the form. Please try again!",
               {
                 variant: "error",
-              }
+              },
             );
             break;
           case 503:
@@ -179,12 +185,19 @@ const LeakTestPage = (props) => {
     .min(0, "Number of bags cannot be negative!")
     .required("Please enter the number of bags with defects!");
 
+  const rightSideOnly = (schema) =>
+    yup
+      .mixed()
+      .nullable()
+      .when("hasRightSide", { is: "Yes", then: () => schema });
+
   const formik = useFormik({
     initialValues: {
       station: null,
       shift: null,
       product: null,
       lotCode: "",
+      hasRightSide: "Yes",
       leakLeftBeginning: null,
       leakLeftMiddle: null,
       leakLeftEnd: null,
@@ -204,17 +217,17 @@ const LeakTestPage = (props) => {
         .test(
           "PRODUCT_VALIDATION",
           "Please select the running product!",
-          (value) => Boolean(value && value?.partNum !== "")
+          (value) => Boolean(value && value?.partNum !== ""),
         ),
       lotCode: yup.string().required("Please enter the lot number!"),
       leakLeftBeginning: passFail,
       leakLeftMiddle: passFail,
       leakLeftEnd: passFail,
       leakLeftDefects: defects,
-      leakRightBeginning: passFail,
-      leakRightMiddle: passFail,
-      leakRightEnd: passFail,
-      leakRightDefects: defects,
+      leakRightBeginning: rightSideOnly(passFail),
+      leakRightMiddle: rightSideOnly(passFail),
+      leakRightEnd: rightSideOnly(passFail),
+      leakRightDefects: rightSideOnly(defects),
     }),
   });
 
@@ -244,53 +257,80 @@ const LeakTestPage = (props) => {
           </Stack>
         </AccordionSummary>
         <AccordionDetails>
-          <Typography
-            variant="h6"
-            color={colors.grey[100]}
-            fontWeight="600"
-            sx={{ mb: "15px" }}
-          >
-            Sample Points
-          </Typography>
+          {side === "Right" ? (
+            <Stack spacing={1} sx={{ mb: "20px" }}>
+              <Typography
+                variant="h6"
+                color={colors.grey[100]}
+                fontWeight="600"
+              >
+                Does this machine have a right side?
+              </Typography>
+              <ToggleButtonCheck
+                alignment={formik.values.hasRightSide}
+                onChange={(value) =>
+                  formik.setFieldValue("hasRightSide", value)
+                }
+                options={[{ label: "Yes" }, { label: "No" }]}
+              />
+            </Stack>
+          ) : undefined}
           <Box
-            display="grid"
-            gap="30px"
-            gridTemplateColumns="minmax(0, 1fr)"
-            sx={gridSx}
+            sx={{
+              display:
+                side === "Right" && formik.values.hasRightSide === "No"
+                  ? "none"
+                  : "block",
+            }}
           >
-            {SAMPLE_POINTS.map((point) => {
-              const name = "leak" + side + point;
-              return (
-                <Stack key={name} spacing={1}>
-                  <Typography color={colors.grey[100]} fontWeight="600">
-                    {point}
-                  </Typography>
-                  <ToggleButtonCheck
-                    alignment={formik.values[name]}
-                    onChange={(value) => formik.setFieldValue(name, value)}
-                    error={!!formik.touched[name] && !!formik.errors[name]}
-                    options={[{ label: "Pass" }, { label: "Fail" }]}
-                  />
-                </Stack>
-              );
-            })}
-            <TextField
-              variant="filled"
-              type="number"
-              label="Number of Bags with Defects"
-              inputProps={{ min: 0, step: 1 }}
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              value={formik.values[defectsName]}
-              name={defectsName}
-              error={
-                !!formik.touched[defectsName] && !!formik.errors[defectsName]
-              }
-              helperText={
-                formik.touched[defectsName] && formik.errors[defectsName]
-              }
-              sx={{ gridColumn: "span 1" }}
-            />
+            <Typography
+              variant="h6"
+              color={colors.grey[100]}
+              fontWeight="600"
+              sx={{ mb: "15px" }}
+            >
+              Sample Points
+            </Typography>
+            <Box
+              display="grid"
+              gap="30px"
+              gridTemplateColumns="minmax(0, 1fr)"
+              sx={gridSx}
+            >
+              {SAMPLE_POINTS.map((point) => {
+                const name = "leak" + side + point;
+                return (
+                  <Stack key={name} spacing={1}>
+                    <Typography color={colors.grey[100]} fontWeight="600">
+                      {point}
+                    </Typography>
+                    <ToggleButtonCheck
+                      alignment={formik.values[name]}
+                      onChange={(value) => formik.setFieldValue(name, value)}
+                      error={!!formik.touched[name] && !!formik.errors[name]}
+                      options={[{ label: "Pass" }, { label: "Fail" }]}
+                    />
+                  </Stack>
+                );
+              })}
+              <TextField
+                variant="filled"
+                type="number"
+                label="Number of Bags with Defects"
+                inputProps={{ min: 0, step: 1 }}
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                value={formik.values[defectsName]}
+                name={defectsName}
+                error={
+                  !!formik.touched[defectsName] && !!formik.errors[defectsName]
+                }
+                helperText={
+                  formik.touched[defectsName] && formik.errors[defectsName]
+                }
+                sx={{ gridColumn: "span 1" }}
+              />
+            </Box>
           </Box>
         </AccordionDetails>
       </Accordion>
@@ -351,7 +391,7 @@ const LeakTestPage = (props) => {
             sx={{ gridColumn: "span 4" }}
             options={stations
               .filter(
-                ({ name }) => !name.includes("ROAST") && !name.includes("MIX")
+                ({ name }) => !name.includes("ROAST") && !name.includes("MIX"),
               )
               .map(({ name }) => name)}
             onBlur={formik.handleBlur}
@@ -409,7 +449,7 @@ const LeakTestPage = (props) => {
                   "leakTest",
                   station,
                   value.partNum,
-                  value.planId
+                  value.planId,
                 );
               }
             }}

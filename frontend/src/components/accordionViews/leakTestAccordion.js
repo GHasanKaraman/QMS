@@ -148,7 +148,14 @@ const LeakTestAccordion = ({ id, expanded, isForm, onChange, value }) => {
         </Stack>
         <Divider />
         {renderSide("Left Side", "Left")}
-        {renderSide("Right Side", "Right")}
+        {data?.hasRightSide === "No" ? (
+          <Label
+            title="Right Side"
+            subtitle="Not applicable (single-sided machine)"
+          />
+        ) : (
+          renderSide("Right Side", "Right")
+        )}
       </AccordionDetails>
     </Accordion>
   );

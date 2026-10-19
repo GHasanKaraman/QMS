@@ -247,7 +247,23 @@ const ViewLeakTestPage = (props) => {
       </Accordion>
 
       {renderSide("LEFT SIDE", "Left")}
-      {renderSide("RIGHT SIDE", "Right")}
+      {data?.hasRightSide === "No" ? (
+        <Accordion defaultExpanded>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography fontWeight={600} fontSize={18}>
+              RIGHT SIDE
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Label
+              title="Right Side"
+              subtitle="Not applicable (single-sided machine)"
+            />
+          </AccordionDetails>
+        </Accordion>
+      ) : (
+        renderSide("RIGHT SIDE", "Right")
+      )}
 
       <CommentAccordion formID={id} form="leaktest" />
     </Box>

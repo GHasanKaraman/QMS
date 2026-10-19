@@ -132,6 +132,12 @@ const NitrogenTestPage = (props) => {
     values.product = values.product.partNum;
     values.started = Number(productDetails?.started);
     values.startDateTime = moment(productDetails?.startDateTime);
+    if (values.hasRightSide === "No") {
+      delete values.nitrogenRightBeginning;
+      delete values.nitrogenRightMiddle;
+      delete values.nitrogenRightEnd;
+      delete values.rightPicture;
+    }
 
     const formData = new FormData();
     for (const name in values) {
@@ -162,7 +168,7 @@ const NitrogenTestPage = (props) => {
               "Something went wrong while saving the form. Please try again!",
               {
                 variant: "error",
-              }
+              },
             );
             break;
           case 503:
@@ -195,12 +201,19 @@ const NitrogenTestPage = (props) => {
       return !value || (value && SUPPORTED_FORMATS.includes(value?.type));
     });
 
+  const rightSideOnly = (schema) =>
+    yup
+      .mixed()
+      .nullable()
+      .when("hasRightSide", { is: "Yes", then: () => schema });
+
   const formik = useFormik({
     initialValues: {
       station: null,
       shift: null,
       product: null,
       lotCode: "",
+      hasRightSide: "Yes",
       nitrogenLeftBeginning: null,
       nitrogenLeftMiddle: null,
       nitrogenLeftEnd: null,
@@ -220,17 +233,17 @@ const NitrogenTestPage = (props) => {
         .test(
           "PRODUCT_VALIDATION",
           "Please select the running product!",
-          (value) => Boolean(value && value?.partNum !== "")
+          (value) => Boolean(value && value?.partNum !== ""),
         ),
       lotCode: yup.string().required("Please enter the lot number!"),
       nitrogenLeftBeginning: passFail,
       nitrogenLeftMiddle: passFail,
       nitrogenLeftEnd: passFail,
       leftPicture: picture,
-      nitrogenRightBeginning: passFail,
-      nitrogenRightMiddle: passFail,
-      nitrogenRightEnd: passFail,
-      rightPicture: picture,
+      nitrogenRightBeginning: rightSideOnly(passFail),
+      nitrogenRightMiddle: rightSideOnly(passFail),
+      nitrogenRightEnd: rightSideOnly(passFail),
+      rightPicture: rightSideOnly(picture),
     }),
   });
 
@@ -260,60 +273,87 @@ const NitrogenTestPage = (props) => {
           </Stack>
         </AccordionSummary>
         <AccordionDetails>
-          <Typography
-            variant="h6"
-            color={colors.grey[100]}
-            fontWeight="600"
-            sx={{ mb: "15px" }}
-          >
-            Sample Points
-          </Typography>
-          <Typography color={colors.grey[300]} sx={{ mb: "15px" }}>
-            Is the oxygen reading less than 5%?
-          </Typography>
+          {side === "Right" ? (
+            <Stack spacing={1} sx={{ mb: "20px" }}>
+              <Typography
+                variant="h6"
+                color={colors.grey[100]}
+                fontWeight="600"
+              >
+                Does this machine have a right side?
+              </Typography>
+              <ToggleButtonCheck
+                alignment={formik.values.hasRightSide}
+                onChange={(value) =>
+                  formik.setFieldValue("hasRightSide", value)
+                }
+                options={[{ label: "Yes" }, { label: "No" }]}
+              />
+            </Stack>
+          ) : undefined}
           <Box
-            display="grid"
-            gap="30px"
-            gridTemplateColumns="minmax(0, 1fr)"
-            sx={gridSx}
+            sx={{
+              display:
+                side === "Right" && formik.values.hasRightSide === "No"
+                  ? "none"
+                  : "block",
+            }}
           >
-            {SAMPLE_POINTS.map((point) => {
-              const name = "nitrogen" + side + point;
-              return (
-                <Stack key={name} spacing={1}>
-                  <Typography color={colors.grey[100]} fontWeight="600">
-                    {point}
-                  </Typography>
-                  <ToggleButtonCheck
-                    alignment={formik.values[name]}
-                    onChange={(value) => formik.setFieldValue(name, value)}
-                    error={!!formik.touched[name] && !!formik.errors[name]}
-                    options={[{ label: "Pass" }, { label: "Fail" }]}
-                  />
-                </Stack>
-              );
-            })}
             <Typography
               variant="h6"
               color={colors.grey[100]}
               fontWeight="600"
-              sx={{ m: "0 0 -20px 0", gridColumn: "span 1" }}
+              sx={{ mb: "15px" }}
             >
-              Photo of Nitrogen Screen ({label.toLowerCase()} results)
+              Sample Points
             </Typography>
-            <UploadImage
-              sx={{ gridColumn: "span 1", justifySelf: "start" }}
-              value={formik.values[pictureName]}
-              error={
-                !!formik.touched[pictureName] && !!formik.errors[pictureName]
-              }
-              helperText={
-                formik.touched[pictureName] && formik.errors[pictureName]
-              }
-              onChange={(blob) => {
-                formik.setFieldValue(pictureName, blob);
-              }}
-            />
+            <Typography color={colors.grey[300]} sx={{ mb: "15px" }}>
+              Is the oxygen reading less than 5%?
+            </Typography>
+            <Box
+              display="grid"
+              gap="30px"
+              gridTemplateColumns="minmax(0, 1fr)"
+              sx={gridSx}
+            >
+              {SAMPLE_POINTS.map((point) => {
+                const name = "nitrogen" + side + point;
+                return (
+                  <Stack key={name} spacing={1}>
+                    <Typography color={colors.grey[100]} fontWeight="600">
+                      {point}
+                    </Typography>
+                    <ToggleButtonCheck
+                      alignment={formik.values[name]}
+                      onChange={(value) => formik.setFieldValue(name, value)}
+                      error={!!formik.touched[name] && !!formik.errors[name]}
+                      options={[{ label: "Pass" }, { label: "Fail" }]}
+                    />
+                  </Stack>
+                );
+              })}
+              <Typography
+                variant="h6"
+                color={colors.grey[100]}
+                fontWeight="600"
+                sx={{ m: "0 0 -20px 0", gridColumn: "span 1" }}
+              >
+                Photo of Nitrogen Screen ({label.toLowerCase()} results)
+              </Typography>
+              <UploadImage
+                sx={{ gridColumn: "span 1", justifySelf: "start" }}
+                value={formik.values[pictureName]}
+                error={
+                  !!formik.touched[pictureName] && !!formik.errors[pictureName]
+                }
+                helperText={
+                  formik.touched[pictureName] && formik.errors[pictureName]
+                }
+                onChange={(blob) => {
+                  formik.setFieldValue(pictureName, blob);
+                }}
+              />
+            </Box>
           </Box>
         </AccordionDetails>
       </Accordion>
@@ -375,7 +415,7 @@ const NitrogenTestPage = (props) => {
             sx={{ gridColumn: "span 4" }}
             options={stations
               .filter(
-                ({ name }) => !name.includes("ROAST") && !name.includes("MIX")
+                ({ name }) => !name.includes("ROAST") && !name.includes("MIX"),
               )
               .map(({ name }) => name)}
             onBlur={formik.handleBlur}
@@ -433,7 +473,7 @@ const NitrogenTestPage = (props) => {
                   "nitrogenTest",
                   station,
                   value.partNum,
-                  value.planId
+                  value.planId,
                 );
               }
             }}
