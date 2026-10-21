@@ -18,6 +18,7 @@ import { ReactComponent as Signature } from "../../images/signature.svg";
 import { tokens } from "../../theme";
 import {
   extractInformations,
+  getStatusColor,
   getTimeRange,
   toStringDate,
 } from "../../utils/helpers";
@@ -258,10 +259,7 @@ const RunSummaryPage = (props) => {
                                   ? "5%"
                                   : "7%",
                           height: "20px",
-                          background:
-                            form.status === "passed"
-                              ? colors.ciboInnerGreen[500]
-                              : colors.yoggieRed[500],
+                          background: getStatusColor(colors, form.status),
                         }}
                       />
                     );
@@ -283,11 +281,13 @@ const RunSummaryPage = (props) => {
                       width: "25px",
                       height: "25px",
                       borderRadius: "15px",
-                      background: forms.every(
-                        (form) => form.status === "passed",
+                      background: forms.some(
+                        (form) => form.status === "failed",
                       )
-                        ? colors.ciboInnerGreen[500]
-                        : colors.yoggieRed[500],
+                        ? colors.yoggieRed[500]
+                        : forms.some((form) => form.status === "inProgress")
+                          ? colors.orangeAccent[500]
+                          : colors.ciboInnerGreen[500],
                     }}
                   />
                   <Signature

@@ -310,6 +310,16 @@ const Router = () => {
           path="/leaktest/:id"
           element={<ViewLeakTestPage title="CiboQA | Data Sheet Results" />}
         />
+        <Route
+          exact
+          path="/leaktest/:id/edit"
+          element={<LeakTestPage title="CiboQA | Leak Test" />}
+        />
+        <Route
+          exact
+          path="/leaktest/:id/retest"
+          element={<LeakTestPage title="CiboQA | Leak Test Retest" />}
+        />
 
         <Route
           exact
@@ -320,6 +330,16 @@ const Router = () => {
           exact
           path="/nitrogentest/:id"
           element={<ViewNitrogenTestPage title="CiboQA | Data Sheet Results" />}
+        />
+        <Route
+          exact
+          path="/nitrogentest/:id/edit"
+          element={<NitrogenTestPage title="CiboQA | Nitrogen Test" />}
+        />
+        <Route
+          exact
+          path="/nitrogentest/:id/retest"
+          element={<NitrogenTestPage title="CiboQA | Nitrogen Test Retest" />}
         />
 
         <Route path="*" element={<Navigate to="/" />} />

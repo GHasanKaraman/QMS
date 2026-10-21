@@ -8,7 +8,11 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-import { extractInformations, toStringDate } from "../utils/helpers";
+import {
+  extractInformations,
+  getStatusColor,
+  toStringDate,
+} from "../utils/helpers";
 import { tokens } from "../theme";
 
 import { ReactComponent as Signature } from "../images/signature.svg";
@@ -19,20 +23,13 @@ const FormCard = ({ form, date = false }) => {
   const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
 
-  const getStatusColor = (form) => {
-    if (form.status === "passed") {
-      return colors.ciboInnerGreen[300];
-    }
-    return colors.yoggieRed[300];
-  };
-
   const info = extractInformations(form);
   if (info) {
     return (
       <Card
         key={form._id}
         sx={{
-          background: getStatusColor(form),
+          background: getStatusColor(colors, form.status, 300),
           width: 200,
           height: date ? 100 : 75,
         }}

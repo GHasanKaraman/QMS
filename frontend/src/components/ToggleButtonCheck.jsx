@@ -42,6 +42,12 @@ const ToggleButtonCheck = (props) => {
             aria-label={i}
             sx={{
               borderColor: props.error ? "red" : colors.contrast[100],
+              // Optional per-option selected color
+              ...(option.color && {
+                "&&.Mui-selected, &&.Mui-selected:hover": {
+                  background: option.color + " !important",
+                },
+              }),
             }}
           >
             <Stack direction="row" spacing={1}>

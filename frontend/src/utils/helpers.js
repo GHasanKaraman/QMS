@@ -6,6 +6,13 @@ export const toStringDate = (date, format) => {
   return newDate;
 };
 
+// Red is reserved for failed forms
+export const getStatusColor = (colors, status, shade = 500) => {
+  if (status === "passed") return colors.ciboInnerGreen[shade];
+  if (status === "inProgress") return colors.orangeAccent[shade];
+  return colors.yoggieRed[shade];
+};
+
 export const extractUniqueProducts = (...forms) => {
   return Array.from(
     new Set(forms.flatMap((item) => item.map((form) => form.product))),

@@ -6,17 +6,58 @@ const imageModel = require("../models/imageModel");
 const nitrogenTestFormModel = require("../models/nitrogenTestFormModel.js");
 const mongoose = require("mongoose");
 const { sendQAC } = require("../qac.js");
+const {
+  getNextStage,
+  applyStage,
+  logStage,
+  buildRetest,
+  claimRetest,
+} = require("../utils/sampleStages.js");
 
-const LEFT_FIELDS = [
-  "nitrogenLeftBeginning",
-  "nitrogenLeftMiddle",
-  "nitrogenLeftEnd",
-];
-const RIGHT_FIELDS = [
-  "nitrogenRightBeginning",
-  "nitrogenRightMiddle",
-  "nitrogenRightEnd",
-];
+const PREFIX = "nitrogen";
+
+// Both screen photos are required before the end stage can be saved
+const hasAllPhotos = (form) =>
+  Boolean(form.leftImageID) &&
+  (form.hasRightSide === "No" || Boolean(form.rightImageID));
+
+// Attaches newly uploaded screen photos. A side's photo can't be replaced
+// once attached.
+const attachPhotos = async (form, savedImages) => {
+  const sides = { leftPicture: "leftImageID", rightPicture: "rightImageID" };
+  const newImages = savedImages.filter(
+    ({ fieldname }) =>
+      sides[fieldname] &&
+      !form[sides[fieldname]] &&
+      (fieldname === "leftPicture" || form.hasRightSide !== "No"),
+  );
+  if (newImages.length === 0) return;
+  const result = await imageModel.insertMany(newImages);
+  newImages.forEach(({ fieldname }, i) => {
+    form[sides[fieldname]] = result[i]._id;
+  });
+};
+
+// Applies the stage results and photos sent with a stage.
+// Returns false when something required is missing.
+const applyNitrogenStage = async (form, req, stage) => {
+  if (!applyStage(form, req.body, PREFIX, stage)) return false;
+  await attachPhotos(form, req.savedImages);
+  return stage !== "End" || hasAllPhotos(form);
+};
+
+const logNitrogenStage = (form, stage, username) =>
+  logStage(form, PREFIX, stage, username, {}, hasAllPhotos);
+
+const sendFormSubmit = (form, req) =>
+  sendQAC("formSubmit", {
+    formType: "nitrogenTest",
+    station: form.station,
+    product: form.product,
+    ip: req.ip,
+    username: req.username,
+    formStatus: form.status,
+  });
 
 router.post("/nitrogentest/get", async (req, res) => {
   try {
@@ -41,16 +82,16 @@ router.post("/nitrogentest/get", async (req, res) => {
 
       const product = await sendQAC("recipe", details);
 
-      const imageIDs = nitrogenTestForm[0].imageIDs || [];
-      const found = await imageModel.find({ _id: { $in: imageIDs } });
-      // Keep the left/right order of imageIDs
-      const images = imageIDs.map((imageID) =>
-        found.find((image) => image._id.equals(imageID)),
-      );
+      const { leftImageID, rightImageID } = nitrogenTestForm[0];
+      const images = await imageModel.find({
+        _id: { $in: [leftImageID, rightImageID].filter(Boolean) },
+      });
+      const findImage = (imageID) =>
+        imageID ? images.find((image) => image._id.equals(imageID)) : null;
 
       res.status(200).json({
         nitrogenTestForm: nitrogenTestForm[0],
-        images: images,
+        images: [findImage(leftImageID), findImage(rightImageID)],
         product: product,
       });
       console.log("Fetched " + id + " nitrogen test data sheet result!");
@@ -63,68 +104,145 @@ router.post("/nitrogentest/get", async (req, res) => {
   }
 });
 
+// Latest nitrogen test of the given run that still needs work: either
+// unfinished (to continue) or failed and not retested yet (to retest)
+router.post("/nitrogentest/inprogress", async (req, res) => {
+  try {
+    const { station, product, started } = req.body;
+    const form = await nitrogenTestFormModel
+      .findOne({
+        station,
+        product,
+        started: Number(started) || 0,
+        $or: [{ completed: false }, { status: "failed", retestedBy: null }],
+      })
+      .sort({ createdAt: -1 });
+    res.status(200).json({ form });
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(503);
+  }
+});
+
 router.post("/nitrogentest/add", upload, async (req, res) => {
   try {
-    const imageDetails = req.savedImages;
-    const formInformations = req.body;
-    const hasRightSide = formInformations.hasRightSide !== "No";
-    if (!hasRightSide) {
-      RIGHT_FIELDS.forEach((field) => {
-        delete formInformations[field];
-      });
-    }
-    const SAMPLE_FIELDS = hasRightSide
-      ? [...LEFT_FIELDS, ...RIGHT_FIELDS]
-      : LEFT_FIELDS;
-
-    if (imageDetails.length !== (hasRightSide ? 2 : 1)) {
-      console.log("Nitrogen test form is missing a nitrogen screen photo!");
+    const data = req.body;
+    if (!data.product || data.product === "undefined" || !data.lotCode) {
+      console.log("Something went wrong when saving the form!");
       return res.sendStatus(405);
     }
 
-    if (formInformations.product && formInformations.product !== "undefined") {
-      const result = await imageModel.insertMany(imageDetails);
-      if (result) {
-        var status = "failed";
-        if (
-          formInformations.lotCode &&
-          SAMPLE_FIELDS.every((field) => formInformations[field] === "Pass")
-        ) {
-          status = "passed";
-        }
-        const imageIDs = result.map((info) => info._id);
+    const form = new nitrogenTestFormModel({
+      station: data.station,
+      shift: data.shift,
+      product: data.product,
+      lotCode: data.lotCode,
+      hasRightSide: data.hasRightSide === "No" ? "No" : "Yes",
+      started: data.started,
+      startDateTime: data.startDateTime,
+      username: req.username,
+    });
 
-        const form = await nitrogenTestFormModel.create({
-          ...formInformations,
-          imageIDs,
-          username: req.username,
-          status,
-        });
-        if (form) {
-          console.log(
-            req.username + " successfully created a nitrogen test form!",
-          );
-          await sendQAC("formSubmit", {
-            formType: "nitrogenTest",
-            station: formInformations.station,
-            product: formInformations.product,
-            ip: req.ip,
-            username: req.username,
-            formStatus: status,
-          });
-          res.status(200).json({ form });
-        } else {
-          console.log("Something went wrong while creating nitrogen test form!");
-          res.sendStatus(500);
-        }
-      } else {
-        console.log("Image info has not been written in the database!");
-        res.sendStatus(500);
-      }
-    } else {
-      console.log("Something went wrong when saving the form!");
-      res.sendStatus(405);
+    if (!(await applyNitrogenStage(form, req, "Beginning"))) {
+      console.log("Nitrogen test beginning samples are missing!");
+      return res.sendStatus(405);
     }
+    logNitrogenStage(form, "Beginning", req.username);
+    await form.save();
+
+    console.log(req.username + " successfully created a nitrogen test form!");
+    await sendFormSubmit(form, req);
+    res.status(200).json({ form });
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(503);
+  }
+});
+
+// Records the next stage (middle or end) of an open nitrogen test.
+// Filled stages can't be changed and failed forms are closed.
+router.post("/nitrogentest/update", upload, async (req, res) => {
+  try {
+    const { id, stage } = req.body;
+    const form = await nitrogenTestFormModel.findById(id);
+    if (!form) {
+      return res.sendStatus(404);
+    }
+    if (form.completed || stage !== getNextStage(form, PREFIX)) {
+      console.log(
+        "Nitrogen test " + id + " " + stage + " stage can't be filled!",
+      );
+      return res.sendStatus(409);
+    }
+    if (!(await applyNitrogenStage(form, req, stage))) {
+      console.log("Nitrogen test " + stage + " samples are missing!");
+      return res.sendStatus(405);
+    }
+    logNitrogenStage(form, stage, req.username);
+    await form.save();
+
+    console.log(
+      req.username + " filled the " + stage + " stage of nitrogen test " + id,
+    );
+    if (form.completed) {
+      await sendFormSubmit(form, req);
+    }
+    res.status(200).json({ form });
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(503);
+  }
+});
+
+// Retests a failed nitrogen test: creates a new linked form that keeps the
+// stages before the failed one and records the failed stage again. Screen
+// photos are not carried over, the retest needs its own.
+router.post("/nitrogentest/retest", upload, async (req, res) => {
+  try {
+    const { id } = req.body;
+    const original = await nitrogenTestFormModel.findById(id);
+    if (!original) {
+      return res.sendStatus(404);
+    }
+    if (original.status !== "failed" || original.retestedBy) {
+      console.log("Nitrogen test " + id + " can't be retested!");
+      return res.sendStatus(409);
+    }
+
+    const { form, stage } = buildRetest(
+      nitrogenTestFormModel,
+      original,
+      PREFIX,
+      req.username,
+    );
+    if (!applyStage(form, req.body, PREFIX, stage)) {
+      console.log("Nitrogen test retest " + stage + " samples are missing!");
+      return res.sendStatus(405);
+    }
+
+    if (!(await claimRetest(nitrogenTestFormModel, original._id, form._id))) {
+      console.log("Nitrogen test " + id + " has already been retested!");
+      return res.sendStatus(409);
+    }
+    try {
+      await attachPhotos(form, req.savedImages);
+      if (stage === "End" && !hasAllPhotos(form)) {
+        console.log("Nitrogen test retest is missing screen photos!");
+        await nitrogenTestFormModel.updateOne({ _id: id }, { retestedBy: null });
+        return res.sendStatus(405);
+      }
+      logNitrogenStage(form, stage, req.username);
+      await form.save();
+    } catch (err) {
+      await nitrogenTestFormModel.updateOne({ _id: id }, { retestedBy: null });
+      throw err;
+    }
+
+    console.log(
+      req.username + " retested nitrogen test " + id + " as " + form._id,
+    );
+    await sendFormSubmit(form, req);
+    res.status(200).json({ form });
   } catch (err) {
     console.log(err);
     res.sendStatus(503);

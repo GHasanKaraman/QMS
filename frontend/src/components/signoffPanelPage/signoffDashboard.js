@@ -30,6 +30,7 @@ import axios from "../../api/axios";
 import userAuth from "../../utils/userAuth";
 import {
   extractUniqueProducts,
+  getStatusColor,
   getTimeRange,
   toStringDate,
 } from "../../utils/helpers";
@@ -653,10 +654,11 @@ const SignoffDashboard = (props) => {
                                       width: `${100 / currentRun.length}%`,
                                       height: 10,
                                       borderRadius: 3,
-                                      background:
-                                        run.status === "passed"
-                                          ? colors.ciboInnerGreen[400]
-                                          : colors.yoggieRed[400],
+                                      background: getStatusColor(
+                                        colors,
+                                        run.status,
+                                        400,
+                                      ),
                                     }}
                                   />
                                 );
